@@ -1,4 +1,4 @@
-""" NWS Alerts """
+""" NFL Scores """
 import logging
 from datetime import timedelta
 
@@ -18,7 +18,7 @@ from .const import (
     API_ENDPOINT,
     CONF_INTERVAL,
     CONF_TIMEOUT,
-    CONF_ZONE_ID,
+    CONF_TEAM_ID,
     COORDINATOR,
     DEFAULT_INTERVAL,
     DEFAULT_TIMEOUT,
@@ -148,44 +148,90 @@ async def async_get_state(config) -> dict:
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
-    url = "%s/alerts/active/count" % API_ENDPOINT
-    zone_id = config[CONF_ZONE_ID]
+    url = API_ENDPOINT
+    team_id = config[CONF_TEAM_ID]
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
-            _LOGGER.debug("getting state for %s from %s" % (zone_id, url))
+            _LOGGER.debug("getting state for %s from %s" % (team_id, url))
             if r.status == 200:
                 data = await r.json()
 
     if data is not None:
         # Reset values before reassigning
         values = {
-            "state": 0,
-            "event": None,
-            "event_id": None,
-            "message_type": None,
-            "event_status": None,
-            "display_desc": None,
-            "spoken_desc": None,
+            "state": "PRE",
+            "kickoff": None,
+            "quarter": None,
+            "clock": None,
+            "venue": None,
+            "odds": None,
+            "overunder": None,
+            "last_play": None,
+            "team_abbr": None,
+            "team_name": None,
+            "team_homeaway": None,
+            "team_logo": None,
+            "team_score": None,
+            "team_timeouts": None,
+            "opponent_abbr": None,
+            "opponent_name": None,
+            "opponent_homeaway": None,
+            "opponent_logo": None,
+            "opponent_score": None,
+            "opponent_timeouts": None,
         }
-        if "zones" in data:
-            for zone in zone_id.split(","):
-                if zone in data["zones"]:
-                    values = await async_get_alerts(zone_id)
-                    break
+        # Populate values
+        # Check that the team is there in list
+        # Iterate
+        for event in data["events"]:
+            _LOGGER.debug("looking at this event: %s" % event)
+            if team_id in event["shortName"]:
+                values["state"] = event.status.type.state.upper()
+                values["kickoff"] = event.status.type.detail
+                values["quarter"] = event.status.period
+                values["clock"] = event.status.displayClock
+                values["venue"] = event.competitions[0].venue.fullName
+                values["odds"] = event.competitions[0].odds[0].details
+                values["overunder"] = event.competitions[0].odds[0].overUnder
+                if event.competitions[0].status.type.state == 'pre':
+                    values["lastplay"] = ""
+                else:
+                    values["lastplay"] = event.competitions[0].situation.lastPlay.text
+                team_index = 0 if event.competitions[0].competitors[0].team.abbreviation == team_id else 1
+                oppo_index = (team_index-1).abs()
+                values["team_abbr"] = event.competitions[0].competitors[team_index].team.abbreviation
+                values["team_name"] = event.competitions[0].competitors[team_index].team.displayName
+                values["team_homeaway"] = event.competitions[0].competitors[team_index].homeAway
+                values["team_logo"] = event.competitions[0].competitors[team_index].team.logo
+                values["team_score"] = event.competitions[0].competitors[team_index].score
+                values["team_timeouts"] = event.competitions[0].competitors[team_index].team.abbreviation
+                if event.competitions[0].competitors[team_index].homeAway == "home":
+                    values["team_timeouts"] = event.competitions[0].situation.homeTimeouts
+                    values["opponent_timeouts"] = event.competitions[0].situation.awayTimeouts
+                else:
+                    values["team_timeouts"] = event.competitions[0].situation.awayTimeouts
+                    values["opponent_timeouts"] = event.competitions[0].situation.homeTimeouts
+                values["opponent_abbr"] = event.competitions[0].competitors[oppo_index].team.abbreviation
+                values["opponent_name"] = event.competitions[0].competitors[oppo_index].team.displayName
+                values["opponent_homeaway"] = event.competitions[0].competitors[oppo_index].homeAway
+                values["opponent_logo"] = event.competitions[0].competitors[oppo_index].team.logo
+                values["opponent_score"] = event.competitions[0].competitors[oppo_index].score
+                values["opponent_timeouts"] = event.competitions[0].competitors[oppo_index].team.abbreviation
+                
 
     return values
 
-
-async def async_get_alerts(zone_id: str) -> dict:
+# nothing below here matters
+async def async_get_alerts(team_id: str) -> dict:
     """Query API for Alerts."""
 
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/geo+json"}
     data = None
-    url = "%s/alerts/active?zone=%s" % (API_ENDPOINT, zone_id)
+    url = "%s/alerts/active?zone=%s" % (API_ENDPOINT, team_id)
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
-            _LOGGER.debug("getting alert for %s from %s" % (zone_id, url))
+            _LOGGER.debug("getting alert for %s from %s" % (team_id, url))
             if r.status == 200:
                 data = await r.json()
 

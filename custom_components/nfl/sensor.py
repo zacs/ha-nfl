@@ -15,7 +15,7 @@ from .const import (
     ATTRIBUTION,
     CONF_INTERVAL,
     CONF_TIMEOUT,
-    CONF_ZONE_ID,
+    CONF_TEAM_ID,
     COORDINATOR,
     DEFAULT_ICON,
     DEFAULT_INTERVAL,
@@ -24,19 +24,12 @@ from .const import (
     DOMAIN,
 )
 
-# ---------------------------------------------------------
-# API Documentation
-# ---------------------------------------------------------
-# https://www.weather.gov/documentation/services-web-api
-# https://forecast-v3.weather.gov/documentation
-# ---------------------------------------------------------
-
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Required(CONF_ZONE_ID): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+        vol.Required(CONF_TEAM_ID): cv.string,
+        vol.Optional(CONF_NAME, default="%s Playing" % CONF_TEAM_ID): cv.string,
         vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): int,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): int,
     }
@@ -67,15 +60,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.data[DOMAIN][config.entry_id] = {
         COORDINATOR: coordinator,
     }
-    async_add_entities([NWSAlertSensor(hass, config)], True)
+    async_add_entities([NFLScoresSensor(hass, config)], True)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup the sensor platform."""
-    async_add_entities([NWSAlertSensor(hass, entry)], True)
+    async_add_entities([NFLScoresSensor(hass, entry)], True)
 
 
-class NWSAlertSensor(CoordinatorEntity):
+class NFLScoresSensor(CoordinatorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -84,14 +77,33 @@ class NWSAlertSensor(CoordinatorEntity):
         self._config = entry
         self._name = entry.data[CONF_NAME]
         self._icon = DEFAULT_ICON
-        self._state = 0
+        self._state = "PRE"
+        self._kickoff = None
+        self._quarter = None
+        self._clock = None
+        self._venue = None
+        self._odds = None
+        self._overunder = None
+        self._last_play = None
+        self._team_abbr = None
+        self._team_name = None
+        self._team_homeaway = None
+        self._team_logo = None
+        self._team_score = None
+        self._team_timeouts = None
+        self._opponent_abbr = None
+        self._opponent_name = None
+        self._opponent_homeaway = None
+        self._opponent_logo = None
+        self._opponent_score = None
+        self._opponent_timeouts = None
         self._event = None
         self._event_id = None
         self._message_type = None
         self._event_status = None
         self._display_desc = None
         self._spoken_desc = None
-        self._zone_id = entry.data[CONF_ZONE_ID].replace(" ", "")
+        self._team_id = entry.data[CONF_TEAM_ID]
         self.coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
 
     @property

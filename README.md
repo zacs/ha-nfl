@@ -30,7 +30,7 @@ Your team ID will be a 2- or 3-letter acronym (eg. "SEA" for Seattle or "NE" for
 
 <b>Manually via an entry in your configuration.yaml file:</b>
 
-To create a sensor instance add the following configuration to your sensor definitions using the zone_id found above:
+To create a sensor instance add the following configuration to your sensor definitions using the team_id found above:
 
 ```
 - platform: nfl
@@ -43,7 +43,7 @@ You can overide the sensor default name ("sensor.nfl_score") to one of your choo
 
 ```
 - platform: nfl
-  zone_id: 'SEA'
+  team_id: 'SEA'
   name: My NFL Sensor
 ```
 

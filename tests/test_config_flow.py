@@ -6,7 +6,7 @@ from homeassistant import config_entries, data_entry_flow, setup
 from homeassistant.const import CONF_NAME
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.nws_alerts.const import CONF_ZONE_ID, DOMAIN
+from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
 
 
 @pytest.mark.parametrize(
@@ -14,16 +14,16 @@ from custom_components.nws_alerts.const import CONF_ZONE_ID, DOMAIN
     [
         (
             {
-                "name": "Testing Alerts",
-                "zone_id": "AZZ540,AZC013",
+                "name": "Testing Scores",
+                "team_id": "SEA",
                 "interval": 5,
                 "timeout": 120,
             },
             "user",
             "Testing Alerts",
             {
-                "name": "Testing Alerts",
-                "zone_id": "AZZ540,AZC013",
+                "name": "Testing Scores",
+                "team_id": "SEA",
                 "interval": 5,
                 "timeout": 120,
             },
@@ -47,7 +47,7 @@ async def test_form(
     # assert result["title"] == title_1
 
     with patch(
-        "custom_components.nws_alerts.async_setup_entry",
+        "custom_components.nfl.async_setup_entry",
         return_value=True,
     ) as mock_setup_entry:
 
@@ -68,8 +68,8 @@ async def test_form(
 #     [
 #         {
 #             DOMAIN: {
-#                 CONF_NAME: "NWS Alerts",
-#                 CONF_ZONE_ID: "AZZ540,AZC013",
+#                 CONF_NAME: "NFL Scores",
+#                 CONF_TEAM_ID: "SEA",
 #             },
 #         },
 #     ],
@@ -79,7 +79,7 @@ async def test_form(
 #     await setup.async_setup_component(hass, "persistent_notification", {})
 
 #     with patch(
-#         "custom_components.nws_alerts.async_setup_entry",
+#         "custom_components.nfl.async_setup_entry",
 #         return_value=True,
 #     ):
 #         result = await hass.config_entries.flow.async_init(

@@ -1,4 +1,4 @@
-"""Adds config flow for NWS Alerts."""
+"""Adds config flow for NFL Scores."""
 from __future__ import annotations
 
 import logging
@@ -15,7 +15,7 @@ from .const import (
     API_ENDPOINT,
     CONF_INTERVAL,
     CONF_TIMEOUT,
-    CONF_ZONE_ID,
+    CONF_TEAM_ID,
     DEFAULT_INTERVAL,
     DEFAULT_NAME,
     DEFAULT_TIMEOUT,
@@ -41,7 +41,7 @@ def _get_schema(hass: Any, user_input: list, default_dict: list) -> Any:
 
     return vol.Schema(
         {
-            vol.Required(CONF_ZONE_ID, default=_get_default(CONF_ZONE_ID)): str,
+            vol.Required(CONF_TEAM_ID, default=_get_default(CONF_TEAM_ID)): str,
             vol.Optional(CONF_NAME, default=_get_default(CONF_NAME)): str,
             vol.Optional(CONF_INTERVAL, default=_get_default(CONF_INTERVAL)): int,
             vol.Optional(CONF_TIMEOUT, default=_get_default(CONF_TIMEOUT)): int,
@@ -49,38 +49,51 @@ def _get_schema(hass: Any, user_input: list, default_dict: list) -> Any:
     )
 
 
-async def _get_zone_list(self):
-    """Return list of zone by lat/lon"""
+async def _get_team_list(self):
+    """Return list of team acronyms"""
 
-    data = None
-    lat = self.hass.config.latitude
-    lon = self.hass.config.longitude
-
-    headers = {"User-Agent": USER_AGENT, "Accept": "application/geo+json"}
-
-    url = API_ENDPOINT + "/zones?point=%s,%s" % (lat, lon)
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as r:
-            _LOGGER.debug("getting zone list for %s,%s from %s" % (lat, lon, url))
-            if r.status == 200:
-                data = await r.json()
-
-    zone_list = []
-    if data is not None:
-        if "features" in data:
-            x = 0
-            while len(data[JSON_FEATURES]) > x:
-                zone_list.append(data[JSON_FEATURES][x][JSON_PROPERTIES][JSON_ID])
-                x += 1
-            _LOGGER.debug("Zones list: %s", zone_list)
-            return zone_list
-    return None
+    team_list = [
+        'ARI',
+        'ATL',
+        'BAL',
+        'BUF',
+        'CAR',
+        'CHI',
+        'CIN',
+        'CLE',
+        'DAL',
+        'DEN',
+        'DET',
+        'GB',
+        'HOU',
+        'IND',
+        'JAX',
+        'KC',
+        'LAC',
+        'LAR',
+        'LV',
+        'MIA',
+        'MIN',
+        'NE',
+        'NO',
+        'NYG',
+        'NYJ',
+        'PHI',
+        'PIT',
+        'SEA',
+        'SF',
+        'TB',
+        'TEN',
+        'WSH'
+    ]
+    
+    _LOGGER.debug("Team list: %s", team_list)
+    return team_list
 
 
 @config_entries.HANDLERS.register(DOMAIN)
-class NWSAlertsFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for NWS Alerts."""
+class NFLScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for NFL Scores."""
 
     VERSION = 2
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
@@ -102,7 +115,7 @@ class NWSAlertsFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input={}):
         """Handle a flow initialized by the user."""
         self._errors = {}
-        self._zone_list = await _get_zone_list(self)
+        self._team_list = await _get_team_list(self)
 
         if user_input is not None:
             self._data.update(user_input)
@@ -117,7 +130,7 @@ class NWSAlertsFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_NAME: DEFAULT_NAME,
             CONF_INTERVAL: DEFAULT_INTERVAL,
             CONF_TIMEOUT: DEFAULT_TIMEOUT,
-            CONF_ZONE_ID: self._zone_list,
+            CONF_TEAM_ID: self._team_list,
         }
 
         return self.async_show_form(
@@ -129,11 +142,11 @@ class NWSAlertsFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return NWSAlertsOptionsFlow(config_entry)
+        return NFLScoresOptionsFlow(config_entry)
 
 
-class NWSAlertsOptionsFlow(config_entries.OptionsFlow):
-    """Options flow for NWS Alerts."""
+class NFLScoresOptionsFlow(config_entries.OptionsFlow):
+    """Options flow for NFL Scores."""
 
     def __init__(self, config_entry):
         """Initialize."""
@@ -142,7 +155,7 @@ class NWSAlertsOptionsFlow(config_entries.OptionsFlow):
         self._errors = {}
 
     async def async_step_init(self, user_input=None):
-        """Manage Mail and Packages options."""
+        """Manage options."""
         if user_input is not None:
             self._data.update(user_input)
             return self.async_create_entry(title="", data=self._data)

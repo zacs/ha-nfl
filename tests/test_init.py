@@ -8,7 +8,7 @@ from homeassistant.helpers.entity_registry import async_get
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.nws_alerts.const import CONF_ZONE_ID, DOMAIN
+from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
 from tests.const import CONFIG_DATA
 
 
@@ -18,7 +18,7 @@ async def test_setup_entry(
     """Test settting up entities."""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        title="NWS Alerts",
+        title="NFL Scores",
         data=CONFIG_DATA,
     )
 
@@ -35,7 +35,7 @@ async def test_unload_entry(hass):
     """Test unloading entities."""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        title="NWS Alerts",
+        title="NFL Scores",
         data=CONFIG_DATA,
     )
 
@@ -61,12 +61,12 @@ async def test_unload_entry(hass):
 #     """Test importing a config."""
 #     entry = MockConfigEntry(
 #         domain=DOMAIN,
-#         title="NWS Alerts",
+#         title="NFL Scores",
 #         data=CONFIG_DATA,
 #     )
 #     await async_setup_component(hass, "persistent_notification", {})
 #     with patch(
-#         "custom_components.nws_alerts.async_setup_entry",
+#         "custom_components.nfl.async_setup_entry",
 #         return_value=True,
 #     ) as mock_setup_entry:
 
