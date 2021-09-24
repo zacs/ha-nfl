@@ -9,7 +9,7 @@
           "timeout": "Update Timeout (in seconds)"
         },
         "description": "You can find your 2 or 3-letter acronym on the ESPN NFL page's banner, at the top score strip.",
-        "title": "NFL Scores"
+        "title": "NFL"
       }
     }
   },
@@ -23,7 +23,7 @@
           "timeout": "Update Timeout (in seconds)"
         },
         "description": "You can find your 2 or 3-letter acronym on the ESPN NFL page's banner, at the top score strip.",
-        "title": "NFL Scores"
+        "title": "NFL"
       }
     }
   }

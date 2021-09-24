@@ -1,3 +1,3 @@
 """Constants for tests."""
 
-CONFIG_DATA = {"name": "NFL Scores", "team_id": "SEA"}
+CONFIG_DATA = {"name": "NFL", "team_id": "SEA"}

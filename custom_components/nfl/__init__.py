@@ -1,4 +1,4 @@
-""" NFL Scores """
+""" NFL Team Status """
 import logging
 from datetime import timedelta
 
