@@ -195,8 +195,16 @@ async def async_get_state(config) -> dict:
                 values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
                 if event["status"]["type"]["state"] == 'pre':
                     values["lastplay"] = ""
+                    values["team_timeouts"] = 3
+                    values["opponent_timeouts"] = 3
                 else:
                     values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
+                        values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                        values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                    else:
+                        values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                        values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
@@ -205,12 +213,7 @@ async def async_get_state(config) -> dict:
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
                 values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]
                 values["team_timeouts"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
-                if event["competitions"][0]["competitors"][team_index].homeAway == "home":
-                    values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
-                    values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
-                else:
-                    values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
-                    values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["displayName"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
