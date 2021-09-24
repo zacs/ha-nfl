@@ -220,16 +220,12 @@ async def async_get_state(config) -> dict:
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
-                values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]
-                values["team_timeouts"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
-                
+                values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]                
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
-                values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
-                values["opponent_timeouts"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
-                
+                values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]                
 
     return values
 
