@@ -160,7 +160,7 @@ async def async_get_state(config) -> dict:
         # Reset values before reassigning
         values = {
             "state": "PRE",
-            "kickoff": None,
+            "date": None,
             "quarter": None,
             "clock": None,
             "venue": None,
@@ -190,7 +190,7 @@ async def async_get_state(config) -> dict:
             _LOGGER.debug("looking at this event: %s" % event)
             if team_id in event["shortName"]:
                 values["state"] = event["status"]["type"]["state"].upper()
-                values["kickoff"] = event["status"]["type"]["detail"]
+                values["date"] = event["date"]
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
                 values["location"] = "%s, %s" % (event["competitions"][0]["venue"]["address"]["city"], event["competitions"][0]["venue"]["address"]["state"])
                 values["tv_network"] = event["competitions"][0]["broadcasts"][0]["names"][0]
