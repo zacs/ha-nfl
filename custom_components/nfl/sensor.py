@@ -82,8 +82,11 @@ class NFLScoresSensor(CoordinatorEntity):
         self._quarter = None
         self._clock = None
         self._venue = None
+        self._location = None
+        self._tv_network = None
         self._odds = None
         self._overunder = None
+        self._possession = None
         self._last_play = None
         self._team_abbr = None
         self._team_name = None
@@ -146,8 +149,11 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["quarter"] = self.coordinator.data["quarter"]
         attrs["clock"] = self.coordinator.data["clock"]
         attrs["venue"] = self.coordinator.data["venue"]
+        attrs["location"] = self.coordinator.data["location"]
+        attrs["tv_network"] = self.coordinator.data["tv_network"]
         attrs["odds"] = self.coordinator.data["odds"]
         attrs["overunder"] = self.coordinator.data["overunder"]
+        attrs["possession"] = self.coordinator.data["possession"]
         attrs["last_play"] = self.coordinator.data["last_play"]
         attrs["team_abbr"] = self.coordinator.data["team_abbr"]
         attrs["team_name"] = self.coordinator.data["team_name"]

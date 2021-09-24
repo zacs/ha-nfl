@@ -164,9 +164,12 @@ async def async_get_state(config) -> dict:
             "quarter": None,
             "clock": None,
             "venue": None,
+            "location": None,
+            "tv_network": None,
             "odds": None,
             "overunder": None,
             "last_play": None,
+            "possession": None,
             "team_abbr": None,
             "team_name": None,
             "team_homeaway": None,
@@ -189,9 +192,12 @@ async def async_get_state(config) -> dict:
                 values["state"] = event["status"]["type"]["state"].upper()
                 values["kickoff"] = event["status"]["type"]["detail"]
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
+                values["location"] = "%s, %s" % (event["competitions"][0]["venue"]["address"]["city"], event["competitions"][0]["venue"]["address"]["state"])
+                values["tv_network"] = event["competitions"][0]["broadcasts"][0]["names"][0]
                 values["odds"] = event["competitions"][0]["odds"][0]["details"]
                 values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
-                if event["status"]["type"]["state"].lower() == 'pre':
+                if event["status"]["type"]["state"].lower() in ['pre', 'post']: # could use status.completed == true as well
+                    values["possession"] = ""
                     values["lastplay"] = ""
                     values["team_timeouts"] = 3
                     values["opponent_timeouts"] = 3
@@ -201,6 +207,7 @@ async def async_get_state(config) -> dict:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
                     values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    values["possession"] = event["competitions"][0]["situation"]["possession"]
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
@@ -210,14 +217,14 @@ async def async_get_state(config) -> dict:
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
-                values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["displayName"]
+                values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
                 values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]
                 values["team_timeouts"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
-                values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["displayName"]
+                values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
