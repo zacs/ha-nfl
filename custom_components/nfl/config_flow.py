@@ -1,4 +1,4 @@
-"""Adds config flow for NFL Scores."""
+"""Adds config flow for NFL."""
 from __future__ import annotations
 
 import logging
@@ -93,7 +93,7 @@ async def _get_team_list(self):
 
 @config_entries.HANDLERS.register(DOMAIN)
 class NFLScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for NFL Scores."""
+    """Config flow for NFL."""
 
     VERSION = 2
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
@@ -146,7 +146,7 @@ class NFLScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class NFLScoresOptionsFlow(config_entries.OptionsFlow):
-    """Options flow for NFL Scores."""
+    """Options flow for NFL."""
 
     def __init__(self, config_entry):
         """Initialize."""

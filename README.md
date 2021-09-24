@@ -18,7 +18,7 @@ open the HACS section of Home Assistant.
 
 Click the "+ Explore & Add New repositories" button in the bottom right corner.
 
-In the window that opens search for "NFL Scores".
+In the window that opens search for "NFL".
 
 In the window that opens when you select it click om "Install This Repository in HACS"
 
@@ -37,19 +37,19 @@ To create a sensor instance add the following configuration to your sensor defin
   team_id: 'SEA'
 ```
 
-After you restart Home Assistant then you should have a new sensor called "sensor.nfl_score" in your system.
+After you restart Home Assistant then you should have a new sensor called "sensor.nfl" in your system.
 
 You can overide the sensor default name ("sensor.nfl_score") to one of your choosing by setting the "name:" option:
 
 ```
 - platform: nfl
   team_id: 'SEA'
-  name: My NFL Sensor
+  name: Seattle Game Sensor
 ```
 
 Using the configuration example above the sensor will then be called "sensor.my_nfl_sensor"
 
 <b>Or you can configure the integration via the "Configuration->Integrations" section of the Home Assistant UI.</b>
 
-Look for the integration labeled "NFL Scores"
+Look for the integration labeled "NFL"
 

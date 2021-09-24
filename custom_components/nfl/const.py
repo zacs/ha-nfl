@@ -9,7 +9,7 @@ CONF_TEAM_ID = "team_id"
 
 # Defaults
 DEFAULT_ICON = "mdi:football"
-DEFAULT_NAME = "NFL Scores"
+DEFAULT_NAME = "NFL"
 DEFAULT_INTERVAL = 60
 DEFAULT_TIMEOUT = 120
 
