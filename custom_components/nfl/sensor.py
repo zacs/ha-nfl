@@ -29,7 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_TEAM_ID): cv.string,
-        vol.Optional(CONF_NAME, default="%s Playing" % CONF_TEAM_ID): cv.string,
+        vol.Optional(CONF_NAME, default=CONF_TEAM_ID): cv.string,
         vol.Optional(CONF_INTERVAL, default=DEFAULT_INTERVAL): int,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): int,
     }
