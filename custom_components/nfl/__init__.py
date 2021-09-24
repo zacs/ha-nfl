@@ -174,12 +174,14 @@ async def async_get_state(config) -> dict:
             "team_name": None,
             "team_homeaway": None,
             "team_logo": None,
+            "team_colors": None,
             "team_score": None,
             "team_timeouts": None,
             "opponent_abbr": None,
             "opponent_name": None,
             "opponent_homeaway": None,
             "opponent_logo": None,
+            "opponent_colors": None,
             "opponent_score": None,
             "opponent_timeouts": None,
         }
@@ -220,11 +222,15 @@ async def async_get_state(config) -> dict:
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
+                values["team_colors"] = [event["competitions"][0]["competitors"][team_index]["team"]["color"], 
+                                         event["competitions"][0]["competitors"][team_index]["team"]["alternateColor"]]
                 values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]                
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
+                values["opponent_colors"] = [event["competitions"][0]["competitors"][oppo_index]["team"]["color"],
+                                             event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]]
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]                
 
     return values
