@@ -186,37 +186,37 @@ async def async_get_state(config) -> dict:
         for event in data["events"]:
             _LOGGER.debug("looking at this event: %s" % event)
             if team_id in event["shortName"]:
-                values["state"] = event.status.type.state.upper()
-                values["kickoff"] = event.status.type.detail
-                values["quarter"] = event.status.period
-                values["clock"] = event.status.displayClock
-                values["venue"] = event.competitions[0].venue.fullName
-                values["odds"] = event.competitions[0].odds[0].details
-                values["overunder"] = event.competitions[0].odds[0].overUnder
-                if event.competitions[0].status.type.state == 'pre':
+                values["state"] = event["status"]["type"]["state"].upper()
+                values["kickoff"] = event["status"]["type"]["detail"]
+                values["quarter"] = event["status"]["period"]
+                values["clock"] = event["status"]["displayClock"]
+                values["venue"] = event["competitions"][0]["venue"]["fullName"]
+                values["odds"] = event["competitions"][0]["odds"][0]["details"]
+                values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
+                if event["status"]["type"]["state"] == 'pre':
                     values["lastplay"] = ""
                 else:
-                    values["lastplay"] = event.competitions[0].situation.lastPlay.text
-                team_index = 0 if event.competitions[0].competitors[0].team.abbreviation == team_id else 1
+                    values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = (team_index-1).abs()
-                values["team_abbr"] = event.competitions[0].competitors[team_index].team.abbreviation
-                values["team_name"] = event.competitions[0].competitors[team_index].team.displayName
-                values["team_homeaway"] = event.competitions[0].competitors[team_index].homeAway
-                values["team_logo"] = event.competitions[0].competitors[team_index].team.logo
-                values["team_score"] = event.competitions[0].competitors[team_index].score
-                values["team_timeouts"] = event.competitions[0].competitors[team_index].team.abbreviation
-                if event.competitions[0].competitors[team_index].homeAway == "home":
-                    values["team_timeouts"] = event.competitions[0].situation.homeTimeouts
-                    values["opponent_timeouts"] = event.competitions[0].situation.awayTimeouts
+                values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
+                values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["displayName"]
+                values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
+                values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
+                values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]
+                values["team_timeouts"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
+                if event["competitions"][0]["competitors"][team_index].homeAway == "home":
+                    values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                    values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
                 else:
-                    values["team_timeouts"] = event.competitions[0].situation.awayTimeouts
-                    values["opponent_timeouts"] = event.competitions[0].situation.homeTimeouts
-                values["opponent_abbr"] = event.competitions[0].competitors[oppo_index].team.abbreviation
-                values["opponent_name"] = event.competitions[0].competitors[oppo_index].team.displayName
-                values["opponent_homeaway"] = event.competitions[0].competitors[oppo_index].homeAway
-                values["opponent_logo"] = event.competitions[0].competitors[oppo_index].team.logo
-                values["opponent_score"] = event.competitions[0].competitors[oppo_index].score
-                values["opponent_timeouts"] = event.competitions[0].competitors[oppo_index].team.abbreviation
+                    values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                    values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
+                values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["displayName"]
+                values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
+                values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
+                values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
+                values["opponent_timeouts"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 
 
     return values
