@@ -197,16 +197,16 @@ async def async_get_state(config) -> dict:
                 values["odds"] = event["competitions"][0]["odds"][0]["details"]
                 values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
                 if event["status"]["type"]["state"].lower() in ['pre', 'post']: # could use status.completed == true as well
-                    values["possession"] = ""
-                    values["lastplay"] = ""
+                    values["possession"] = None
+                    values["last_play"] = None
                     values["team_timeouts"] = 3
                     values["opponent_timeouts"] = 3
-                    values["quarter"] = ""
-                    values["clock"] = ""
+                    values["quarter"] = None
+                    values["clock"] = None
                 else:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
-                    values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
                     values["possession"] = event["competitions"][0]["situation"]["possession"]
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
