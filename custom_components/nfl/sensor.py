@@ -142,12 +142,25 @@ class NFLScoresSensor(CoordinatorEntity):
             return attrs
 
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
-        attrs["title"] = self.coordinator.data["event"]
-        attrs["event_id"] = self.coordinator.data["event_id"]
-        attrs["message_type"] = self.coordinator.data["message_type"]
-        attrs["event_status"] = self.coordinator.data["event_status"]
-        attrs["display_desc"] = self.coordinator.data["display_desc"]
-        attrs["spoken_desc"] = self.coordinator.data["spoken_desc"]
+        attrs["kickoff"] = self.coordinator.data["kickoff"]
+        attrs["quarter"] = self.coordinator.data["quarter"]
+        attrs["clock"] = self.coordinator.data["clock"]
+        attrs["venue"] = self.coordinator.data["venue"]
+        attrs["odds"] = self.coordinator.data["odds"]
+        attrs["overunder"] = self.coordinator.data["overunder"]
+        attrs["last_play"] = self.coordinator.data["last_play"]
+        attrs["team_abbr"] = self.coordinator.data["team_abbr"]
+        attrs["team_name"] = self.coordinator.data["team_name"]
+        attrs["team_homeaway"] = self.coordinator.data["team_homeaway"]
+        attrs["team_logo"] = self.coordinator.data["team_logo"]
+        attrs["team_score"] = self.coordinator.data["team_score"]
+        attrs["team_timeouts"] = self.coordinator.data["team_timeouts"]
+        attrs["opponent_abbr"] = self.coordinator.data["opponent_abbr"]
+        attrs["opponent_name"] = self.coordinator.data["opponent_name"]
+        attrs["opponent_homeaway"] = self.coordinator.data["opponent_homeaway"]
+        attrs["opponent_logo"] = self.coordinator.data["opponent_logo"]
+        attrs["opponent_score"] = self.coordinator.data["opponent_score"]
+        attrs["opponent_timeouts"] = self.coordinator.data["opponent_timeouts"]
 
         return attrs
 
