@@ -109,7 +109,7 @@ async def async_migrate_entry(hass, config_entry):
 
 
 class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching NWS Alert data."""
+    """Class to manage fetching NFL data."""
 
     def __init__(self, hass, config, the_timeout: int, interval: int):
         """Initialize."""
@@ -188,16 +188,18 @@ async def async_get_state(config) -> dict:
             if team_id in event["shortName"]:
                 values["state"] = event["status"]["type"]["state"].upper()
                 values["kickoff"] = event["status"]["type"]["detail"]
-                values["quarter"] = event["status"]["period"]
-                values["clock"] = event["status"]["displayClock"]
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
                 values["odds"] = event["competitions"][0]["odds"][0]["details"]
                 values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
-                if event["status"]["type"]["state"] == 'pre':
+                if event["status"]["type"]["state"].lower() == 'pre':
                     values["lastplay"] = ""
                     values["team_timeouts"] = 3
                     values["opponent_timeouts"] = 3
+                    values["quarter"] = ""
+                    values["clock"] = ""
                 else:
+                    values["quarter"] = event["status"]["period"]
+                    values["clock"] = event["status"]["displayClock"]
                     values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
