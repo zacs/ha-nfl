@@ -198,7 +198,7 @@ async def async_get_state(config) -> dict:
                 else:
                     values["lastplay"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
-                oppo_index = (team_index-1).abs()
+                oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["displayName"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
