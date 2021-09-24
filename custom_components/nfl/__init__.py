@@ -176,6 +176,7 @@ async def async_get_state(config) -> dict:
             "team_logo": None,
             "team_colors": None,
             "team_score": None,
+            "team_win_probability": None,
             "team_timeouts": None,
             "opponent_abbr": None,
             "opponent_name": None,
@@ -183,6 +184,7 @@ async def async_get_state(config) -> dict:
             "opponent_logo": None,
             "opponent_colors": None,
             "opponent_score": None,
+            "opponent_win_probability": None,
             "opponent_timeouts": None,
         }
         # Populate values
@@ -205,6 +207,8 @@ async def async_get_state(config) -> dict:
                     values["opponent_timeouts"] = 3
                     values["quarter"] = None
                     values["clock"] = None
+                    values["team_win_probability"] = None
+                    values["opponent_win_probability"] = None
                 else:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
@@ -213,9 +217,13 @@ async def async_get_state(config) -> dict:
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                        values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
+                        values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
                     else:
                         values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                        values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
+                        values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]

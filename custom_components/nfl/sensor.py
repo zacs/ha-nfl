@@ -94,6 +94,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._team_logo = None
         self._team_colors = None
         self._team_score = None
+        self._team_win_probability = None
         self._team_timeouts = None
         self._opponent_abbr = None
         self._opponent_name = None
@@ -101,6 +102,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._opponent_logo = None
         self._opponent_colors = None
         self._opponent_score = None
+        self._opponent_win_probability = None
         self._opponent_timeouts = None
         self._team_id = entry.data[CONF_TEAM_ID]
         self.coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
@@ -157,6 +159,7 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["team_logo"] = self.coordinator.data["team_logo"]
         attrs["team_colors"] = self.coordinator.data["team_colors"]
         attrs["team_score"] = self.coordinator.data["team_score"]
+        attrs["team_win_probability"] = self.coordinator.data["team_win_probability"]
         attrs["team_timeouts"] = self.coordinator.data["team_timeouts"]
         attrs["opponent_abbr"] = self.coordinator.data["opponent_abbr"]
         attrs["opponent_name"] = self.coordinator.data["opponent_name"]
@@ -164,6 +167,7 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["opponent_logo"] = self.coordinator.data["opponent_logo"]
         attrs["opponent_colors"] = self.coordinator.data["opponent_colors"]
         attrs["opponent_score"] = self.coordinator.data["opponent_score"]
+        attrs["opponent_win_probability"] = self.coordinator.data["opponent_win_probability"]
         attrs["opponent_timeouts"] = self.coordinator.data["opponent_timeouts"]
 
         return attrs
