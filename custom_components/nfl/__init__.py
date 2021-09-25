@@ -169,6 +169,7 @@ async def async_get_state(config) -> dict:
             "odds": None,
             "overunder": None,
             "last_play": None,
+            "down_distance_text": None,
             "possession": None,
             "team_abbr": None,
             "team_id": None,
@@ -205,6 +206,7 @@ async def async_get_state(config) -> dict:
                 if event["status"]["type"]["state"].lower() in ['pre', 'post']: # could use status.completed == true as well
                     values["possession"] = None
                     values["last_play"] = None
+                    values["down_distance_text"] = None
                     values["team_timeouts"] = 3
                     values["opponent_timeouts"] = 3
                     values["quarter"] = None
@@ -215,6 +217,7 @@ async def async_get_state(config) -> dict:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
                     values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    values["down_distance_text"] = event["competitions"][0]["situation"]["downDistanceText"]
                     values["possession"] = event["competitions"][0]["situation"]["possession"]
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
