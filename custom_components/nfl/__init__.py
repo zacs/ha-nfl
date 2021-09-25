@@ -171,6 +171,7 @@ async def async_get_state(config) -> dict:
             "last_play": None,
             "possession": None,
             "team_abbr": None,
+            "team_id": None,
             "team_name": None,
             "team_homeaway": None,
             "team_logo": None,
@@ -179,6 +180,7 @@ async def async_get_state(config) -> dict:
             "team_win_probability": None,
             "team_timeouts": None,
             "opponent_abbr": None,
+            "opponent_id": None,
             "opponent_name": None,
             "opponent_homeaway": None,
             "opponent_logo": None,
@@ -227,6 +229,7 @@ async def async_get_state(config) -> dict:
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
+                values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
@@ -234,6 +237,7 @@ async def async_get_state(config) -> dict:
                                          event["competitions"][0]["competitors"][team_index]["team"]["alternateColor"]]
                 values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]                
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
+                values["opponent_id"] = event["competitions"][0]["competitors"][oppo_index]["team"]["id"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
