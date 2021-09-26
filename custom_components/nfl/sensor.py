@@ -107,6 +107,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._opponent_score = None
         self._opponent_win_probability = None
         self._opponent_timeouts = None
+        self._last_update = None
         self._team_id = entry.data[CONF_TEAM_ID]
         self.coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
 
@@ -175,6 +176,7 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["opponent_score"] = self.coordinator.data["opponent_score"]
         attrs["opponent_win_probability"] = self.coordinator.data["opponent_win_probability"]
         attrs["opponent_timeouts"] = self.coordinator.data["opponent_timeouts"]
+        attrs["last_update"] = self.coordinator.data["last_update"]
 
         return attrs
 

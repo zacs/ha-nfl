@@ -1,6 +1,7 @@
 """ NFL Team Status """
 import logging
 from datetime import timedelta
+from datetime import datetime
 
 import aiohttp
 from async_timeout import timeout
@@ -189,10 +190,9 @@ async def async_get_state(config) -> dict:
             "opponent_score": None,
             "opponent_win_probability": None,
             "opponent_timeouts": None,
+            "last_update": None
         }
-        # Populate values
-        # Check that the team is there in list
-        # Iterate
+
         for event in data["events"]:
             _LOGGER.debug("looking at this event: %s" % event)
             if team_id in event["shortName"]:
@@ -246,6 +246,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
                 values["opponent_colors"] = [''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["color"])),
                                              ''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]))]
-                values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]                
+                values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
+                values["last_update"] = datetime.now()
 
     return values
