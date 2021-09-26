@@ -196,6 +196,8 @@ async def async_get_state(config) -> dict:
         for event in data["events"]:
             _LOGGER.debug("looking at this event: %s" % event)
             if team_id in event["shortName"]:
+                team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
+                oppo_index = abs((team_index-1))
                 values["state"] = event["status"]["type"]["state"].upper()
                 values["date"] = event["date"]
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
@@ -233,8 +235,6 @@ async def async_get_state(config) -> dict:
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                         values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
                         values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
-                team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
-                oppo_index = abs((team_index-1))
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
