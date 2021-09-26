@@ -223,11 +223,14 @@ async def async_get_state(config) -> dict:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
                     values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
-                    if event["competitions"][0]["situation"]["downDistanceText"]:
+                    if event["competitions"][0]["situation"]["downDistanceText"] is not None:
                         values["down_distance_text"] = event["competitions"][0]["situation"]["downDistanceText"]
                     else:
                         values["down_distance_text"] = None
-                    values["possession"] = event["competitions"][0]["situation"]["possession"]
+                    if event["competitions"][0]["situation"]["possession"] is not None:
+                        values["possession"] = event["competitions"][0]["situation"]["possession"]
+                    else:
+                        values["possession"] = None
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
