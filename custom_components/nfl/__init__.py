@@ -175,6 +175,7 @@ async def async_get_state(config) -> dict:
         #     "team_abbr": None,
         #     "team_id": None,
         #     "team_name": None,
+        #     "team_record": None,
         #     "team_homeaway": None,
         #     "team_logo": None,
         #     "team_colors": None,
@@ -184,6 +185,7 @@ async def async_get_state(config) -> dict:
         #     "opponent_abbr": None,
         #     "opponent_id": None,
         #     "opponent_name": None,
+        #     "opponent_record": None,
         #     "opponent_homeaway": None,
         #     "opponent_logo": None,
         #     "opponent_colors": None,
@@ -244,6 +246,7 @@ async def async_get_state(config) -> dict:
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
+                values["team_record"] = event["competitions"][0]["competitors"][team_index]["records"][0]["summary"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
                 values["team_colors"] = [''.join(('#',event["competitions"][0]["competitors"][team_index]["team"]["color"])), 
@@ -252,6 +255,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_id"] = event["competitions"][0]["competitors"][oppo_index]["team"]["id"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
+                values["opponent_record"] = event["competitions"][0]["competitors"][oppo_index]["records"][0]["summary"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
                 values["opponent_colors"] = [''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["color"])),
