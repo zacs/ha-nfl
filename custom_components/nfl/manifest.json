@@ -2,7 +2,7 @@
     "domain": "nfl",
     "name": "NFL Scores",
     "version": "0.1",
-    "documentation": "https://github.com/zacs/ha_nfl/",
+    "documentation": "https://github.com/zacs/ha_nfl",
     "issue_tracker": "https://github.com/zacs/ha_nfl/issues",
     "dependencies": [],
     "codeowners": ["@zacs"],

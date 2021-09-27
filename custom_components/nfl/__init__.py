@@ -162,39 +162,41 @@ async def async_get_state(config) -> dict:
 
     if data is not None:
         # Reset values before reassigning
-        values = {
-            "state": "PRE",
-            "date": None,
-            "quarter": None,
-            "clock": None,
-            "venue": None,
-            "location": None,
-            "tv_network": None,
-            "odds": None,
-            "overunder": None,
-            "last_play": None,
-            "down_distance_text": None,
-            "possession": None,
-            "team_abbr": None,
-            "team_id": None,
-            "team_name": None,
-            "team_homeaway": None,
-            "team_logo": None,
-            "team_colors": None,
-            "team_score": None,
-            "team_win_probability": None,
-            "team_timeouts": None,
-            "opponent_abbr": None,
-            "opponent_id": None,
-            "opponent_name": None,
-            "opponent_homeaway": None,
-            "opponent_logo": None,
-            "opponent_colors": None,
-            "opponent_score": None,
-            "opponent_win_probability": None,
-            "opponent_timeouts": None,
-            "last_update": None
-        }
+        # values = {
+        #     "state": "PRE",
+        #     "date": None,
+        #     "quarter": None,
+        #     "clock": None,
+        #     "venue": None,
+        #     "location": None,
+        #     "tv_network": None,
+        #     "odds": None,
+        #     "overunder": None,
+        #     "last_play": None,
+        #     "down_distance_text": None,
+        #     "possession": None,
+        #     "team_abbr": None,
+        #     "team_id": None,
+        #     "team_name": None,
+        #     "team_record": None,
+        #     "team_homeaway": None,
+        #     "team_logo": None,
+        #     "team_colors": None,
+        #     "team_score": None,
+        #     "team_win_probability": None,
+        #     "team_timeouts": None,
+        #     "opponent_abbr": None,
+        #     "opponent_id": None,
+        #     "opponent_name": None,
+        #     "opponent_record": None,
+        #     "opponent_homeaway": None,
+        #     "opponent_logo": None,
+        #     "opponent_colors": None,
+        #     "opponent_score": None,
+        #     "opponent_win_probability": None,
+        #     "opponent_timeouts": None,
+        #     "last_update": None
+        # }
 
         for event in data["events"]:
             _LOGGER.debug("looking at this event: %s" % event)
@@ -226,13 +228,13 @@ async def async_get_state(config) -> dict:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
                     values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
-                    if event["competitions"][0]["situation"]["downDistanceText"] is not None:
+                    try:
                         values["down_distance_text"] = event["competitions"][0]["situation"]["downDistanceText"]
-                    else:
+                    except:
                         values["down_distance_text"] = None
-                    if event["competitions"][0]["situation"]["possession"] is not None:
+                    try:
                         values["possession"] = event["competitions"][0]["situation"]["possession"]
-                    else:
+                    except:
                         values["possession"] = None
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
@@ -247,6 +249,7 @@ async def async_get_state(config) -> dict:
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
+                values["team_record"] = event["competitions"][0]["competitors"][team_index]["records"][0]["summary"]
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
                 values["team_colors"] = [''.join(('#',event["competitions"][0]["competitors"][team_index]["team"]["color"])), 
@@ -255,6 +258,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_id"] = event["competitions"][0]["competitors"][oppo_index]["team"]["id"]
                 values["opponent_name"] = event["competitions"][0]["competitors"][oppo_index]["team"]["shortDisplayName"]
+                values["opponent_record"] = event["competitions"][0]["competitors"][oppo_index]["records"][0]["summary"]
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
                 values["opponent_colors"] = [''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["color"])),
