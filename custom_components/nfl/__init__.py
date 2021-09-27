@@ -146,6 +146,9 @@ async def update_alerts(config) -> dict:
 async def async_get_state(config) -> dict:
     """Query API for status."""
 
+    # add super coarse logic to skip everything below if 
+    #  outside of a general season date range
+
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
