@@ -7,6 +7,6 @@
     "dependencies": [],
     "codeowners": ["@zacs"],
     "config_flow": true,
-    "requirements": [],
+    "requirements": ["arrow"],
     "iot_class": "cloud_polling"
   }

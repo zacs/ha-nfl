@@ -1,7 +1,7 @@
 """ NFL Team Status """
 import logging
 from datetime import timedelta
-from datetime import datetime
+import arrow
 
 import aiohttp
 from async_timeout import timeout
@@ -37,7 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load the saved entities."""
     # Print startup message
     _LOGGER.info(
-        "Version %s is starting, if you have any issues please report" " them here: %s",
+        "NFL version %s is starting, if you have any issues please report them here: %s",
         VERSION,
         ISSUE_URL,
     )
@@ -205,6 +205,7 @@ async def async_get_state(config) -> dict:
                 oppo_index = abs((team_index-1))
                 values["state"] = event["status"]["type"]["state"].upper()
                 values["date"] = event["date"]
+                values["kickoff_in"] = arrow.get(event["date"]).humanize()
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
                 values["location"] = "%s, %s" % (event["competitions"][0]["venue"]["address"]["city"], event["competitions"][0]["venue"]["address"]["state"])
                 values["tv_network"] = event["competitions"][0]["broadcasts"][0]["names"][0]
@@ -264,6 +265,13 @@ async def async_get_state(config) -> dict:
                 values["opponent_colors"] = [''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["color"])),
                                              ''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]))]
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
-                values["last_update"] = datetime.now()
+                values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+
+        if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 600):
+            _LOGGER.debug("Event is within 10 minutes, set refresh rate to 5 seconds.")
+        elif values["state"] == 'IN':
+            _LOGGER.debug("Event in progress, set refresh rate to 5 seconds.")
+        elif values["state"] == 'POST': # and if the refresh is set to fast
+            _LOGGER.debug("Event is over, set refresh back to 10 minutes.")
 
     return values
