@@ -142,7 +142,6 @@ async def update_alerts(config) -> dict:
     data = await async_get_state(config)
     return data
 
-
 async def async_get_state(config) -> dict:
     """Query API for status."""
 
@@ -161,43 +160,6 @@ async def async_get_state(config) -> dict:
                 data = await r.json()
 
     if data is not None:
-        # Reset values before reassigning
-        # values = {
-        #     "state": "PRE",
-        #     "date": None,
-        #     "quarter": None,
-        #     "clock": None,
-        #     "venue": None,
-        #     "location": None,
-        #     "tv_network": None,
-        #     "odds": None,
-        #     "overunder": None,
-        #     "last_play": None,
-        #     "down_distance_text": None,
-        #     "possession": None,
-        #     "team_abbr": None,
-        #     "team_id": None,
-        #     "team_name": None,
-        #     "team_record": None,
-        #     "team_homeaway": None,
-        #     "team_logo": None,
-        #     "team_colors": None,
-        #     "team_score": None,
-        #     "team_win_probability": None,
-        #     "team_timeouts": None,
-        #     "opponent_abbr": None,
-        #     "opponent_id": None,
-        #     "opponent_name": None,
-        #     "opponent_record": None,
-        #     "opponent_homeaway": None,
-        #     "opponent_logo": None,
-        #     "opponent_colors": None,
-        #     "opponent_score": None,
-        #     "opponent_win_probability": None,
-        #     "opponent_timeouts": None,
-        #     "last_update": None
-        # }
-
         for event in data["events"]:
             _LOGGER.debug("looking at this event: %s" % event)
             if team_id in event["shortName"]:
@@ -273,5 +235,48 @@ async def async_get_state(config) -> dict:
             _LOGGER.debug("Event in progress, set refresh rate to 5 seconds.")
         elif values["state"] == 'POST': # and if the refresh is set to fast
             _LOGGER.debug("Event is over, set refresh back to 10 minutes.")
+
+    return values
+
+async def async_clear_states(config) -> dict:
+    """Clear all state attributes"""
+    
+    values = {}
+    # Reset values before reassigning
+    values = {
+        "state": "PRE",
+        "date": None,
+        "quarter": None,
+        "clock": None,
+        "venue": None,
+        "location": None,
+        "tv_network": None,
+        "odds": None,
+        "overunder": None,
+        "last_play": None,
+        "down_distance_text": None,
+        "possession": None,
+        "team_abbr": None,
+        "team_id": None,
+        "team_name": None,
+        "team_record": None,
+        "team_homeaway": None,
+        "team_logo": None,
+        "team_colors": None,
+        "team_score": None,
+        "team_win_probability": None,
+        "team_timeouts": None,
+        "opponent_abbr": None,
+        "opponent_id": None,
+        "opponent_name": None,
+        "opponent_record": None,
+        "opponent_homeaway": None,
+        "opponent_logo": None,
+        "opponent_colors": None,
+        "opponent_score": None,
+        "opponent_win_probability": None,
+        "opponent_timeouts": None,
+        "last_update": None
+    }
 
     return values
