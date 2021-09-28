@@ -202,13 +202,21 @@ async def async_get_state(config) -> dict:
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
                         values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
-                        values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
-                        values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
+                        try:
+                            values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
+                            values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
+                        except:
+                            values["team_win_probability"] = None
+                            values["opponent_win_probability"] = None
                     else:
                         values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
                         values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
-                        values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
-                        values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
+                        try:
+                            values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
+                            values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
+                        except:
+                            values["team_win_probability"] = None
+                            values["opponent_win_probability"] = None
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
