@@ -237,7 +237,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
 
-        if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 600):
+        if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 240000): #600):
             _LOGGER.debug("Event is within 10 minutes, set refresh rate to 5 seconds.")
         elif values["state"] == 'IN':
             _LOGGER.debug("Event in progress, set refresh rate to 5 seconds.")
