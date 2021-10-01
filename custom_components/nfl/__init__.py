@@ -120,7 +120,7 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
         self.config = config
         self.hass = hass
 
-        _LOGGER.debug("Data will be update every %s", self.interval)
+        _LOGGER.debug("Data will be updated every %s", self.interval)
 
         super().__init__(hass, _LOGGER, name=self.name, update_interval=self.interval)
 
@@ -131,10 +131,8 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
                 data = await update_alerts(self.config)
                 # update the interval based on flag
                 if data["private_fast_refresh"] == True:
-                    _LOGGER.debug("XXXXXXXXXXXX Setting next refresh to 5 seconds since the game is imminent or in-progress.")
                     self.update_interval = timedelta(seconds=5)
                 else:
-                    _LOGGER.debug("XXXXXXXXXXXX Setting next refresh to 10 minutes since the game is imminent or in-progress.")
                     self.update_interval = timedelta(minutes=10)
             except Exception as error:
                 raise UpdateFailed(error) from error
@@ -153,9 +151,6 @@ async def update_alerts(config) -> dict:
 async def async_get_state(config) -> dict:
     """Query API for status."""
 
-    # add super coarse logic to skip everything below if 
-    #  outside of a general season date range
-
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
@@ -163,13 +158,14 @@ async def async_get_state(config) -> dict:
     team_id = config[CONF_TEAM_ID]
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
-            _LOGGER.debug("getting state for %s from %s" % (team_id, url))
+            _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
             if r.status == 200:
                 data = await r.json()
 
     if data is not None:
         for event in data["events"]:
-            _LOGGER.debug("looking at this event: %s" % event)
+            #_LOGGER.debug("Looking at this event: %s" % event)
+            _LOGGER.debug("Found event; parsing data.")
             if team_id in event["shortName"]:
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
@@ -246,14 +242,14 @@ async def async_get_state(config) -> dict:
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
                 values["private_fast_refresh"] = False
 
-        if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 240000): #600):
-            _LOGGER.debug("Event is within 10 minutes, set refresh rate to 5 seconds.")
+        if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
+            _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
         elif values["state"] == 'IN':
-            _LOGGER.debug("Event in progress, set refresh rate to 5 seconds.")
+            _LOGGER.debug("Event in progress, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
         elif values["state"] == 'POST': # and if the refresh is set to fast
-            _LOGGER.debug("Event is over, set refresh back to 10 minutes.")
+            _LOGGER.debug("Event is over, setting refresh back to 10 minutes.")
             values["private_fast_refresh"] = False
 
     return values
@@ -262,7 +258,7 @@ async def async_clear_states(config) -> dict:
     """Clear all state attributes"""
     
     values = {}
-    # Reset values before reassigning
+    # Reset values
     values = {
         "state": "PRE",
         "date": None,
