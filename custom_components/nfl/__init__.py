@@ -132,10 +132,10 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
                 # update the interval based on flag
                 if data["private_fast_refresh"] == True:
                     _LOGGER.debug("XXXXXXXXXXXX Setting next refresh to 5 seconds since the game is imminent or in-progress.")
-                    self.interval = timedelta(seconds=5)
+                    self.update_interval = timedelta(seconds=5)
                 else:
                     _LOGGER.debug("XXXXXXXXXXXX Setting next refresh to 10 minutes since the game is imminent or in-progress.")
-                    self.interval = timedelta(minutes=10)
+                    self.update_interval = timedelta(minutes=10)
             except Exception as error:
                 raise UpdateFailed(error) from error
             return data
