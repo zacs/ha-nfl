@@ -132,6 +132,8 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
             except Exception as error:
                 raise UpdateFailed(error) from error
             return data
+        # update the interval based on flag
+        _LOGGER.debug("XXXXXXXXXXXXXXXXXXXX data returned to determine interval: %s" % data)
 
 
 async def update_alerts(config) -> dict:
