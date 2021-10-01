@@ -129,11 +129,14 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
         async with timeout(self.timeout):
             try:
                 data = await update_alerts(self.config)
+                # update the interval based on flag
+                _LOGGER.debug("XXXXXXXXXXXXXXXXXXXX data returned to determine interval: %s" % data)
+                if data["private_fast_refresh"] == True:
+                    _LOGGER.debug("XXXXXXXXXXXXXXXXXXXX BUMP TO 3 SECONDS")
             except Exception as error:
                 raise UpdateFailed(error) from error
             return data
-        # update the interval based on flag
-        _LOGGER.debug("XXXXXXXXXXXXXXXXXXXX data returned to determine interval: %s" % data)
+        
 
 
 async def update_alerts(config) -> dict:
@@ -238,13 +241,17 @@ async def async_get_state(config) -> dict:
                                              ''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]))]
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+                values["private_fast_refresh"] = False
 
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 240000): #600):
             _LOGGER.debug("Event is within 10 minutes, set refresh rate to 5 seconds.")
+            values["private_fast_refresh"] = True
         elif values["state"] == 'IN':
             _LOGGER.debug("Event in progress, set refresh rate to 5 seconds.")
+            values["private_fast_refresh"] = True
         elif values["state"] == 'POST': # and if the refresh is set to fast
             _LOGGER.debug("Event is over, set refresh back to 10 minutes.")
+            values["private_fast_refresh"] = False
 
     return values
 
@@ -286,7 +293,8 @@ async def async_clear_states(config) -> dict:
         "opponent_score": None,
         "opponent_win_probability": None,
         "opponent_timeouts": None,
-        "last_update": None
+        "last_update": None,
+        "private_fast_refresh": False
     }
 
     return values
