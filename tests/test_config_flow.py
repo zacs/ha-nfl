@@ -16,7 +16,6 @@ from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
             {
                 "name": "Testing State",
                 "team_id": "SEA",
-                "interval": 5,
                 "timeout": 120,
             },
             "user",
@@ -24,7 +23,6 @@ from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
             {
                 "name": "Testing State",
                 "team_id": "SEA",
-                "interval": 5,
                 "timeout": 120,
             },
         ),

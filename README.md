@@ -30,7 +30,7 @@ You'll need to know your team ID, which is a 2- or 3-letter acronym (eg. "SEA" f
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
-Look for the integration labeled "NFL" and enter your team's acronym in the UI prompt. There are also fields for refresh interval and timeout, which are safe to keep as-is. 
+Look for the integration labeled "NFL" and enter your team's acronym in the UI prompt. There is also a field for timeout, which are safe to keep as-is. 
 
 ### Manually in your configuration.yaml file
 

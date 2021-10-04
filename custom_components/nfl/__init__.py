@@ -17,11 +17,9 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import (
     API_ENDPOINT,
-    CONF_INTERVAL,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
     COORDINATOR,
-    DEFAULT_INTERVAL,
     DEFAULT_TIMEOUT,
     DOMAIN,
     ISSUE_URL,
@@ -54,8 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = AlertsDataUpdateCoordinator(
         hass,
         entry.data,
-        entry.data.get(CONF_TIMEOUT),
-        entry.data.get(CONF_INTERVAL),
+        entry.data.get(CONF_TIMEOUT)
     )
 
     # Fetch initial data so we have data when entities subscribe
@@ -88,9 +85,9 @@ async def update_listener(hass, entry):
 class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching NFL data."""
 
-    def __init__(self, hass, config, the_timeout: int, interval: int):
+    def __init__(self, hass, config, the_timeout: int):
         """Initialize."""
-        self.interval = timedelta(minutes=interval)
+        self.interval = timedelta(minutes=10)
         self.name = config[CONF_NAME]
         self.timeout = the_timeout
         self.config = config
