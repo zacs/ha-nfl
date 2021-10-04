@@ -1,4 +1,4 @@
-"""Test NFL Scores Sensors"""
+"""Test NFL Sensor"""
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.nfl.const import DOMAIN
@@ -9,7 +9,7 @@ async def test_sensor(hass):
 
     entry = MockConfigEntry(
         domain=DOMAIN,
-        title="NFL Scores",
+        title="NFL",
         data=CONFIG_DATA,
     )
 
