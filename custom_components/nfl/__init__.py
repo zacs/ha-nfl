@@ -104,7 +104,7 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
         """Fetch data"""
         async with timeout(self.timeout):
             try:
-                data = await update_alerts(self.config)
+                data = await update_game(self.config)
                 # update the interval based on flag
                 if data["private_fast_refresh"] == True:
                     self.update_interval = timedelta(seconds=5)
@@ -116,7 +116,7 @@ class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
         
 
 
-async def update_alerts(config) -> dict:
+async def update_game(config) -> dict:
     """Fetch new state data for the sensor.
     This is the only method that should fetch new data for Home Assistant.
     """
@@ -141,8 +141,8 @@ async def async_get_state(config) -> dict:
     if data is not None:
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
-            _LOGGER.debug("Found event; parsing data.")
             if team_id in event["shortName"]:
+                _LOGGER.debug("Found event; parsing data.")
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
                 values["state"] = event["status"]["type"]["state"].upper()
@@ -217,6 +217,9 @@ async def async_get_state(config) -> dict:
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
                 values["private_fast_refresh"] = False
+            else:
+                _LOGGER.debug("Did not find a game with for the configured team. Is it a bye week?")
+                values["state"] = 'BYE'
 
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
             _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
@@ -224,7 +227,7 @@ async def async_get_state(config) -> dict:
         elif values["state"] == 'IN':
             _LOGGER.debug("Event in progress, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
-        elif values["state"] == 'POST': # and if the refresh is set to fast
+        elif values["state"] in ['POST', 'BYE']: 
             _LOGGER.debug("Event is over, setting refresh back to 10 minutes.")
             values["private_fast_refresh"] = False
 
