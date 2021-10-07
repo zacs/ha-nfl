@@ -82,6 +82,26 @@ async def update_listener(hass, entry):
     await hass.config_entries.async_forward_entry_unload(entry, "sensor")
     hass.async_add_job(hass.config_entries.async_forward_entry_setup(entry, "sensor"))
 
+async def async_migrate_entry(hass, config_entry):
+     """Migrate an old config entry."""
+     version = config_entry.version
+
+     # 1-> 2: Migration format
+     if version == 1:
+         _LOGGER.debug("Migrating from version %s", version)
+         updated_config = config_entry.data.copy()
+
+         if CONF_TIMEOUT not in updated_config.keys():
+             updated_config[CONF_TIMEOUT] = DEFAULT_TIMEOUT
+
+         if updated_config != config_entry.data:
+             hass.config_entries.async_update_entry(config_entry, data=updated_config)
+
+         config_entry.version = 2
+         _LOGGER.debug("Migration to version %s complete", config_entry.version)
+
+     return True
+
 class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching NFL data."""
 
