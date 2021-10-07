@@ -37,10 +37,10 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     """Configuration from yaml"""
     if DOMAIN not in hass.data.keys():
         hass.data.setdefault(DOMAIN, {})
-        config.entry_id = uuid.uuid4().hex
+        config.entry_id = slugify(f"{config.get(CONF_TEAM_ID)}")
         config.data = config
     else:
-        config.entry_id = uuid.uuid4().hex
+        config.entry_id = slugify(f"{config.get(CONF_TEAM_ID)}")
         config.data = config
 
     # Setup the data coordinator
