@@ -14,17 +14,15 @@ from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
     [
         (
             {
-                "name": "Testing Scores",
+                "name": "Testing State",
                 "team_id": "SEA",
-                "interval": 5,
                 "timeout": 120,
             },
             "user",
-            "Testing Alerts",
+            "Testing State",
             {
-                "name": "Testing Scores",
+                "name": "Testing State",
                 "team_id": "SEA",
-                "interval": 5,
                 "timeout": 120,
             },
         ),
@@ -68,7 +66,7 @@ async def test_form(
 #     [
 #         {
 #             DOMAIN: {
-#                 CONF_NAME: "NFL Scores",
+#                 CONF_NAME: "NFL",
 #                 CONF_TEAM_ID: "SEA",
 #             },
 #         },

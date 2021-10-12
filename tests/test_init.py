@@ -18,7 +18,7 @@ async def test_setup_entry(
     """Test settting up entities."""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        title="NFL Scores",
+        title="NFL",
         data=CONFIG_DATA,
     )
 
@@ -35,7 +35,7 @@ async def test_unload_entry(hass):
     """Test unloading entities."""
     entry = MockConfigEntry(
         domain=DOMAIN,
-        title="NFL Scores",
+        title="NFL",
         data=CONFIG_DATA,
     )
 
@@ -61,7 +61,7 @@ async def test_unload_entry(hass):
 #     """Test importing a config."""
 #     entry = MockConfigEntry(
 #         domain=DOMAIN,
-#         title="NFL Scores",
+#         title="NFL",
 #         data=CONFIG_DATA,
 #     )
 #     await async_setup_component(hass, "persistent_notification", {})
