@@ -239,8 +239,25 @@ async def async_get_state(config) -> dict:
         
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
-            _LOGGER.debug("Did not find a game with for the configured team. Is it a bye week?")
-            values["state"] = 'BYE'
+            _LOGGER.debug("Did not find a game with for the configured team. Checking if it's a bye week.")
+            found_bye = False
+            values = await async_clear_states(config)
+            for bye_team in data["week"]["teamsOnBye"]:
+                if team_id.lower() == bye_team["abbreviation"].lower():
+                    _LOGGER.debug("Bye week confirmed.")
+                    found_bye = True
+                    values["team_abbr"] = bye_team["abbreviation"]
+                    values["team_name"] = bye_team["shortDisplayName"]
+                    values["team_logo"] = bye_team["logo"]
+                    values["state"] = 'BYE'
+                    values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+            if found_bye == False:
+                    _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
+                    values["team_abbr"] = None
+                    values["team_name"] = None
+                    values["team_logo"] = None
+                    values["state"] = 'NOT_FOUND'
+                    values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
 
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
             _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
@@ -260,8 +277,8 @@ async def async_clear_states(config) -> dict:
     values = {}
     # Reset values
     values = {
-        "state": "PRE",
         "date": None,
+        "kickoff_in": None,
         "quarter": None,
         "clock": None,
         "venue": None,
@@ -272,12 +289,9 @@ async def async_clear_states(config) -> dict:
         "last_play": None,
         "down_distance_text": None,
         "possession": None,
-        "team_abbr": None,
         "team_id": None,
-        "team_name": None,
         "team_record": None,
         "team_homeaway": None,
-        "team_logo": None,
         "team_colors": None,
         "team_score": None,
         "team_win_probability": None,
