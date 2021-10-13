@@ -243,7 +243,7 @@ async def async_get_state(config) -> dict:
             found_bye = False
             values = await async_clear_states(config)
             for bye_team in data["week"]["teamsOnBye"]:
-                if team_id.tolower() == bye_team["abbreviation"].tolower():
+                if team_id.lower() == bye_team["abbreviation"].lower():
                     _LOGGER.debug("Bye week confirmed.")
                     found_bye = True
                     values["team_abbr"] = bye_team["abbreviation"]
