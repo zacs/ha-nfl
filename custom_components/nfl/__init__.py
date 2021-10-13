@@ -240,6 +240,7 @@ async def async_get_state(config) -> dict:
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
             _LOGGER.debug("Did not find a game with for the configured team. Is it a bye week?")
+            values = await async_clear_states(config)
             values["state"] = 'BYE'
 
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
