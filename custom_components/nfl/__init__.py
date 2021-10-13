@@ -252,6 +252,7 @@ async def async_get_state(config) -> dict:
                     values["state"] = 'BYE'
                     values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
             if found_bye == False:
+                    _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
                     values["team_abbr"] = None
                     values["team_name"] = None
                     values["team_logo"] = None
