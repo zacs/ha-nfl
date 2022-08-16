@@ -7,7 +7,7 @@ The integration is a shameless fork of the excellent [ha-nfl](https://github.com
 ## Supported Leagues
 NFL - NFL, From the original ha-nfl custom component
 NCAAF - NCAA Football
-MLB - Coming Soon
+MLB - MLB Baseball
 MLS - Coming Soon
 NHL - Coming Soon
 NCAAB - NCAA Basketball Coming Soon
@@ -30,7 +30,7 @@ The attributes available will change based on the sensor's state, a small number
 | `date` | Date and time of the game | `PRE` `IN` `POST` |
 | `kickoff_in` | Human-readable string for how far away the game is (eg. "in 30 minutes" or "tomorrow") |  `PRE` `IN` `POST` |
 | `quarter` | The current quarter of gameplay | `IN` |
-| `clock` | The clock value within the quarter (should never be higher than 15:00) | `IN` |
+| `clock` | The clock value within the quarter (should never be higher than 15:00).  Inning (MLB only). | `IN` |
 | `venue` | The name of the stadium where the game is being played (eg. "Arrowhead Stadium") | `PRE` `IN` `POST` |
 | `location` | The city and state where the game is being played (eg. "Pittsburgh, PA") | `PRE` `IN` `POST` |
 | `tv_network` | The TV network where you can watch the game (eg. "NBC" or "NFL"). Note that if there is a national feed, it will be listed here, otherwise the local affiliate will be listed. | `PRE` `IN` `POST` |
@@ -39,6 +39,12 @@ The attributes available will change based on the sensor's state, a small number
 | `possession` | The ID of the team in possession of the ball. This will correlate to `team_id` or `opponent_id` below. Note that this value will be null in between posessions (after a score, etc). | `IN` |
 | `last_play` | Sentence describing the most recent play, usually including the participants from both offense and defense, and the resulting yards. Note this can be null on posession changes or in between quarters. | `IN` |
 | `down_distance_text` | String for the down and yards to go (eg. "2nd and 7"). | `IN` |
+| `outs` | Number of outs (MLB only). | `IN` |
+| `balls` | Number of balls (MLB only)). | `IN` |
+| `strikes` | Number of strikes (MLB only). | `IN` |
+| `on_first` | Baserunner on first base (MLB only). | `IN` |
+| `on_second` | Baserunner on second base (MLB only). | `IN` |
+| `on_third` | Baserunner on third base (MLB only). | `IN` |
 | `team_abbr` | The abbreviation for your team (ie. `SEA` for the Seahawks). | `PRE` `IN` `POST` `BYE` |
 | `team_id` | A numeric ID for your team, used to match `possession` above. | `PRE` `IN` `POST` |
 | `team_name` | Your team's name (eg. "Seahawks"). Note this does not include the city name. | `PRE` `IN` `POST` `BYE` |
@@ -81,6 +87,7 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
 For the League, the following values are valid:
     NFL
     NCAAF
+    MLB
     
 You'll need to know your team ID, which is a 2- or 3-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/nfl in the top scores UI. 
 

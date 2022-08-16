@@ -73,6 +73,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._config = entry
         self._name = entry.data[CONF_NAME]
         self._icon = DEFAULT_ICON
+        self._league = None
         self._state = "PRE"
         self._date = None
         self._kickoff_in = None
@@ -108,6 +109,15 @@ class NFLScoresSensor(CoordinatorEntity):
         self._opponent_timeouts = None
         self._last_update = None
         self._team_id = entry.data[CONF_TEAM_ID]
+#
+#  MLB Specific Fields
+#
+        self._outs = None
+        self._balls = None
+        self._strikes = None
+        self._on_first = None
+        self._on_second = None
+        self._on_third = None
         self.coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
 
     @property
@@ -146,6 +156,7 @@ class NFLScoresSensor(CoordinatorEntity):
             return attrs
 
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
+        attrs["league"] = self.coordinator.data["league"]
         attrs["date"] = self.coordinator.data["date"]
         attrs["kickoff_in"] = self.coordinator.data["kickoff_in"]
         attrs["quarter"] = self.coordinator.data["quarter"]
@@ -178,6 +189,15 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["opponent_score"] = self.coordinator.data["opponent_score"]
         attrs["opponent_win_probability"] = self.coordinator.data["opponent_win_probability"]
         attrs["opponent_timeouts"] = self.coordinator.data["opponent_timeouts"]
+#
+#  MLB Specific Fields
+#
+        attrs["outs"] = self.coordinator.data["outs"]
+        attrs["balls"] = self.coordinator.data["balls"]
+        attrs["strikes"] = self.coordinator.data["strikes"]
+        attrs["on_first"] = self.coordinator.data["on_first"]
+        attrs["on_second"] = self.coordinator.data["on_second"]
+        attrs["on_third"] = self.coordinator.data["on_third"]
         attrs["last_update"] = self.coordinator.data["last_update"]
 
         return attrs

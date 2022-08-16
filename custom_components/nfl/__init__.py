@@ -175,6 +175,7 @@ async def async_get_state(config) -> dict:
                 found_team = True
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
                 oppo_index = abs((team_index-1))
+                values["league"] = league_id
                 values["state"] = event["status"]["type"]["state"].upper()
                 values["date"] = event["date"]
                 values["kickoff_in"] = arrow.get(event["date"]).humanize()
@@ -213,8 +214,12 @@ async def async_get_state(config) -> dict:
                     except:
                         values["possession"] = None
                     if event["competitions"][0]["competitors"][team_index]["homeAway"] == "home":
-                        values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
-                        values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                        try:
+                            values["team_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                            values["opponent_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                        except:
+                            values["team_timeouts"] = None
+                            values["opponent_timeouts"] = None
                         try:
                             values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
                             values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
@@ -222,8 +227,12 @@ async def async_get_state(config) -> dict:
                             values["team_win_probability"] = None
                             values["opponent_win_probability"] = None
                     else:
-                        values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
-                        values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                        try:
+                            values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
+                            values["opponent_timeouts"] = event["competitions"][0]["situation"]["homeTimeouts"]
+                        except:
+                            values["team_timeouts"] = None
+                            values["opponent_timeouts"] = None
                         try:
                             values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
                             values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
@@ -268,6 +277,49 @@ async def async_get_state(config) -> dict:
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
                 values["private_fast_refresh"] = False
+#
+# MLB Specific Fields
+#
+                values["outs"] = None
+                values["balls"] = None
+                values["strikes"] = None
+                values["on_first"] = None
+                values["on_second"] = None
+                values["on_third"] = None
+
+                if league_id == "MLB":
+                    if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
+                        values["clock"] = event["status"]["type"]["detail"] # Inning
+                        if values["clock"][:3].lower() in ['bot','mid']:
+                            if values["team_homeaway"] in ["home"]: # Home outs, at bat in bottom of inning
+                                values["possession"] = values["team_id"]
+                            else: # Away outs, at bat in bottom of inning
+                                values["possession"] = values ["opponent_id"]
+                        else:
+                            if values["team_homeaway"] in ["away"]: # Away outs, at bat in top of inning
+                                values["possession"] = values["team_id"]
+                            else:  # Home outs, at bat in top of inning
+                                values["possession"] = values ["opponent_id"]
+                        try:
+                            values["outs"] = event["competitions"][0]["situation"]["outs"]
+                        except:
+                            values["outs"] = None
+                        try: # Balls
+                            values["balls"] = event["competitions"][0]["situation"]["balls"]
+                        except:
+                            values["balls"] = None
+                        try: # Strikes
+                            values["strikes"] = event["competitions"][0]["situation"]["strikes"]
+                        except:
+                            values["strikes"] = None
+                        try: # Baserunners
+                            values["on_first"] = event["competitions"][0]["situation"]["onFirst"]
+                            values["on_second"] = event["competitions"][0]["situation"]["onSecond"]
+                            values["on_third"] = event["competitions"][0]["situation"]["onThird"]
+                        except:
+                            values["on_first"] = None
+                            values["on_second"] = None
+                            values["on_third"] = None
         
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
@@ -347,6 +399,16 @@ async def async_clear_states(config) -> dict:
         "opponent_win_probability": None,
         "opponent_timeouts": None,
         "last_update": None,
+#
+# MLB Specific Fields
+#
+        "outs": None,
+        "balls": None,
+        "strikes": None,
+        "on_first": None,
+        "on_second": None,
+        "on_third": None,
+
         "private_fast_refresh": False
     }
 

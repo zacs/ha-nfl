@@ -2,7 +2,8 @@
 DEFAULT_API_ENDPOINT = "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
 API_ENDPOINT = [
     ["NFL", "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"],
-    ["NCAAF", "http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard"]
+    ["NCAAF", "http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard"],
+    ["MLB", "http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard"]
     ]
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
 
