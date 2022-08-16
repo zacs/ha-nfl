@@ -5,7 +5,7 @@ This integration fetches data for a team's current/future game for multiple spor
 The integration is a shameless fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
 
 ## Supported Leagues
-NFL - From the original ha-nfl  custom component
+NFL - NFL, From the original ha-nfl custom component
 NCAAF - NCAA Football
 MLB - Coming Soon
 MLS - Coming Soon
@@ -78,6 +78,10 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
   
 ## Configuration
 
+For the League, the following values are valid:
+    NFL
+    NCAAF
+    
 You'll need to know your team ID, which is a 2- or 3-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/nfl in the top scores UI. 
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI

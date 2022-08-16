@@ -16,9 +16,11 @@ from homeassistant.helpers.entity_registry import (
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
+    DEFAULT_API_ENDPOINT,
     API_ENDPOINT,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
+    CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_TIMEOUT,
     DOMAIN,
@@ -147,7 +149,16 @@ async def async_get_state(config) -> dict:
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
-    url = API_ENDPOINT
+
+    league_id = config[CONF_LEAGUE_ID]
+    _LOGGER.debug("league_id %s", league_id)
+
+    url = DEFAULT_API_ENDPOINT
+    for x in range(len(API_ENDPOINT)):
+        if API_ENDPOINT[x][0] == league_id:
+            _LOGGER.debug("API_ENDPOINT found %s", league_id)
+            url = API_ENDPOINT[x][1]
+
     team_id = config[CONF_TEAM_ID]
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:

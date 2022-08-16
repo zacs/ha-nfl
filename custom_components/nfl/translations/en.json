@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "data": {
-          "league_id": "League",
+          "league_id": "League (NFL, NCAAF)",
           "name": "Friendly Name",
           "team_id": "Team Acronym",
           "timeout": "Update Timeout (in seconds)"
@@ -17,7 +17,7 @@
     "step": {
       "init": {
         "data": {
-          "league_id": "League",
+          "league_id": "League (NFL, NCAAF)",
           "name": "Friendly Name",
           "team_id": "Team Acronym",
           "timeout": "Update Timeout (in seconds)"
