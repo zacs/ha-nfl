@@ -153,11 +153,15 @@ async def async_get_state(config) -> dict:
     league_id = config[CONF_LEAGUE_ID]
     _LOGGER.debug("league_id %s", league_id)
 
-    url = DEFAULT_API_ENDPOINT
+    url_found = False
     for x in range(len(API_ENDPOINT)):
         if API_ENDPOINT[x][0] == league_id:
             _LOGGER.debug("API_ENDPOINT found %s", league_id)
             url = API_ENDPOINT[x][1]
+            url_found = True
+    if not url_found:
+            _LOGGER.warn("URL for league not found: %s", league_id)
+            url = DEFAULT_API_ENDPOINT
 
     team_id = config[CONF_TEAM_ID]
     async with aiohttp.ClientSession() as session:
@@ -360,7 +364,13 @@ async def async_get_state(config) -> dict:
         elif values["state"] in ['POST', 'BYE']: 
             _LOGGER.debug("Event is over, setting refresh back to 10 minutes.")
             values["private_fast_refresh"] = False
-
+    else:
+        _LOGGER.warn("URL did not return data:  %s", url)
+        values["team_abbr"] = None
+        values["team_name"] = None
+        values["team_logo"] = None
+        values["state"] = 'NOT_FOUND'
+        values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
     return values
 
 async def async_clear_states(config) -> dict:
