@@ -119,6 +119,13 @@ class NFLScoresSensor(CoordinatorEntity):
         self._on_first = None
         self._on_second = None
         self._on_third = None
+#
+#  MLS Specific Fields
+#
+        self._team_shots_on_target = None
+        self._team_total_shots = None
+        self._opponent_shots_on_target = None
+        self._opponent_total_shots = None
 
     @property
     def unique_id(self):
@@ -199,7 +206,13 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["on_first"] = self.coordinator.data["on_first"]
         attrs["on_second"] = self.coordinator.data["on_second"]
         attrs["on_third"] = self.coordinator.data["on_third"]
-
+#
+#  MLS Specific Fields
+#
+        attrs["team_shots_on_target"] = self.coordinator.data["team_shots_on_target"]
+        attrs["team_total_shots"] = self.coordinator.data["team_total_shots"]
+        attrs["opponent_shots_on_target"] = self.coordinator.data["opponent_shots_on_target"]
+        attrs["opponent_total_shots"] = self.coordinator.data["opponent_total_shots"]
 
         return attrs
 

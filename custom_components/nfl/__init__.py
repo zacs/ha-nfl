@@ -155,7 +155,7 @@ async def async_get_state(config) -> dict:
 
     url_found = False
     for x in range(len(API_ENDPOINT)):
-        if API_ENDPOINT[x][0] == league_id:
+        if API_ENDPOINT[x][0] == league_id.upper():
             _LOGGER.debug("API_ENDPOINT found %s", league_id)
             url = API_ENDPOINT[x][1]
             url_found = True
@@ -174,7 +174,7 @@ async def async_get_state(config) -> dict:
     if data is not None:
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
-            if team_id in event["shortName"]:
+            if team_id.upper() in event["shortName"]:
                 _LOGGER.debug("Found event; parsing data.")
                 found_team = True
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
@@ -184,14 +184,26 @@ async def async_get_state(config) -> dict:
                 values["date"] = event["date"]
                 values["kickoff_in"] = arrow.get(event["date"]).humanize()
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
-                values["location"] = "%s, %s" % (event["competitions"][0]["venue"]["address"]["city"], event["competitions"][0]["venue"]["address"]["state"])
+                try:
+                    values["location"] = "%s, %s" % (event["competitions"][0]["venue"]["address"]["city"], event["competitions"][0]["venue"]["address"]["state"])
+                except:
+                    try:
+                        values["location"] = event["competitions"][0]["venue"]["address"]["city"]
+                    except:
+                        values["location"] = None
                 try:
                     values["tv_network"] = event["competitions"][0]["broadcasts"][0]["names"][0]
                 except:
                     values["tv_network"] = None
                 if event["status"]["type"]["state"].lower() in ['pre']: # odds only exist pre-game
-                    values["odds"] = event["competitions"][0]["odds"][0]["details"]
-                    values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
+                    try:
+                        values["odds"] = event["competitions"][0]["odds"][0]["details"]
+                    except:
+                        values["odds"] = None
+                    try:
+                        values["overunder"] = event["competitions"][0]["odds"][0]["overUnder"]
+                    except:
+                        values["overunder"] = None
                 else:
                     values["odds"] = None
                     values["overunder"] = None
@@ -208,7 +220,10 @@ async def async_get_state(config) -> dict:
                 else:
                     values["quarter"] = event["status"]["period"]
                     values["clock"] = event["status"]["displayClock"]
-                    values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    try:
+                        values["last_play"] = event["competitions"][0]["situation"]["lastPlay"]["text"]
+                    except:
+                        values["last_play"] = None
                     try:
                         values["down_distance_text"] = event["competitions"][0]["situation"]["downDistanceText"]
                     except:
@@ -324,6 +339,51 @@ async def async_get_state(config) -> dict:
                             values["on_first"] = None
                             values["on_second"] = None
                             values["on_third"] = None
+#
+# The MLS Specific Fields
+#
+                values["team_shots_on_target"] = None
+                values["team_total_shots"] = None
+                values["opponent_shots_on_target"] = None
+                values["opponent_total_shots"] = None
+
+                if league_id == "MLS":
+                    if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
+                        values["team_shots_on_target"] = 0
+                        values["team_total_shots"] = 0
+                        for statistic in event["competitions"] [0] ["competitors"] [team_index] ["statistics"]:
+                            _LOGGER.debug("Looking at this statistic: %s" % statistic)
+                            if "shotsOnTarget" in statistic["name"]:
+                                _LOGGER.debug("Found shotsOnTarget statistics; parsing data.")
+                                values["team_shots_on_target"] = statistic["displayValue"]
+                            if "totalShots" in statistic["name"]:
+                                _LOGGER.debug("Found totalShots statistics; parsing data.")
+                                values["team_total_shots"] = statistic["displayValue"]
+                        values["opponent_shots_on_target"] = 0
+                        values["opponent_total_shots"] = 0
+                        for statistic in event["competitions"] [0] ["competitors"] [oppo_index] ["statistics"]:
+                            _LOGGER.debug("Looking at this statistic: %s" % statistic)
+                            if "shotsOnTarget" in statistic["name"]:
+                                _LOGGER.debug("Found shotsOnTarget statistics; parsing data.")
+                                values["opponent_shots_on_target"] = statistic["displayValue"]
+                            if "totalShots" in statistic["name"]:
+                                _LOGGER.debug("Found totalShots statistics; parsing data.")
+                                values["opponent_total_shots"] = statistic["displayValue"]
+                            
+                        values["last_play"] = ''
+                        for detail in event["competitions"][0]["details"]:
+                            try:
+                                mls_team_id = detail["team"]["id"]
+                            
+                                values["last_play"] = values["last_play"] + "     " + detail["clock"]["displayValue"]
+                                values["last_play"] = values["last_play"] + "  " + detail["type"]["text"]
+                                values["last_play"] = values["last_play"] + ": " + detail["athletesInvolved"][0]["displayName"]
+                                if mls_team_id == values["team_id"]:
+                                    values["last_play"] = values["last_play"] + " (" + values["team_abbr"] + ")"
+                                else:
+                                    values["last_play"] = values["last_play"] + " (" + values["opponent_abbr"] + ")          "
+                            except:
+                                values["last_play"] = values["last_play"] + " (Last play not found) "
         
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
@@ -335,6 +395,7 @@ async def async_get_state(config) -> dict:
                     if team_id.lower() == bye_team["abbreviation"].lower():
                         _LOGGER.debug("Bye week confirmed.")
                         found_bye = True
+                        values["league"] = league_id
                         values["team_abbr"] = bye_team["abbreviation"]
                         values["team_name"] = bye_team["shortDisplayName"]
                         values["team_logo"] = bye_team["logo"]
@@ -342,14 +403,16 @@ async def async_get_state(config) -> dict:
                         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
                 if found_bye == False:
                         _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
-                        values["team_abbr"] = None
+                        values["league"] = league_id
+                        values["team_abbr"] = team_id
                         values["team_name"] = None
                         values["team_logo"] = None
                         values["state"] = 'NOT_FOUND'
                         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
             except:
                 _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
-                values["team_abbr"] = None
+                values["league"] = league_id
+                values["team_abbr"] = team_id
                 values["team_name"] = None
                 values["team_logo"] = None
                 values["state"] = 'NOT_FOUND'
@@ -366,7 +429,8 @@ async def async_get_state(config) -> dict:
             values["private_fast_refresh"] = False
     else:
         _LOGGER.warn("URL did not return data:  %s", url)
-        values["team_abbr"] = None
+        values["league"] = league_id
+        values["team_abbr"] = team_id
         values["team_name"] = None
         values["team_logo"] = None
         values["state"] = 'NOT_FOUND'
@@ -418,7 +482,13 @@ async def async_clear_states(config) -> dict:
         "on_first": None,
         "on_second": None,
         "on_third": None,
-
+#
+# The MLS Specific Fields
+#
+        "team_shots_on_target": None,
+        "team_total_shots": None,
+        "opponent_shots_on_target": None,
+        "opponent_total_shots": None,
         "private_fast_refresh": False
     }
 

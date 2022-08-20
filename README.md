@@ -5,12 +5,12 @@ This integration fetches data for a team's current/future game for multiple spor
 The integration is a shameless fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
 
 ## Supported Leagues
-NFL - NFL, From the original ha-nfl custom component
-NCAAF - NCAA Football
-MLB - MLB Baseball
-MLS - Coming Soon
-NHL - Coming Soon
-NCAAB - NCAA Basketball Coming Soon
+- MLB - MLB Baseball
+- MLS - MLS Soccer
+- NCAAF - NCAA Football
+- NFL - NFL, From the original ha-nfl custom component
+- NHL - Coming Soon
+- NCAAB - NCAA Basketball Coming Soon
 
 ## Sensor Data
 
@@ -45,6 +45,10 @@ The attributes available will change based on the sensor's state, a small number
 | `on_first` | Baserunner on first base (MLB only). | `IN` |
 | `on_second` | Baserunner on second base (MLB only). | `IN` |
 | `on_third` | Baserunner on third base (MLB only). | `IN` |
+| `team_total_shots` | Total shots by team (MLS only). | `IN` |
+| `team_shots_on_target` | Shots on net by team (MLS only). | `IN` |
+| `opponent_total_shots` | Total shots by team (MLS only). | `IN` |
+| 'opponent_shots_on_target` | Shots on net by team (MLS only). | `IN` |
 | `team_abbr` | The abbreviation for your team (ie. `SEA` for the Seahawks). | `PRE` `IN` `POST` `BYE` |
 | `team_id` | A numeric ID for your team, used to match `possession` above. | `PRE` `IN` `POST` |
 | `team_name` | Your team's name (eg. "Seahawks"). Note this does not include the city name. | `PRE` `IN` `POST` `BYE` |
