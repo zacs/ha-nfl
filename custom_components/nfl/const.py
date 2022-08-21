@@ -1,6 +1,9 @@
 # API
 DEFAULT_API_ENDPOINT = "http://site.api.espn.com/apis/site/v2/sports/league/not/found"
 API_ENDPOINT = [
+    ["BUND", "http://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard", "mdi:soccer"],
+    ["EPL", "http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", "mdi:soccer"],
+    ["LIGA", "http://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", "mdi:soccer"],
     ["MLB", "http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard", "mdi:baseball"],
     ["MLS", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard", "mdi:soccer"],
     ["NWSL", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard", "mdi:soccer"],

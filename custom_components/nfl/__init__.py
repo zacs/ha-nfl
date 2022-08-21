@@ -340,14 +340,14 @@ async def async_get_state(config) -> dict:
                             values["on_second"] = None
                             values["on_third"] = None
 #
-# The MLS/NWSL Specific Fields
+# The Soccer Specific Fields
 #
                 values["team_shots_on_target"] = None
                 values["team_total_shots"] = None
                 values["opponent_shots_on_target"] = None
                 values["opponent_total_shots"] = None
 
-                if league_id in ['MLS', 'NWSL']:
+                if league_id in ['MLS', 'NWSL', 'BUND', 'EPL', 'LIGA']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["team_shots_on_target"] = 0
                         values["team_total_shots"] = 0
@@ -483,7 +483,7 @@ async def async_clear_states(config) -> dict:
         "on_second": None,
         "on_third": None,
 #
-# The MLS/NWSL Specific Fields
+# The Soccer Specific Fields
 #
         "team_shots_on_target": None,
         "team_total_shots": None,
