@@ -74,6 +74,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._name = entry.data[CONF_NAME]
         self._icon = DEFAULT_ICON
         self._league = None
+        self._league_logo = None
         self._state = "PRE"
         self._date = None
         self._kickoff_in = None
@@ -164,6 +165,7 @@ class NFLScoresSensor(CoordinatorEntity):
 
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
         attrs["league"] = self.coordinator.data["league"]
+        attrs["league_logo"] = self.coordinator.data["league_logo"]
         attrs["date"] = self.coordinator.data["date"]
         attrs["kickoff_in"] = self.coordinator.data["kickoff_in"]
         attrs["quarter"] = self.coordinator.data["quarter"]

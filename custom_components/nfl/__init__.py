@@ -172,6 +172,10 @@ async def async_get_state(config) -> dict:
 
     found_team = False
     if data is not None:
+        try:
+            values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
+        except:
+            values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
             if team_id.upper() in event["shortName"]:
@@ -409,6 +413,10 @@ async def async_get_state(config) -> dict:
                         values["team_logo"] = None
                         values["state"] = 'NOT_FOUND'
                         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+                try:
+                    values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
+                except:
+                    values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
             except:
                 _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
                 values["league"] = league_id
@@ -417,7 +425,10 @@ async def async_get_state(config) -> dict:
                 values["team_logo"] = None
                 values["state"] = 'NOT_FOUND'
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-
+                try:
+                    values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
+                except:
+                    values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
             _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
@@ -435,6 +446,11 @@ async def async_get_state(config) -> dict:
         values["team_logo"] = None
         values["state"] = 'NOT_FOUND'
         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+        try:
+            values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
+        except:
+            values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
+
     return values
 
 async def async_clear_states(config) -> dict:
