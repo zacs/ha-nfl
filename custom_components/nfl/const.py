@@ -4,7 +4,11 @@ API_ENDPOINT = [
     ["MLB", "http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard", "mdi:baseball"],
     ["MLS", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard", "mdi:soccer"],
     ["NWSL", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard", "mdi:soccer"],
+    ["NBA", "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", "mdi:basketball"],
     ["NCAAF", "http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", "mdi:football"],
+    ["NCAAM", "http://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard", "mdi:basketball"],
+    ["NCAAW", "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard", "mdi:basketball"],
+    ["WNBA", "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard", "mdi:basketball"],
     ["NFL", "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard", "mdi:football"]
     ]
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"

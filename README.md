@@ -6,8 +6,8 @@ The integration is a shameless fork of the excellent [ha-nfl](https://github.com
 
 ## Supported Leagues
 - Baseball - MLB
-- Basketball - NCAAM (Coming Soon)
-- Football - NCAAF, NFL
+- Basketball - WNBA, NBA, NCAAM, NCAAW (beta)
+- Football - NFL, NCAAF
 - Hockey - NHL (Coming Soon)
 - Soccer - MLS, NWSL
 
@@ -88,11 +88,15 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
 ## Configuration
 
 For the League, the following values are valid:
-- NFL
+- NBA
 - NCAAF
+- NCAAM
+- NCAAF
+- NFL
 - MLB
 - MLS
 - NWSL
+- WNBA
     
 You'll need to know your team ID, which is a 2-, 3- or 4-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/ in the top scores UI. 
 
