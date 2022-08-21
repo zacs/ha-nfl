@@ -120,7 +120,7 @@ class NFLScoresSensor(CoordinatorEntity):
         self._on_second = None
         self._on_third = None
 #
-#  MLS Specific Fields
+#  MLS/NWSL Specific Fields
 #
         self._team_shots_on_target = None
         self._team_total_shots = None
@@ -207,7 +207,7 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["on_second"] = self.coordinator.data["on_second"]
         attrs["on_third"] = self.coordinator.data["on_third"]
 #
-#  MLS Specific Fields
+#  MLS/NWSL Specific Fields
 #
         attrs["team_shots_on_target"] = self.coordinator.data["team_shots_on_target"]
         attrs["team_total_shots"] = self.coordinator.data["team_total_shots"]

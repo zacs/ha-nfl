@@ -5,12 +5,11 @@ This integration fetches data for a team's current/future game for multiple spor
 The integration is a shameless fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
 
 ## Supported Leagues
-- MLB - MLB Baseball
-- MLS - MLS Soccer
-- NCAAF - NCAA Football
-- NFL - NFL, From the original ha-nfl custom component
-- NHL - Coming Soon
-- NCAAB - NCAA Basketball Coming Soon
+- Baseball - MLB
+- Basketball - NCAAM (Coming Soon)
+- Football - NCAAF, NFL
+- Hockey - NHL (Coming Soon)
+- Soccer - MLS, NWSL
 
 ## Sensor Data
 
@@ -89,15 +88,17 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
 ## Configuration
 
 For the League, the following values are valid:
-    NFL
-    NCAAF
-    MLB
+- NFL
+- NCAAF
+- MLB
+- MLS
+- NWSL
     
-You'll need to know your team ID, which is a 2- or 3-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/nfl in the top scores UI. 
+You'll need to know your team ID, which is a 2-, 3- or 4-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/ in the top scores UI. 
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
-Look for the integration labeled "NFL" and enter your team's acronym in the UI prompt. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.nfl`, otherwise it will be `sensor.friendly_name_you_picked`. 
+Look for the integration labeled "NFL" and enter the League and your team's acronym in the UI prompt. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.nfl`, otherwise it will be `sensor.friendly_name_you_picked`. 
 
 ### Manually in your `configuration.yaml` file
 

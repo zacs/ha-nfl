@@ -150,12 +150,12 @@ async def async_get_state(config) -> dict:
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
 
-    league_id = config[CONF_LEAGUE_ID]
+    league_id = config[CONF_LEAGUE_ID].upper()
     _LOGGER.debug("league_id %s", league_id)
 
     url_found = False
     for x in range(len(API_ENDPOINT)):
-        if API_ENDPOINT[x][0] == league_id.upper():
+        if API_ENDPOINT[x][0] == league_id:
             _LOGGER.debug("API_ENDPOINT found %s", league_id)
             url = API_ENDPOINT[x][1]
             url_found = True
@@ -340,14 +340,14 @@ async def async_get_state(config) -> dict:
                             values["on_second"] = None
                             values["on_third"] = None
 #
-# The MLS Specific Fields
+# The MLS/NWSL Specific Fields
 #
                 values["team_shots_on_target"] = None
                 values["team_total_shots"] = None
                 values["opponent_shots_on_target"] = None
                 values["opponent_total_shots"] = None
 
-                if league_id == "MLS":
+                if league_id in ['MLS', 'NWSL']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["team_shots_on_target"] = 0
                         values["team_total_shots"] = 0
@@ -483,7 +483,7 @@ async def async_clear_states(config) -> dict:
         "on_second": None,
         "on_third": None,
 #
-# The MLS Specific Fields
+# The MLS/NWSL Specific Fields
 #
         "team_shots_on_target": None,
         "team_total_shots": None,
