@@ -23,6 +23,7 @@ from .const import (
     CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_TIMEOUT,
+    DEFAULT_PROB,
     DOMAIN,
     ISSUE_URL,
     PLATFORMS,
@@ -31,7 +32,8 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
+team_prob = {}
+oppo_prob = {}
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load the saved entities."""
@@ -149,10 +151,12 @@ async def async_get_state(config) -> dict:
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
+    global team_prob
+    global oppo_prob
 
     league_id = config[CONF_LEAGUE_ID].upper()
     _LOGGER.debug("league_id %s", league_id)
-
+    
     url_found = False
     for x in range(len(API_ENDPOINT)):
         if API_ENDPOINT[x][0] == league_id:
@@ -171,6 +175,7 @@ async def async_get_state(config) -> dict:
                 data = await r.json()
 
     found_team = False
+    prob_key = league_id + '-' + team_id
     if data is not None:
         try:
             values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
@@ -247,8 +252,8 @@ async def async_get_state(config) -> dict:
                             values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
                             values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
                         except:
-                            values["team_win_probability"] = None
-                            values["opponent_win_probability"] = None
+                            values["team_win_probability"] = team_prob.setdefault(prob_key, DEFAULT_PROB)
+                            values["opponent_win_probability"] = oppo_prob.setdefault(prob_key, DEFAULT_PROB)
                     else:
                         try:
                             values["team_timeouts"] = event["competitions"][0]["situation"]["awayTimeouts"]
@@ -260,8 +265,10 @@ async def async_get_state(config) -> dict:
                             values["team_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["awayWinPercentage"]
                             values["opponent_win_probability"] = event["competitions"][0]["situation"]["lastPlay"]["probability"]["homeWinPercentage"]
                         except:
-                            values["team_win_probability"] = None
-                            values["opponent_win_probability"] = None
+                            values["team_win_probability"] = team_prob.setdefault(prob_key, DEFAULT_PROB)
+                            values["opponent_win_probability"] = oppo_prob.setdefault(prob_key, DEFAULT_PROB)
+                    team_prob.update({prob_key: values["team_win_probability"]})
+                    oppo_prob.update({prob_key: values["opponent_win_probability"]})
                 values["team_abbr"] = event["competitions"][0]["competitors"][team_index]["team"]["abbreviation"]
                 values["team_id"] = event["competitions"][0]["competitors"][team_index]["team"]["id"]
                 values["team_name"] = event["competitions"][0]["competitors"][team_index]["team"]["shortDisplayName"]
