@@ -1,15 +1,16 @@
-# Sports game data in Home Assistant
+# Real-time Sports Scores in Home Assistant
 
-This integration fetches data for a team's current/future game for multiple sports, and creates a sensor with attributes for the details of the game. 
+This integration provides real-time scores for teams in multiple professional (NBA, NFL, NHL, MLB, MLS, and more), college (NCAA), and international (soccer) sports using ESPN APIs, and creates a sensor with attributes for the details of the game. 
 
-This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
+This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.  Thanks for the starting place!
 
-## Supported Leagues
-- Baseball - MLB (Major League Baseball)
-- Basketball - NBA (National Basketball Assc), NCAAM (NCAA Men's), NCAAW (NCAA Women's), WNBA (Women's NCAA)
-- Football - NFL (National Football League), NCAAF (NCAA Football)
+## Supported Sports / Leagues
+- Baseball - MLB
+- Basketball - NBA, WNBA, NCAAM, NCAAW, WNBA
+- Football - NFL, NCAAF
 - Hockey - NHL (Coming Soon)
-- Soccer - MLS (Major League Soccer), NWSL (National Women's Soccer League), BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
+- U.S. Soccer - MLS, NWSL
+- International Soccer - BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
 
 ## Sensor Data
 
@@ -76,9 +77,9 @@ Some attributes are only available for certain sports.
 
 ### Manually
 
-Clone or download this repository and copy the "nfl" directory to your "custom_components" directory in your config directory
+Clone or download this repository and copy the "teamtracker" directory to your "custom_components" directory in your config directory
 
-```<config directory>/custom_components/nfl/...```
+```<config directory>/custom_components/teamtracker/...```
   
 ### HACS
 
@@ -90,43 +91,43 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
 ## Configuration
 
 For the League, the following values are valid:
-- BUND
-- EPL
-- LIGA
-- LIG1
-- MLB
-- MLS
-- NBA
-- NCAAF
-- NCAAM
-- NCAAW
-- NFL
-- NWSL
-- SERA
-- WNBA
+- BUND (German Bundesliga)
+- EPL (English Premiere League)
+- LIGA (Spanish LaLiga)
+- LIG1 (French Ligue 1)
+- MLB (Major League Baseball)
+- MLS (Major League Soccer)
+- NBA (National Basketball Assc)
+- NCAAF (NCAA Football)
+- NCAAM (NCAA Men's Basketball)
+- NCAAW (NCAA Women's Basketball)
+- NFL (National Football League)
+- NWSL (National Women's Soccer League)
+- SERA (Italian Serie A)
+- WNBA (Women's NBA)
     
-You'll need to know your team ID, which is a 2-, 3- or 4-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/ in the top scores UI. 
+For the Team, you'll need to know the team ID ESPN uses for your team.  This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well.
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
-Look for the integration labeled "NFL" and enter the League and your team's acronym in the UI prompt. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.nfl`, otherwise it will be `sensor.friendly_name_you_picked`. 
+Search for the integration labeled "Team Tracker" and select it.  Enter the desired League from the list above and your team's ID in the UI prompt. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_picked`. 
 
 ### Manually in your `configuration.yaml` file
 
 To create a sensor instance add the following configuration to your sensor definitions using the team_id found above:
 
 ```
-- platform: nfl
+- platform: teamtracker
   league_id: 'NFL'
   team_id: 'SEA'
 ```
 
-After you restart Home Assistant then you should have a new sensor called `sensor.nfl` in your system.
+After you restart Home Assistant then you should have a new sensor called `sensor.team_tracker` in your system.
 
-You can overide the sensor default name (`sensor.nfl`) to one of your choosing by setting the `name` option:
+You can overide the sensor default name (`sensor.team_tracker`) to one of your choosing by setting the `name` option:
 
 ```
-- platform: nfl
+- platform: teamtracker
   league_id: 'NFL'
   team_id: 'SEA'
   name: Seahawks
