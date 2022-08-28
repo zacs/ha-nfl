@@ -10,8 +10,10 @@ LEAGUE_LIST = [
     ["BUND", "http://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard", "mdi:soccer"],
     ["EPL", "http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", "mdi:soccer"],
     ["LIGA", "http://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", "mdi:soccer"],
+    ["LIG1", "http://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard", "mdi:soccer"],
     ["MLS", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard", "mdi:soccer"],
-    ["NWSL", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard", "mdi:soccer"]
+    ["NWSL", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard", "mdi:soccer"],
+    ["SERA", "http://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard", "mdi:soccer"]
     ]
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
 

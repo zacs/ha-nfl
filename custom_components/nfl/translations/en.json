@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "data": {
-          "league_id": "League (NFL, NCAAF, MLB, NBA, WNBA, NCAAM, NCAAW, MLS, NWSL, BUND, EPL, LIGA)",
+          "league_id": "League (NFL, NCAAF, MLB, NBA, WNBA, NCAAM, NCAAW, MLS, NWSL, BUND, EPL, LIGA, LIG1, SERA)",
           "name": "Friendly Name",
           "team_id": "Team Acronym",
           "timeout": "Update Timeout (in seconds)"
@@ -17,7 +17,7 @@
     "step": {
       "init": {
         "data": {
-          "league_id": "League (NFL, NCAAF, MLB, NBA, WNBA, NCAAM, NCAAW, MLS, NWSL, BUND, EPL, LIGA)",
+          "league_id": "League (NFL, NCAAF, MLB, NBA, WNBA, NCAAM, NCAAW, MLS, NWSL, BUND, EPL, LIGA, LIG1, SERA)",
           "name": "Friendly Name",
           "team_id": "Team Acronym",
           "timeout": "Update Timeout (in seconds)"

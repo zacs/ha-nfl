@@ -355,7 +355,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_shots_on_target"] = None
                 values["opponent_total_shots"] = None
 
-                if league_id in ['MLS', 'NWSL', 'BUND', 'EPL', 'LIGA']:
+                if league_id in ['MLS', 'NWSL', 'BUND', 'EPL', 'LIGA', 'LIG1', 'SERA']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["team_shots_on_target"] = 0
                         values["team_total_shots"] = 0

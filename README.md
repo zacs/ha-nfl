@@ -5,11 +5,11 @@ This integration fetches data for a team's current/future game for multiple spor
 This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
 
 ## Supported Leagues
-- Baseball - MLB
-- Basketball - WNBA, NBA, NCAAM, NCAAW (beta)
-- Football - NFL, NCAAF
+- Baseball - MLB (Major League Baseball)
+- Basketball - NBA (National Basketball Assc), NCAAM (NCAA Men's), NCAAW (NCAA Women's), WNBA (Women's NCAA)
+- Football - NFL (National Football League), NCAAF (NCAA Football)
 - Hockey - NHL (Coming Soon)
-- Soccer - MLS, NWSL, BUND, EPL, LIGA
+- Soccer - MLS (Major League Soccer), NWSL (National Women's Soccer League), BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
 
 ## Sensor Data
 
@@ -93,6 +93,7 @@ For the League, the following values are valid:
 - BUND
 - EPL
 - LIGA
+- LIG1
 - MLB
 - MLS
 - NBA
@@ -101,6 +102,7 @@ For the League, the following values are valid:
 - NCAAW
 - NFL
 - NWSL
+- SERA
 - WNBA
     
 You'll need to know your team ID, which is a 2-, 3- or 4-letter acronym (eg. "SEA" for Seattle or "NE" for New England). You can find yours at https://espn.com/ in the top scores UI. 
