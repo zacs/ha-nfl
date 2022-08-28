@@ -13,8 +13,10 @@ from . import AlertsDataUpdateCoordinator
 
 from .const import (
     ATTRIBUTION,
+    LEAGUE_LIST,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
+    CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_ICON,
     DEFAULT_NAME,
@@ -70,9 +72,18 @@ class NFLScoresSensor(CoordinatorEntity):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(hass.data[DOMAIN][entry.entry_id][COORDINATOR])
+
+        league_id = entry.data[CONF_LEAGUE_ID].upper()
+        icon = DEFAULT_ICON
+        for x in range(len(LEAGUE_LIST)):
+            if LEAGUE_LIST[x][0] == league_id:
+                icon = LEAGUE_LIST[x][2]
+        if icon == DEFAULT_ICON:
+            _LOGGER.warn("League not found: %s", league_id)
+
         self._config = entry
         self._name = entry.data[CONF_NAME]
-        self._icon = DEFAULT_ICON
+        self._icon = icon
         self._league = None
         self._league_logo = None
         self._state = "PRE"

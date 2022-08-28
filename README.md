@@ -2,27 +2,29 @@
 
 This integration fetches data for a team's current/future game for multiple sports, and creates a sensor with attributes for the details of the game. 
 
-The integration is a shameless fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
+This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.Thank you for the starting place!
 
 ## Supported Leagues
 - Baseball - MLB
 - Basketball - WNBA, NBA, NCAAM, NCAAW (beta)
 - Football - NFL, NCAAF
 - Hockey - NHL (Coming Soon)
-- Soccer - MLS, NWSL
+- Soccer - MLS, NWSL, BUND, EPL, LIGA
 
 ## Sensor Data
 
 ### State
 The sensor is pretty simple: the main state is `PRE`, `IN`, `POST`, `BYE` or `NOT_FOUND`, but there are attributes for pretty much all aspects of the game, when available. State definitions are as you'd expect:
-- `PRE`: The game is in pre-game state. This happens on the first day of the game week, which seems to be Tuesday evenings around midnight Eastern time (once all the games through the Monday Night Football game are wrapped up). 
+- `PRE`: The game is in pre-game state. This happens when ESPN publishes the pre-game info via their API.  The lead time varies based on the league.
 - `IN`: The game is in progress.
 - `POST`: The game has completed. 
 - `BYE`: Your given team has a bye week this week. Note that attributes available are limited in this case (only abreviation, name, logo, and last updated time will be available). 
-- `NOT_FOUND`: There is no game found for your team, nor is there a bye. This should only happen at the end of the season, and once your team is eliminated from postseason play. 
+- `NOT_FOUND`: There is no game found for your team, nor is there a bye. This can happen if an invalid league or team ID has been entered.  It can also happen at the end of the season or mid-season when ESPN hasn't published the pre-game info for the next game. 
 
 ### Attributes
-The attributes available will change based on the sensor's state, a small number are always available (team abbreviation, team name, and logo), but otherwise the attributes only populate when in the current state. The table below lists which attributes are available in which states. 
+The attributes available will change based on the sensor's state, a small number are always available (league, team abbreviation, team name, and logo), but otherwise the attributes only populate when in the current state. The table below lists which attributes are available in which states. 
+
+Some attributes are only available for certain sports.
 
 | Name | Value | Relevant States |
 | --- | --- | --- |
@@ -88,13 +90,16 @@ Clone or download this repository and copy the "nfl" directory to your "custom_c
 ## Configuration
 
 For the League, the following values are valid:
+- BUND
+- EPL
+- LIGA
+- MLB
+- MLS
 - NBA
 - NCAAF
 - NCAAM
-- NCAAF
+- NCAAW
 - NFL
-- MLB
-- MLS
 - NWSL
 - WNBA
     
@@ -110,6 +115,7 @@ To create a sensor instance add the following configuration to your sensor defin
 
 ```
 - platform: nfl
+  league_id: 'NFL'
   team_id: 'SEA'
 ```
 
@@ -119,6 +125,7 @@ You can overide the sensor default name (`sensor.nfl`) to one of your choosing b
 
 ```
 - platform: nfl
+  league_id: 'NFL'
   team_id: 'SEA'
   name: Seahawks
 ```

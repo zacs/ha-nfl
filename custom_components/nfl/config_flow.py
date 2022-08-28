@@ -12,7 +12,6 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
-    API_ENDPOINT,
     CONF_LEAGUE_ID,
     CONF_TIMEOUT,
     CONF_TEAM_ID,

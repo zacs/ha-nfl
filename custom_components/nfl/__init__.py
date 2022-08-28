@@ -17,13 +17,14 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import (
     DEFAULT_API_ENDPOINT,
-    API_ENDPOINT,
+    LEAGUE_LIST,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
     CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_TIMEOUT,
     DEFAULT_PROB,
+    DEFAULT_LEAGUE_LOGO,
     DOMAIN,
     ISSUE_URL,
     PLATFORMS,
@@ -155,19 +156,15 @@ async def async_get_state(config) -> dict:
     global oppo_prob
 
     league_id = config[CONF_LEAGUE_ID].upper()
-    _LOGGER.debug("league_id %s", league_id)
     
-    url_found = False
-    for x in range(len(API_ENDPOINT)):
-        if API_ENDPOINT[x][0] == league_id:
-            _LOGGER.debug("API_ENDPOINT found %s", league_id)
-            url = API_ENDPOINT[x][1]
-            url_found = True
-    if not url_found:
-            _LOGGER.warn("URL for league not found: %s", league_id)
-            url = DEFAULT_API_ENDPOINT
+    url = DEFAULT_API_ENDPOINT
+    for x in range(len(LEAGUE_LIST)):
+        if LEAGUE_LIST[x][0] == league_id:
+            url = LEAGUE_LIST[x][1]
+    if url == DEFAULT_API_ENDPOINT:
+        _LOGGER.warn("URL for league not found: %s", league_id)
 
-    team_id = config[CONF_TEAM_ID]
+    team_id = config[CONF_TEAM_ID].upper()
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
             _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
@@ -180,10 +177,10 @@ async def async_get_state(config) -> dict:
         try:
             values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
         except:
-            values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
+            values["league_logo"] = DEFAULT_LEAGUE_LOGO
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
-            if team_id.upper() in event["shortName"]:
+            if team_id in event["shortName"]:
                 _LOGGER.debug("Found event; parsing data.")
                 found_team = True
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
@@ -363,22 +360,16 @@ async def async_get_state(config) -> dict:
                         values["team_shots_on_target"] = 0
                         values["team_total_shots"] = 0
                         for statistic in event["competitions"] [0] ["competitors"] [team_index] ["statistics"]:
-                            _LOGGER.debug("Looking at this statistic: %s" % statistic)
                             if "shotsOnTarget" in statistic["name"]:
-                                _LOGGER.debug("Found shotsOnTarget statistics; parsing data.")
                                 values["team_shots_on_target"] = statistic["displayValue"]
                             if "totalShots" in statistic["name"]:
-                                _LOGGER.debug("Found totalShots statistics; parsing data.")
                                 values["team_total_shots"] = statistic["displayValue"]
                         values["opponent_shots_on_target"] = 0
                         values["opponent_total_shots"] = 0
                         for statistic in event["competitions"] [0] ["competitors"] [oppo_index] ["statistics"]:
-                            _LOGGER.debug("Looking at this statistic: %s" % statistic)
                             if "shotsOnTarget" in statistic["name"]:
-                                _LOGGER.debug("Found shotsOnTarget statistics; parsing data.")
                                 values["opponent_shots_on_target"] = statistic["displayValue"]
                             if "totalShots" in statistic["name"]:
-                                _LOGGER.debug("Found totalShots statistics; parsing data.")
                                 values["opponent_total_shots"] = statistic["displayValue"]
                             
                         values["last_play"] = ''
@@ -423,7 +414,7 @@ async def async_get_state(config) -> dict:
                 try:
                     values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
                 except:
-                    values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
+                    values["league_logo"] = DEFAULT_LEAGUE_LOGO
             except:
                 _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
                 values["league"] = league_id
@@ -435,7 +426,7 @@ async def async_get_state(config) -> dict:
                 try:
                     values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
                 except:
-                    values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
+                    values["league_logo"] = DEFAULT_LEAGUE_LOGO
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
             _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
@@ -453,10 +444,7 @@ async def async_get_state(config) -> dict:
         values["team_logo"] = None
         values["state"] = 'NOT_FOUND'
         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-        try:
-            values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
-        except:
-            values["league_logo"] = 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png'
+        values["league_logo"] = DEFAULT_LEAGUE_LOGO
 
     return values
 
