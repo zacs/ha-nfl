@@ -24,7 +24,7 @@ CONF_LEAGUE_ID = "league_id"
 
 # Defaults
 DEFAULT_ICON = "mdi:scoreboard"
-DEFAULT_NAME = "NFL"
+DEFAULT_NAME = "team_tracker"
 DEFAULT_LEAGUE = "NFL"
 DEFAULT_TIMEOUT = 120
 DEFAULT_PROB = 0.0
@@ -34,8 +34,8 @@ DEFAULT_API_ENDPOINT = "http://site.api.espn.com/apis/site/v2/sports/league/not/
 # Misc
 TEAM_ID = ""
 VERSION = "0.1"
-ISSUE_URL = "https://github.com/zacs/ha_nfl"
-DOMAIN = "nfl"
+ISSUE_URL = "https://github.com/vasqued2/ha-teamtracker"
+DOMAIN = "teamtracker"
 PLATFORM = "sensor"
 ATTRIBUTION = "Data provided by ESPN"
 COORDINATOR = "coordinator"

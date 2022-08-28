@@ -1,11 +1,11 @@
 {
-    "domain": "nfl",
-    "name": "NFL",
+    "domain": "teamtracker",
+    "name": "Team Tracker",
     "version": "0.1",
-    "documentation": "https://github.com/zacs/ha_nfl",
-    "issue_tracker": "https://github.com/zacs/ha_nfl/issues",
+    "documentation": "https://github.com/vasqued2/ha-teamtracker",
+    "issue_tracker": "https://github.com/vasqued2/ha-teamtracker/issues",
     "dependencies": [],
-    "codeowners": ["@zacs"],
+    "codeowners": ["@vasqued2"],
     "config_flow": true,
     "requirements": ["arrow"],
     "iot_class": "cloud_polling"

@@ -59,15 +59,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.data[DOMAIN][config.entry_id] = {
         COORDINATOR: coordinator,
     }
-    async_add_entities([NFLScoresSensor(hass, config)], True)
+    async_add_entities([TeamTrackerScoresSensor(hass, config)], True)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup the sensor platform."""
-    async_add_entities([NFLScoresSensor(hass, entry)], True)
+    async_add_entities([TeamTrackerScoresSensor(hass, entry)], True)
 
 
-class NFLScoresSensor(CoordinatorEntity):
+class TeamTrackerScoresSensor(CoordinatorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:

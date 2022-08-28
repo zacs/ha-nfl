@@ -1,4 +1,4 @@
-""" NFL Team Status """
+""" TeamTracker Team Status """
 import logging
 from datetime import timedelta
 import arrow
@@ -40,7 +40,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load the saved entities."""
     # Print startup message
     _LOGGER.info(
-        "NFL version %s is starting, if you have any issues please report them here: %s",
+        "TeamTracker version %s is starting, if you have any issues please report them here: %s",
         VERSION,
         ISSUE_URL,
     )
@@ -108,7 +108,7 @@ async def async_migrate_entry(hass, config_entry):
      return True
 
 class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching NFL data."""
+    """Class to manage fetching TeamTracker data."""
 
     def __init__(self, hass, config, the_timeout: int):
         """Initialize."""
