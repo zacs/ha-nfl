@@ -21,6 +21,7 @@ from .const import (
     DEFAULT_ICON,
     DEFAULT_NAME,
     DEFAULT_TIMEOUT,
+    DEFAULT_LEAGUE,
     DOMAIN,
 )
 
@@ -28,12 +29,12 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
+        vol.Optional(CONF_LEAGUE_ID, default=DEFAULT_LEAGUE): cv.string,
         vol.Required(CONF_TEAM_ID): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): int,
     }
 )
-
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Configuration from yaml"""
