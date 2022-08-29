@@ -7,6 +7,7 @@ LEAGUE_LIST = [
     ["NCAAW", "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard", "mdi:basketball"],
     ["NCAAF", "http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", "mdi:football"],
     ["NFL", "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard", "mdi:football"],
+    ["NHL", "http://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard", "mdi:hockey-puck"],
     ["BUND", "http://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard", "mdi:soccer"],
     ["EPL", "http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", "mdi:soccer"],
     ["LIGA", "http://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", "mdi:soccer"],

@@ -52,38 +52,7 @@ async def _get_team_list(self):
     """Return list of team acronyms"""
 
     team_list = [
-        'ARI',
-        'ATL',
-        'BAL',
-        'BUF',
-        'CAR',
-        'CHI',
-        'CIN',
-        'CLE',
-        'DAL',
-        'DEN',
-        'DET',
-        'GB',
-        'HOU',
-        'IND',
-        'JAX',
-        'KC',
-        'LAC',
-        'LAR',
-        'LV',
-        'MIA',
-        'MIN',
-        'NE',
-        'NO',
-        'NYG',
-        'NYJ',
-        'PHI',
-        'PIT',
-        'SEA',
-        'SF',
-        'TB',
-        'TEN',
-        'WSH'
+        'XXX'
     ]
     
     _LOGGER.debug("Team list: %s", team_list)
