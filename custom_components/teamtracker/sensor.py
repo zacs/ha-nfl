@@ -13,31 +13,53 @@ from . import AlertsDataUpdateCoordinator
 
 from .const import (
     ATTRIBUTION,
-    LEAGUE_LIST,
+    CONF_LEAGUE_ID,
+    CONF_LEAGUE_PATH,
+    CONF_SPORT_PATH,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
-    CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_ICON,
-    DEFAULT_NAME,
-    DEFAULT_TIMEOUT,
     DEFAULT_LEAGUE,
+    DEFAULT_LEAGUE_PATH,
+    DEFAULT_NAME,
+    DEFAULT_SPORT_PATH,
+    DEFAULT_TIMEOUT,
     DOMAIN,
+    LEAGUE_LIST,
+    SPORT_LIST,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Optional(CONF_LEAGUE_ID, default=DEFAULT_LEAGUE): cv.string,
+        vol.Required(CONF_LEAGUE_ID, default=DEFAULT_LEAGUE): cv.string,
         vol.Required(CONF_TEAM_ID): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): int,
+        vol.Optional(CONF_SPORT_PATH, default=DEFAULT_SPORT_PATH): cv.string,
+        vol.Optional(CONF_LEAGUE_PATH, default=DEFAULT_LEAGUE_PATH): cv.string,
     }
 )
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Configuration from yaml"""
+
+    _LOGGER.warn("Setting up config from YAML: %s", config)
+
+    league_id = config[CONF_LEAGUE_ID].upper()
+    league_found = False
+    for x in range(len(LEAGUE_LIST)):
+        if LEAGUE_LIST[x][0] == league_id:
+            league_found = True
+            _LOGGER.warn("League %sfound.", league_id)
+            config.update({CONF_SPORT_PATH: LEAGUE_LIST[x][1]})
+            config.update({CONF_LEAGUE_PATH: LEAGUE_LIST[x][2]})
+    if not league_found:
+        _LOGGER.warn("League %s not found.  Attempting to use custom API for user-defined sport %s, league %s.", 
+            (league_id, config[CONF_SPORT_PATH], config[CONF_LEAGUE_PATH]))
+
     if DOMAIN not in hass.data.keys():
         hass.data.setdefault(DOMAIN, {})
         config.entry_id = slugify(f"{config.get(CONF_TEAM_ID)}")
@@ -74,16 +96,17 @@ class TeamTrackerScoresSensor(CoordinatorEntity):
         """Initialize the sensor."""
         super().__init__(hass.data[DOMAIN][entry.entry_id][COORDINATOR])
 
-        league_id = entry.data[CONF_LEAGUE_ID].upper()
+        sport = entry.data[CONF_SPORT_PATH]
         icon = DEFAULT_ICON
-        for x in range(len(LEAGUE_LIST)):
-            if LEAGUE_LIST[x][0] == league_id:
-                icon = LEAGUE_LIST[x][2]
+        for x in range(len(SPORT_LIST)):
+            if SPORT_LIST[x][0] == sport:
+                icon = SPORT_LIST[x][1]
         if icon == DEFAULT_ICON:
-            _LOGGER.warn("League not found: %s", league_id)
+            _LOGGER.warn("Sport not found: %s", sport)
 
         self._config = entry
         self._name = entry.data[CONF_NAME]
+        self._sport = None
         self._icon = icon
         self._league = None
         self._league_logo = None
@@ -176,6 +199,7 @@ class TeamTrackerScoresSensor(CoordinatorEntity):
             return attrs
 
         attrs[ATTR_ATTRIBUTION] = ATTRIBUTION
+        attrs["sport"] = self.coordinator.data["sport"]
         attrs["league"] = self.coordinator.data["league"]
         attrs["league_logo"] = self.coordinator.data["league_logo"]
         attrs["date"] = self.coordinator.data["date"]

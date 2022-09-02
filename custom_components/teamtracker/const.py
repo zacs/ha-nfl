@@ -1,36 +1,50 @@
 # API
-LEAGUE_LIST = [
-    ["MLB", "http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard", "mdi:baseball"],
-    ["NBA", "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", "mdi:basketball"],
-    ["WNBA", "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard", "mdi:basketball"],
-    ["NCAAM", "http://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard", "mdi:basketball"],
-    ["NCAAW", "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard", "mdi:basketball"],
-    ["NCAAF", "http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", "mdi:football"],
-    ["NFL", "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard", "mdi:football"],
-    ["NHL", "http://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard", "mdi:hockey-puck"],
-    ["BUND", "http://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard", "mdi:soccer"],
-    ["EPL", "http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", "mdi:soccer"],
-    ["LIGA", "http://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", "mdi:soccer"],
-    ["LIG1", "http://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard", "mdi:soccer"],
-    ["MLS", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard", "mdi:soccer"],
-    ["NWSL", "http://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard", "mdi:soccer"],
-    ["SERA", "http://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard", "mdi:soccer"]
-    ]
+URL_HEAD = "http://site.api.espn.com/apis/site/v2/sports/"
+URL_TAIL = "/scoreboard"
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"
 
+LEAGUE_LIST = [
+    ["MLB", "baseball", "mlb"],
+    ["NBA", "basketball", "nba"],
+    ["WNBA", "basketball", "wnba"],
+    ["NCAAM", "basketball", "mens-college-basketball"],
+    ["NCAAW", "basketball", "womens-college-basketball"],
+    ["NCAAF", "football", "college-football"],
+    ["NFL", "football", "nfl"],
+    ["NHL", "hockey", "nhl"],
+    ["BUND", "soccer", "ger.1"],
+    ["EPL", "soccer", "eng.1"], 
+    ["LIGA", "soccer", "esp.1"], 
+    ["LIG1", "soccer", "fra.1"], 
+    ["MLS", "soccer", "usa.1"], 
+    ["NWSL", "soccer", "usa.nwsl"], 
+    ["SERA", "soccer", "ita.1"]
+    ]
+
+SPORT_LIST = [
+    ["baseball", "mdi:baseball"],
+    ["basketball", "mdi:basketball"],
+    ["football", "mdi:football"],
+    ["hockey", "mdi:hockey-puck"],
+    ["soccer", "mdi:soccer"]
+]
+
 # Config
+CONF_LEAGUE_ID = "league_id"
+CONF_LEAGUE_PATH = "league_path"
+CONF_SPORT_PATH = "sport_path"
 CONF_TIMEOUT = "timeout"
 CONF_TEAM_ID = "team_id"
-CONF_LEAGUE_ID = "league_id"
 
 # Defaults
 DEFAULT_ICON = "mdi:scoreboard"
-DEFAULT_NAME = "team_tracker"
 DEFAULT_LEAGUE = "NFL"
-DEFAULT_TIMEOUT = 120
-DEFAULT_PROB = 0.0
 DEFAULT_LEAGUE_LOGO = "https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png"
-DEFAULT_API_ENDPOINT = "http://site.api.espn.com/apis/site/v2/sports/league/not/found"
+DEFAULT_LEAGUE_PATH = "league_not_found"
+DEFAULT_NAME = "team_tracker"
+DEFAULT_PROB = 0.0
+DEFAULT_SPORT_PATH = "sport_not_found"
+DEFAULT_TIMEOUT = 120
 
 # Misc
 TEAM_ID = ""

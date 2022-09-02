@@ -12,6 +12,8 @@ This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-
 - U.S. Soccer - MLS, NWSL
 - International Soccer - BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
 
+See Custom API Configuration section below on how to set up additional sports/leagues if you know the ESPN API.
+
 ## Sensor Data
 
 ### State
@@ -118,8 +120,8 @@ To create a sensor instance add the following configuration to your sensor defin
 
 ```
 - platform: teamtracker
-  league_id: 'NFL'
-  team_id: 'SEA'
+  league_id: NFL
+  team_id: CLE
 ```
 
 After you restart Home Assistant then you should have a new sensor called `sensor.team_tracker` in your system.
@@ -128,9 +130,37 @@ You can overide the sensor default name (`sensor.team_tracker`) to one of your c
 
 ```
 - platform: teamtracker
-  league_id: 'NFL'
-  team_id: 'SEA'
-  name: Seahawks
+  league_id: NFL
+  team_id: CLE
+  name: Browns
 ```
 
 Using the configuration example above the sensor will then be called "sensor.seahawks".
+
+## Custom API Configuration
+
+It is possible to configure Team Tracker to use a custom API beyond those for the pre-configured leagues.  Please note that the APIs for many of the more obscure sports will produce an error because they do not return enough data to drive the sensor.
+
+All ESPN APIs use a URL in the following format:
+https://site.api.espn.com/apis/site/v2/sports/{SPORT_PATH}/{LEAGUE_PATH}/scoreboard
+where {SPORT_PATH} is the sport and {LEAGUE_PATH} is the league that the team plays in.
+
+For example, for the NFL, the URL is https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
+
+If you know the URL with the scoreboard of your team, it is possible to configure Team Tracker to use it.  It is beyond the scope of this document to explain how to determine the URL for the desired scoreboard, but the effort involves examining the URLs of various ESPN pages and trial-and-error.
+
+### Via the "Configuration->Integrations" section of the Home Assistant UI
+
+When using the Home Assistant UI to set up your sensor, simply enter 'XXX' in the League field.  This will trigger a second dialogue box which will allow you to enter the values for the {SPORT} and {LEAGUE}.
+
+### Manually in your `configuration.yaml` file
+
+To use YAML to set up your sensor, set the league_id to 'XXX' and enter the desired values for sport_path and league_path.
+```
+- platform: teamtracker
+  league_id: XXX
+  team_id: CLE
+  sport_path: football
+  league_path: nfl
+  name: Browns
+```

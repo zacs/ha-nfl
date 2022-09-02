@@ -16,18 +16,24 @@ from homeassistant.helpers.entity_registry import (
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
-    DEFAULT_API_ENDPOINT,
-    LEAGUE_LIST,
+    CONF_LEAGUE_ID,
+    CONF_LEAGUE_PATH,
+    CONF_SPORT_PATH,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
-    CONF_LEAGUE_ID,
     COORDINATOR,
     DEFAULT_TIMEOUT,
-    DEFAULT_PROB,
+    DEFAULT_LEAGUE,
     DEFAULT_LEAGUE_LOGO,
+    DEFAULT_LEAGUE_PATH,
+    DEFAULT_PROB,
+    DEFAULT_SPORT_PATH,
     DOMAIN,
     ISSUE_URL,
+    LEAGUE_LIST,
     PLATFORMS,
+    URL_HEAD,
+    URL_TAIL,
     USER_AGENT,
     VERSION,
 )
@@ -88,24 +94,35 @@ async def update_listener(hass, entry):
     hass.async_add_job(hass.config_entries.async_forward_entry_setup(entry, "sensor"))
 
 async def async_migrate_entry(hass, config_entry):
-     """Migrate an old config entry."""
-     version = config_entry.version
+    """Migrate an old config entry."""
+    version = config_entry.version
 
-     # 1-> 2: Migration format
-     if version == 1:
-         _LOGGER.debug("Migrating from version %s", version)
-         updated_config = config_entry.data.copy()
+    # 1-> 2->3: Migration format
+    # Add CONF_TIMEOUT, CONF_LEAGUE_ID, CONF_SPORT_PATH, and CONF_LEAGUE_PATH if not already populated
+    if version < 3:
+        _LOGGER.debug("Migrating from version %s", version)
+        updated_config = config_entry.data.copy()
 
-         if CONF_TIMEOUT not in updated_config.keys():
-             updated_config[CONF_TIMEOUT] = DEFAULT_TIMEOUT
+        if CONF_TIMEOUT not in updated_config.keys():
+            updated_config[CONF_TIMEOUT] = DEFAULT_TIMEOUT
+        if CONF_LEAGUE_ID not in updated_config.keys():
+            updated_config[CONF_LEAGUE_ID] = DEFAULT_LEAGUE
+        if (CONF_SPORT_PATH not in updated_config.keys()) or (CONF_LEAGUE_PATH not in updated_config.keys()):
+            league_id = updated_config[CONF_LEAGUE_ID].upper()
+            updated_config[CONF_SPORT_PATH] = DEFAULT_SPORT_PATH
+            updated_config[CONF_LEAGUE_PATH] = DEFAULT_LEAGUE_PATH
+            for x in range(len(LEAGUE_LIST)):
+                if LEAGUE_LIST[x][0] == league_id:
+                    updated_config[CONF_SPORT_PATH] = LEAGUE_LIST[x][1]
+                    updated_config[CONF_LEAGUE_PATH] = LEAGUE_LIST[x][2]
 
-         if updated_config != config_entry.data:
-             hass.config_entries.async_update_entry(config_entry, data=updated_config)
+        if updated_config != config_entry.data:
+            hass.config_entries.async_update_entry(config_entry, data=updated_config)
 
-         config_entry.version = 2
-         _LOGGER.debug("Migration to version %s complete", config_entry.version)
+        config_entry.version = 3
+        _LOGGER.debug("Migration to version %s complete", config_entry.version)
 
-     return True
+    return True
 
 class AlertsDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching TeamTracker data."""
@@ -156,15 +173,10 @@ async def async_get_state(config) -> dict:
     global oppo_prob
 
     league_id = config[CONF_LEAGUE_ID].upper()
-    
-    url = DEFAULT_API_ENDPOINT
-    for x in range(len(LEAGUE_LIST)):
-        if LEAGUE_LIST[x][0] == league_id:
-            url = LEAGUE_LIST[x][1]
-    if url == DEFAULT_API_ENDPOINT:
-        _LOGGER.warn("URL for league not found: %s", league_id)
-
+    sport_path = config[CONF_SPORT_PATH]
+    league_path = config[CONF_LEAGUE_PATH]
     team_id = config[CONF_TEAM_ID].upper()
+    url = URL_HEAD + sport_path + "/" + league_path + URL_TAIL
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
             _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
@@ -178,6 +190,7 @@ async def async_get_state(config) -> dict:
             values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
         except:
             values["league_logo"] = DEFAULT_LEAGUE_LOGO
+        values["sport"] = sport_path
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
             if team_id in event["shortName"]:
@@ -314,7 +327,7 @@ async def async_get_state(config) -> dict:
                 values["on_second"] = None
                 values["on_third"] = None
 
-                if league_id == "MLB":
+                if sport_path in ["baseball"]:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["clock"] = event["status"]["type"]["detail"] # Inning
                         if values["clock"][:3].lower() in ['bot','mid']:
@@ -355,7 +368,7 @@ async def async_get_state(config) -> dict:
                 values["opponent_shots_on_target"] = None
                 values["opponent_total_shots"] = None
 
-                if league_id in ['MLS', 'NWSL', 'BUND', 'EPL', 'LIGA', 'LIG1', 'SERA']:
+                if sport_path in ['soccer']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["team_shots_on_target"] = 0
                         values["team_total_shots"] = 0
@@ -415,6 +428,7 @@ async def async_get_state(config) -> dict:
                     values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
                 except:
                     values["league_logo"] = DEFAULT_LEAGUE_LOGO
+                values["sport"] = sport_path
             except:
                 _LOGGER.debug("Team not found in active games or bye week list. Have you missed the playoffs?")
                 values["league"] = league_id
@@ -427,6 +441,7 @@ async def async_get_state(config) -> dict:
                     values["league_logo"] = data["leagues"][0]["logos"][0]["href"]
                 except:
                     values["league_logo"] = DEFAULT_LEAGUE_LOGO
+                values["sport"] = sport_path
         if values["state"] == 'PRE' and ((arrow.get(values["date"])-arrow.now()).total_seconds() < 1200):
             _LOGGER.debug("Event is within 20 minutes, setting refresh rate to 5 seconds.")
             values["private_fast_refresh"] = True
@@ -445,6 +460,8 @@ async def async_get_state(config) -> dict:
         values["state"] = 'NOT_FOUND'
         values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
         values["league_logo"] = DEFAULT_LEAGUE_LOGO
+        values["sport"] = sport_path
+
 
     return values
 
