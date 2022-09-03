@@ -68,17 +68,6 @@ def _get_path_schema(hass: Any, user_input: list, default_dict: list) -> Any:
         }
     )
 
-async def _get_team_list(self):
-    """Return list of team acronyms"""
-
-    team_list = [
-        'XXX'
-    ]
-    
-    _LOGGER.debug("Team list: %s", team_list)
-    return team_list
-
-
 @config_entries.HANDLERS.register(DOMAIN)
 class TeamTrackerScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for TeamTracker."""
@@ -94,7 +83,6 @@ class TeamTrackerScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input={}):
         """Handle a flow initialized by the user."""
         self._errors = {}
-        self._team_list = await _get_team_list(self)
 
         if user_input is not None:
             league_id = user_input[CONF_LEAGUE_ID].upper()
@@ -148,41 +136,5 @@ class TeamTrackerScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="path",
             data_schema=_get_path_schema(self.hass, user_input, defaults),
-            errors=self._errors,
-        )
-
-
-
-
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry):
-        return TeamTrackerScoresOptionsFlow(config_entry)
-
-
-class TeamTrackerScoresOptionsFlow(config_entries.OptionsFlow):
-    """Options flow for TeamTracker."""
-
-    def __init__(self, config_entry):
-        """Initialize."""
-        self.config = config_entry
-        self._data = dict(config_entry.options)
-        self._errors = {}
-
-    async def async_step_init(self, user_input=None):
-        """Manage options."""
-        if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(title="", data=self._data)
-        return await self._show_options_form(user_input)
-
-
-    async def _show_options_form(self, user_input):
-        """Show the configuration form to edit location data."""
-
-        return self.async_show_form(
-            step_id="init",
-            data_schema=_get_schema(self.hass, user_input, self._data),
             errors=self._errors,
         )

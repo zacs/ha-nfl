@@ -46,19 +46,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Configuration from yaml"""
 
-    _LOGGER.warn("Setting up config from YAML: %s", config)
+    _LOGGER.debug("Setting up config from YAML: %s", config)
 
     league_id = config[CONF_LEAGUE_ID].upper()
-    league_found = False
     for x in range(len(LEAGUE_LIST)):
         if LEAGUE_LIST[x][0] == league_id:
-            league_found = True
-            _LOGGER.warn("League %sfound.", league_id)
             config.update({CONF_SPORT_PATH: LEAGUE_LIST[x][1]})
             config.update({CONF_LEAGUE_PATH: LEAGUE_LIST[x][2]})
-    if not league_found:
-        _LOGGER.warn("League %s not found.  Attempting to use custom API for user-defined sport %s, league %s.", 
-            (league_id, config[CONF_SPORT_PATH], config[CONF_LEAGUE_PATH]))
 
     if DOMAIN not in hass.data.keys():
         hass.data.setdefault(DOMAIN, {})

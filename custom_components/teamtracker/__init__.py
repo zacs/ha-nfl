@@ -453,6 +453,7 @@ async def async_get_state(config) -> dict:
             values["private_fast_refresh"] = False
     else:
         _LOGGER.warn("URL did not return data:  %s", url)
+        values = await async_clear_states(config)
         values["league"] = league_id
         values["team_abbr"] = team_id
         values["team_name"] = None
