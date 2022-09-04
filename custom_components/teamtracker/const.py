@@ -18,7 +18,9 @@ LEAGUE_LIST = [
     ["LIG1", "soccer", "fra.1"], 
     ["MLS", "soccer", "usa.1"], 
     ["NWSL", "soccer", "usa.nwsl"], 
-    ["SERA", "soccer", "ita.1"]
+    ["SERA", "soccer", "ita.1"],
+    ["NCAAVBM", "volleyball", "mens-college-volleyball"],
+    ["NCAAVBW", "volleyball", "womens-college-volleyball"],
     ]
 
 SPORT_LIST = [
@@ -26,7 +28,8 @@ SPORT_LIST = [
     ["basketball", "mdi:basketball"],
     ["football", "mdi:football"],
     ["hockey", "mdi:hockey-puck"],
-    ["soccer", "mdi:soccer"]
+    ["soccer", "mdi:soccer"],
+    ["volleyball", "mdi:volleyball"]
 ]
 
 # Config

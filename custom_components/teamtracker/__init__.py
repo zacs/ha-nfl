@@ -193,7 +193,12 @@ async def async_get_state(config) -> dict:
         values["sport"] = sport_path
         for event in data["events"]:
             #_LOGGER.debug("Looking at this event: %s" % event)
-            if team_id in event["shortName"]:
+            try:
+                sn = event["shortName"]
+            except:
+                sn = ""
+                _LOGGER.debug("This is an ill-formed event, it does not have a short name: %s" % event)
+            if team_id in sn:
                 _LOGGER.debug("Found event; parsing data.")
                 found_team = True
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
@@ -289,13 +294,19 @@ async def async_get_state(config) -> dict:
                 values["team_homeaway"] = event["competitions"][0]["competitors"][team_index]["homeAway"]
                 values["team_logo"] = event["competitions"][0]["competitors"][team_index]["team"]["logo"]
                 try:
-                    values["team_colors"] = [''.join(('#',event["competitions"][0]["competitors"][team_index]["team"]["color"])), 
-                                         ''.join(('#',event["competitions"][0]["competitors"][team_index]["team"]["alternateColor"]))]
+                    color = '#' + event["competitions"][0]["competitors"][team_index]["team"]["color"]
                 except:
                     if team_id == 'NFC':
-                        values["team_colors"] = ['#013369','#013369']
-                    if team_id == 'AFC':
-                        values["team_colors"] = ['#D50A0A','#D50A0A']
+                        color = '#013369'
+                    elif team_id == 'AFC':
+                        color = '#D50A0A'
+                    else:
+                        color = "#D3D3D3"
+                try:
+                    alt_color = '#' + event["competitions"][0]["competitors"][team_index]["team"]["alternateColor"]
+                except:
+                    alt_color = color
+                values["team_colors"] = [color, alt_color]
                 values["team_score"] = event["competitions"][0]["competitors"][team_index]["score"]                
                 values["opponent_abbr"] = event["competitions"][0]["competitors"][oppo_index]["team"]["abbreviation"]
                 values["opponent_id"] = event["competitions"][0]["competitors"][oppo_index]["team"]["id"]
@@ -307,13 +318,19 @@ async def async_get_state(config) -> dict:
                 values["opponent_homeaway"] = event["competitions"][0]["competitors"][oppo_index]["homeAway"]
                 values["opponent_logo"] = event["competitions"][0]["competitors"][oppo_index]["team"]["logo"]
                 try:
-                    values["opponent_colors"] = [''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["color"])), 
-                                         ''.join(('#',event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]))]
+                    color = '#' + event["competitions"][0]["competitors"][oppo_index]["team"]["color"]
                 except:
-                    if team_id == 'AFC':
-                        values["opponent_colors"] = ['#013369','#013369']
                     if team_id == 'NFC':
-                        values["opponent_colors"] = ['#D50A0A','#D50A0A']
+                        color = '#013369'
+                    elif team_id == 'AFC':
+                        color = '#D50A0A'
+                    else:
+                        color = "#A9A9A9"
+                try:
+                    alt_color = '#' + event["competitions"][0]["competitors"][oppo_index]["team"]["alternateColor"]
+                except:
+                    alt_color = color
+                values["opponent_colors"] = [color, alt_color]
                 values["opponent_score"] = event["competitions"][0]["competitors"][oppo_index]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
                 values["private_fast_refresh"] = False
@@ -400,6 +417,39 @@ async def async_get_state(config) -> dict:
                             except:
                                 values["last_play"] = values["last_play"] + " (Last play not found) "
         
+#
+# The Volleyball Specific Fields
+#
+#                values["team_sets"] = 
+#                values["opponent_sets"] = None
+
+                if sport_path in ['volleyball']:
+                    if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
+                        values["clock"] = event["status"]["type"]["detail"] # Set
+                        try:
+                            values["team_total_shots"] = event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [-1] ["value"]
+                        except:
+                            values["team_total_shots"] = 0
+                        try:
+                            values["opponent_total_shots"] = event["competitions"] [0] ["competitors"] [oppo_index] ["linescores"] [-1] ["value"]
+                        except:
+                            values["opponent_total_shots"] = 0
+                            
+                        values["last_play"] = ''
+                        sets = len(event["competitions"] [0] ["competitors"] [team_index] ["linescores"])
+                        for x in range (0, sets):
+                            values["last_play"] = values["last_play"] + " Match " + str(x + 1) + ": "
+                            values["last_play"] = values["last_play"] + values["team_abbr"] + " "
+                            try:
+                                values["last_play"] = values["last_play"] + str(int(event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [x] ["value"])) + " "
+                            except:
+                                values["last_play"] = values["last_play"] + "?? "
+                            values["last_play"] = values["last_play"] + values["opponent_abbr"] + " "
+                            try:
+                                values["last_play"] = values["last_play"] + str(int(event["competitions"] [0] ["competitors"] [oppo_index] ["linescores"] [x] ["value"])) + "; "
+                            except:
+                                values["last_play"] = values["last_play"] + "??; "
+
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
             _LOGGER.debug("Did not find a game with for the configured team. Checking if it's a bye week.")
