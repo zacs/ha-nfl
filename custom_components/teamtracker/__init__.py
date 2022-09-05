@@ -16,12 +16,14 @@ from homeassistant.helpers.entity_registry import (
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
+    CONF_CONFERENCE_ID,
     CONF_LEAGUE_ID,
     CONF_LEAGUE_PATH,
     CONF_SPORT_PATH,
     CONF_TIMEOUT,
     CONF_TEAM_ID,
     COORDINATOR,
+    DEFAULT_CONFERENCE_ID,
     DEFAULT_TIMEOUT,
     DEFAULT_LEAGUE,
     DEFAULT_LEAGUE_LOGO,
@@ -175,8 +177,11 @@ async def async_get_state(config) -> dict:
     league_id = config[CONF_LEAGUE_ID].upper()
     sport_path = config[CONF_SPORT_PATH]
     league_path = config[CONF_LEAGUE_PATH]
+    url_parms = ""
+    if CONF_CONFERENCE_ID in config.keys():
+            url_parms = "?groups=" + config[CONF_CONFERENCE_ID]
     team_id = config[CONF_TEAM_ID].upper()
-    url = URL_HEAD + sport_path + "/" + league_path + URL_TAIL
+    url = URL_HEAD + sport_path + "/" + league_path + URL_TAIL + url_parms
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
             _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
@@ -426,19 +431,23 @@ async def async_get_state(config) -> dict:
                 if sport_path in ['volleyball']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["clock"] = event["status"]["type"]["detail"] # Set
+                        values["team_total_shots"] = values["team_score"]
+                        values["team_timeouts"] = values["team_score"]
+                        values["opponent_total_shots"] = values["opponent_score"]
+                        values["opponent_timeouts"] = values["opponent_score"]
                         try:
-                            values["team_total_shots"] = event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [-1] ["value"]
+                            values["team_score"] = event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [-1] ["value"]
                         except:
-                            values["team_total_shots"] = 0
+                            values["team_score"] = 0
                         try:
-                            values["opponent_total_shots"] = event["competitions"] [0] ["competitors"] [oppo_index] ["linescores"] [-1] ["value"]
+                            values["opponent_score"] = event["competitions"] [0] ["competitors"] [oppo_index] ["linescores"] [-1] ["value"]
                         except:
-                            values["opponent_total_shots"] = 0
+                            values["opponent_score"] = 0
                             
                         values["last_play"] = ''
                         sets = len(event["competitions"] [0] ["competitors"] [team_index] ["linescores"])
                         for x in range (0, sets):
-                            values["last_play"] = values["last_play"] + " Match " + str(x + 1) + ": "
+                            values["last_play"] = values["last_play"] + " Set " + str(x + 1) + ": "
                             values["last_play"] = values["last_play"] + values["team_abbr"] + " "
                             try:
                                 values["last_play"] = values["last_play"] + str(int(event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [x] ["value"])) + " "

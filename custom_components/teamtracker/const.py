@@ -33,6 +33,7 @@ SPORT_LIST = [
 ]
 
 # Config
+CONF_CONFERENCE_ID = "conference_id"
 CONF_LEAGUE_ID = "league_id"
 CONF_LEAGUE_PATH = "league_path"
 CONF_SPORT_PATH = "sport_path"
@@ -40,6 +41,7 @@ CONF_TIMEOUT = "timeout"
 CONF_TEAM_ID = "team_id"
 
 # Defaults
+DEFAULT_CONFERENCE_ID = ""
 DEFAULT_ICON = "mdi:scoreboard"
 DEFAULT_LEAGUE = "NFL"
 DEFAULT_LEAGUE_LOGO = "https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png"
