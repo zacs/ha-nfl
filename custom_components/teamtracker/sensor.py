@@ -159,6 +159,11 @@ class TeamTrackerScoresSensor(CoordinatorEntity):
         self._team_total_shots = None
         self._opponent_shots_on_target = None
         self._opponent_total_shots = None
+#
+#  Volleyball Specific Fields
+#
+        self._team_sets_won = None
+        self._opponent_sets_won = None
 
     @property
     def unique_id(self):
@@ -248,7 +253,11 @@ class TeamTrackerScoresSensor(CoordinatorEntity):
         attrs["team_total_shots"] = self.coordinator.data["team_total_shots"]
         attrs["opponent_shots_on_target"] = self.coordinator.data["opponent_shots_on_target"]
         attrs["opponent_total_shots"] = self.coordinator.data["opponent_total_shots"]
-
+#
+#  Volleyball Specific Fields
+#
+        attrs["team_sets_won"] = self.coordinator.data["team_sets_won"]
+        attrs["opponent_sets_won"] = self.coordinator.data["opponent_sets_won"]
         return attrs
 
     @property

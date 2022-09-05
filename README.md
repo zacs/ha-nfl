@@ -112,8 +112,8 @@ For the Team, you'll need to know the team ID ESPN uses for your team.  This is 
 
 By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.
 
-The following values are valid ESPN Conference identifiers:
-- Top 25 Ranked Teams:  no Conference ID is needed
+The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
+
 - ACC: 1
 - American: 151
 - Big 12: 4
@@ -139,11 +139,11 @@ The following values are valid ESPN Conference identifiers:
 - Southern: 29
 - Southland: 30
 - WAC: 16
-- DII/DII: 35
 
 The following identifiers are also valid:
 - FBS (1-A):  80 (subset of unranked FBS games)
 - FCS (I-AA): 81 (subset of FCS games)
+- DII/DII: 35
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 

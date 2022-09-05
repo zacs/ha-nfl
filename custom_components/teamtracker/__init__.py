@@ -2,6 +2,7 @@
 import logging
 from datetime import timedelta
 import arrow
+import codecs
 
 import aiohttp
 from async_timeout import timeout
@@ -179,7 +180,8 @@ async def async_get_state(config) -> dict:
     league_path = config[CONF_LEAGUE_PATH]
     url_parms = ""
     if CONF_CONFERENCE_ID in config.keys():
-            url_parms = "?groups=" + config[CONF_CONFERENCE_ID]
+            if (len(config[CONF_CONFERENCE_ID]) > 0):
+                url_parms = "?groups=" + config[CONF_CONFERENCE_ID]
     team_id = config[CONF_TEAM_ID].upper()
     url = URL_HEAD + sport_path + "/" + league_path + URL_TAIL + url_parms
     async with aiohttp.ClientSession() as session:
@@ -425,16 +427,14 @@ async def async_get_state(config) -> dict:
 #
 # The Volleyball Specific Fields
 #
-#                values["team_sets"] = 
-#                values["opponent_sets"] = None
+                values["team_sets_won"] = None
+                values["opponent_sets_won"] = None
 
                 if sport_path in ['volleyball']:
                     if event["status"]["type"]["state"].lower() in ['in']: # Set MLB specific fields
                         values["clock"] = event["status"]["type"]["detail"] # Set
-                        values["team_total_shots"] = values["team_score"]
-                        values["team_timeouts"] = values["team_score"]
-                        values["opponent_total_shots"] = values["opponent_score"]
-                        values["opponent_timeouts"] = values["opponent_score"]
+                        values["team_sets_won"] = values["team_score"]
+                        values["opponent_sets_won"] = values["opponent_score"]
                         try:
                             values["team_score"] = event["competitions"] [0] ["competitors"] [team_index] ["linescores"] [-1] ["value"]
                         except:
@@ -458,6 +458,11 @@ async def async_get_state(config) -> dict:
                                 values["last_play"] = values["last_play"] + str(int(event["competitions"] [0] ["competitors"] [oppo_index] ["linescores"] [x] ["value"])) + "; "
                             except:
                                 values["last_play"] = values["last_play"] + "??; "
+
+                if 'IN' in values["state"]:
+                    break
+                if 'PRE' in values["state"] and "minute" in values["kickoff_in"]:
+                    break
 
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
@@ -577,6 +582,11 @@ async def async_clear_states(config) -> dict:
         "team_total_shots": None,
         "opponent_shots_on_target": None,
         "opponent_total_shots": None,
+#
+# The Soccer Specific Fields
+#
+        "team_sets_won": None,
+        "opponent_sets_won": None,
         "private_fast_refresh": False
     }
 
