@@ -2,9 +2,11 @@
 import logging
 from datetime import timedelta
 import arrow
+import json
 import codecs
 
 import aiohttp
+import aiofiles
 from async_timeout import timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
@@ -172,6 +174,7 @@ async def async_get_state(config) -> dict:
     values = {}
     headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
     data = None
+    file_override = False
     global team_prob
     global oppo_prob
 
@@ -182,13 +185,22 @@ async def async_get_state(config) -> dict:
     if CONF_CONFERENCE_ID in config.keys():
             if (len(config[CONF_CONFERENCE_ID]) > 0):
                 url_parms = "?groups=" + config[CONF_CONFERENCE_ID]
+                if (config[CONF_CONFERENCE_ID] == '9999'):
+                    file_override = True
     team_id = config[CONF_TEAM_ID].upper()
     url = URL_HEAD + sport_path + "/" + league_path + URL_TAIL + url_parms
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as r:
-            _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
-            if r.status == 200:
-                data = await r.json()
+    
+    if (file_override):
+        print("Opening file:")
+        async with aiofiles.open('/share/test.json', mode='r') as f:
+            contents = await f.read()
+        data = json.loads(contents)
+    else:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as r:
+                _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
+                if r.status == 200:
+                    data = await r.json()
 
     found_team = False
     prob_key = league_id + '-' + team_id
@@ -205,7 +217,7 @@ async def async_get_state(config) -> dict:
             except:
                 sn = ""
                 _LOGGER.debug("This is an ill-formed event, it does not have a short name: %s" % event)
-            if team_id in sn:
+            if sn.startswith(team_id + ' ') or sn.endswith(' ' + team_id):
                 _LOGGER.debug("Found event; parsing data.")
                 found_team = True
                 team_index = 0 if event["competitions"][0]["competitors"][0]["team"]["abbreviation"] == team_id else 1
