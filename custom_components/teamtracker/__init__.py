@@ -457,7 +457,10 @@ async def async_get_state(config) -> dict:
                             values["opponent_score"] = 0
                             
                         values["last_play"] = ''
-                        sets = len(event["competitions"] [0] ["competitors"] [team_index] ["linescores"])
+                        try:
+                            sets = len(event["competitions"] [0] ["competitors"] [team_index] ["linescores"])
+                        except:
+                            sets = 0
                         for x in range (0, sets):
                             values["last_play"] = values["last_play"] + " Set " + str(x + 1) + ": "
                             values["last_play"] = values["last_play"] + values["team_abbr"] + " "
