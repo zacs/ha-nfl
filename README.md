@@ -2,6 +2,8 @@
 
 This integration fetches data for an NFL team's current/future game, and creates a sensor with attributes for the details of the game. 
 
+You can find examples of interesting automations [in the wiki](https://github.com/zacs/ha-nfl/wiki/Automation-Examples) (please add your own examples!). There is also a great [custom card that leverages this sensor](https://github.com/D34DC3N73R/ha-nfl-card), built by @D34DC3N73R. 
+
 The integration is a shameless fork of the excellent [NWS alerts](https://github.com/finity69x2/nws_alerts) custom component by @finity69x2.Thank you for the starting place!
 
 ## Sensor Data
