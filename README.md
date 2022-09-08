@@ -11,6 +11,7 @@ This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-
 - Hockey - NHL (Coming Soon)
 - U.S. Soccer - MLS, NWSL
 - International Soccer - BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
+- Volleyball - NCAAVB, NCAAVBW
 
 See Custom API Configuration section below on how to set up additional sports/leagues if you know the ESPN API.
 
@@ -103,6 +104,8 @@ For the League, the following values are valid:
 - NCAAF (NCAA Football)
 - NCAAM (NCAA Men's Basketball)
 - NCAAW (NCAA Women's Basketball)
+- NCAAVB (NCAA Men's Volleyball)
+- NCAAVBW (NCAA Women's Volleyball)
 - NFL (National Football League)
 - NWSL (National Women's Soccer League)
 - SERA (Italian Serie A)
@@ -110,18 +113,53 @@ For the League, the following values are valid:
     
 For the Team, you'll need to know the team ID ESPN uses for your team.  This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well.
 
+By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.
+
+The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
+
+- ACC: 1
+- American: 151
+- Big 12: 4
+- Big Ten: 5
+- C-USA: 
+- FBS Independent: 18
+- MAC: 15
+- Mountain West: 17
+- PAC-12: 9
+- SEC: 8
+- ASUN: 176
+- Big Sky: 20
+- Big South: 40
+- CAA: 48
+- Ivy: 22
+- MEAC: 24
+- MVFC: 21
+- NEC: 25
+- OVC: 26
+- Patriot: 27
+- Pioneer: 28
+- SWAC: 31
+- Southern: 29
+- Southland: 30
+- WAC: 16
+
+The following identifiers are also valid:
+- FBS (1-A):  80 (subset of unranked FBS games)
+- FCS (I-AA): 81 (subset of FCS games)
+- DII/DII: 35
+
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
-Search for the integration labeled "Team Tracker" and select it.  Enter the desired League from the list above and your team's ID in the UI prompt. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_picked`. 
+Search for the integration labeled "Team Tracker" and select it.  Enter the desired League from the list above and your team's ID in the UI prompt. If NCAA football or basketball, enter the Conference ID from above if desired.  You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_picked`. 
 
 ### Manually in your `configuration.yaml` file
 
-To create a sensor instance add the following configuration to your sensor definitions using the team_id found above:
+To create a sensor instance add the following configuration to your sensor definitions using the team_id found above.  Enclose the values in quotes to avoid unrealized conflicts w/ predefined terms in YAML (i.e. NO being interpreted as No):
 
 ```
 - platform: teamtracker
-  league_id: NFL
-  team_id: CLE
+  league_id: "NFL"
+  team_id: "NO"
 ```
 
 After you restart Home Assistant then you should have a new sensor called `sensor.team_tracker` in your system.
@@ -130,12 +168,22 @@ You can overide the sensor default name (`sensor.team_tracker`) to one of your c
 
 ```
 - platform: teamtracker
-  league_id: NFL
-  team_id: CLE
-  name: Browns
+  league_id: "NFL"
+  team_id: "NO"
+  name: "Saints"
 ```
 
-Using the configuration example above the sensor will then be called "sensor.seahawks".
+Using the configuration example above the sensor will then be called "sensor.saints".
+
+To set a Conference ID for an NCAA football or basketball team, use the following:
+
+```
+  - platform: teamtracker
+    league_id: "NCAAF"
+    team_id: "BGSU"
+    conference_id: 15
+    name: "Falcons"
+```
 
 ## Custom API Configuration
 
@@ -158,9 +206,9 @@ When using the Home Assistant UI to set up your sensor, simply enter 'XXX' in th
 To use YAML to set up your sensor, set the league_id to 'XXX' and enter the desired values for sport_path and league_path.
 ```
 - platform: teamtracker
-  league_id: XXX
-  team_id: CLE
-  sport_path: football
-  league_path: nfl
-  name: Browns
+  league_id: "XXX"
+  team_id: "OSU"
+  sport_path: "volleyball"
+  league_path: "womens-college-volleyball"
+  name: "Buckeyes_VB"
 ```
