@@ -11,6 +11,7 @@ This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-
 - Hockey - NHL (Coming Soon)
 - U.S. Soccer - MLS, NWSL
 - International Soccer - BUND (German Bundesliga), EPL (English Premiere League), LIGA (Spanish LaLiga), LIG1 (French Ligue 1), SERA (Italian Serie A)
+- Volleyball - NCAAVB, NCAAVBW
 
 See Custom API Configuration section below on how to set up additional sports/leagues if you know the ESPN API.
 
@@ -103,6 +104,8 @@ For the League, the following values are valid:
 - NCAAF (NCAA Football)
 - NCAAM (NCAA Men's Basketball)
 - NCAAW (NCAA Women's Basketball)
+- NCAAVB (NCAA Men's Volleyball)
+- NCAAVBW (NCAA Women's Volleyball)
 - NFL (National Football League)
 - NWSL (National Women's Soccer League)
 - SERA (Italian Serie A)
