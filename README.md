@@ -2,7 +2,15 @@
 
 This integration provides real-time scores for teams in multiple professional (NBA, NFL, NHL, MLB, MLS, and more), college (NCAA), and international (soccer) sports using ESPN APIs, and creates a sensor with attributes for the details of the game. 
 
+This integration can be used with the [ha-teamtracker-card](https://github.com/vasqued2/ha-teamtracker-card) to display the game information in the Home Assistant dashboard.
+
 This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-nfl) custom component by @zacs.  Thanks for the starting place!
+
+#### Version Compatibility
+ - Releases for [ha-teamtracker](https://github.com/vasqued2/ha-teamtracker) and [ha-teamtracker-card](https://github.com/vasqued2/ha-teamtracker-card) follow the MAJOR.MINOR.PATCH convention.
+ - All teamtracker and teamtracker-card releases with the same MAJOR and MINOR version numbers will be compatible, regardless of PATCH version.
+ - For example, any teamtracker v0.2.x will be compatible with any teamtracker-card v0.2.y.
+ - Compatibility is not guaranteed across MAJOR or MINOR version numbers.
 
 ## Supported Sports / Leagues
 - Baseball - MLB
@@ -117,36 +125,42 @@ By default, NCAA football and basketball will only find a game if at least one o
 
 The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
 
-- ACC: 1
-- American: 151
-- Big 12: 4
-- Big Ten: 5
-- C-USA: 
-- FBS Independent: 18
-- MAC: 15
-- Mountain West: 17
-- PAC-12: 9
-- SEC: 8
-- ASUN: 176
-- Big Sky: 20
-- Big South: 40
-- CAA: 48
-- Ivy: 22
-- MEAC: 24
-- MVFC: 21
-- NEC: 25
-- OVC: 26
-- Patriot: 27
-- Pioneer: 28
-- SWAC: 31
-- Southern: 29
-- Southland: 30
-- WAC: 16
+## Conference ID Numbers
+| Conference | Conference ID |
+| --- | --- |
+| ACC | 1 |
+| American | 151 |
+| Big 12 | 4 |
+| Big Ten | 5 |
+| C-USA | 12 |
+| FBS Independent | 18 |
+| MAC | 15 |
+| Mountain West | 17 |
+| PAC-12 | 9 |
+| SEC | 8 |
+| Sun Belt | 37 |
+| ASUN | 176 |
+| Big Sky | 20 |
+| Big South | 40 |
+| CAA | 18 |
+| Ivy | 22 |
+| MEAC | 24 |
+| MVFC | 21 |
+| NEC | 25 |
+| OVC | 26 |
+| Patriot | 27 |
+| Pioneer | 28 |
+| SWAC | 31 |
+| Southern | 29 |
+| Southland | 30 |
+| WAC | 16 |
 
 The following identifiers are also valid:
-- FBS (1-A):  80 (subset of unranked FBS games)
-- FCS (I-AA): 81 (subset of FCS games)
-- DII/DII: 35
+| Additional Groupings | Conference ID | Description |
+| --- | --- | --- |
+| FBS (1-A) | 80 | Subset of unranked FBS games |
+| FCS (1-AA) | 81 | Subset of FCS games |
+| DIVII/III | 35 | Subset of D2/D3 games |
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
