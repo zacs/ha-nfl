@@ -188,7 +188,7 @@ class NFLScoresSensor(CoordinatorEntity):
         return self.coordinator.last_update_success
 
     def team_colors(self, colors) -> tuple:
-        colors = []]
+        colors = []
         color_list = colors.split(",")
         colors.append(self.hex_to_rgb(color_list[0]))
         colors.append(self.hex_to_rgb(color_list[1]))
