@@ -188,6 +188,9 @@ class NFLScoresSensor(CoordinatorEntity):
         return self.coordinator.last_update_success
 
     def team_colors(self, colors) -> list:
+        if colors is None:
+            return None
+        _LOGGER.debug("Colors: %s", colors[0])
         colors[0] = self.hex_to_rgb(colors[0])
         colors[1] = self.hex_to_rgb(colors[1])
         return colors
