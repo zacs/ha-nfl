@@ -187,12 +187,10 @@ class NFLScoresSensor(CoordinatorEntity):
         """Return if entity is available."""
         return self.coordinator.last_update_success
 
-    def team_colors(self, colors) -> tuple:
-        colors = []
-        color_list = colors.split(",")
-        colors.append(self.hex_to_rgb(color_list[0]))
-        colors.append(self.hex_to_rgb(color_list[1]))
-        return tuple(colors)
+    def team_colors(self, colors) -> list:
+        colors[0] = self.hex_to_rgb(colors[0])
+        colors[1] = self.hex_to_rgb(colors[1])
+        return colors
 
     def hex_to_rgb(hexa):
         hexa = hexa.lstrip("#")
