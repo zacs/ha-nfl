@@ -174,9 +174,13 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["opponent_record"] = self.coordinator.data["opponent_record"]
         attrs["opponent_homeaway"] = self.coordinator.data["opponent_homeaway"]
         attrs["opponent_logo"] = self.coordinator.data["opponent_logo"]
-        attrs["opponent_colors"] = self.team_colors(self.coordinator.data["opponent_colors"])
+        attrs["opponent_colors"] = self.team_colors(
+            self.coordinator.data["opponent_colors"]
+        )
         attrs["opponent_score"] = self.coordinator.data["opponent_score"]
-        attrs["opponent_win_probability"] = self.coordinator.data["opponent_win_probability"]
+        attrs["opponent_win_probability"] = self.coordinator.data[
+            "opponent_win_probability"
+        ]
         attrs["opponent_timeouts"] = self.coordinator.data["opponent_timeouts"]
         attrs["last_update"] = self.coordinator.data["last_update"]
 
@@ -187,14 +191,15 @@ class NFLScoresSensor(CoordinatorEntity):
         """Return if entity is available."""
         return self.coordinator.last_update_success
 
-    def team_colors(self, colors) -> list:
+    def team_colors(self, colors) -> tuple:
         if colors is None:
             return None
+        color_list = []
         _LOGGER.debug("Colors: %s", colors[0])
-        colors[0] = self.hex_to_rgb(colors[0])
-        colors[1] = self.hex_to_rgb(colors[1])
-        return colors
+        color_list.append(list(self.hex_to_rgb(colors[0])))
+        color_list.append(list(self.hex_to_rgb(colors[1])))
+        return color_list
 
-    def hex_to_rgb(hexa):
+    def hex_to_rgb(self, hexa) -> tuple:
         hexa = hexa.lstrip("#")
-        return list(int(hexa[i:i+2], 16)  for i in (0, 2, 4))
+        return tuple(int(hexa[i : i + 2], 16) for i in (0, 2, 4))
