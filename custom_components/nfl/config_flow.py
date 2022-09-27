@@ -2,13 +2,13 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Dict, Optional
 
 import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
@@ -28,25 +28,30 @@ JSON_ID = "id"
 _LOGGER = logging.getLogger(__name__)
 
 
-def _get_schema(hass: Any, user_input: list, default_dict: list) -> Any:
+def _get_schema(    
+    hass: HomeAssistant,
+    user_input: Optional[Dict[str, Any]],
+    default_dict: Dict[str, Any],
+    entry_id: str = None
+) -> vol.Schema:
     """Gets a schema using the default_dict as a backup."""
     if user_input is None:
         user_input = {}
 
-    def _get_default(key):
+    def _get_default(key: str, fallback_default: Any = None) -> None:
         """Gets default value for key."""
-        return user_input.get(key, default_dict.get(key))
+        return user_input.get(key, default_dict.get(key, fallback_default))
 
     return vol.Schema(
         {
-            vol.Required(CONF_TEAM_ID, default=_get_default(CONF_TEAM_ID)): str,
-            vol.Optional(CONF_NAME, default=_get_default(CONF_NAME)): str,
-            vol.Optional(CONF_TIMEOUT, default=_get_default(CONF_TIMEOUT)): int,
+            vol.Required(CONF_TEAM_ID, default=_get_default(CONF_TEAM_ID,_get_team_list())): str,
+            vol.Optional(CONF_NAME, default=_get_default(CONF_NAME, DEFAULT_NAME)): str,
+            vol.Optional(CONF_TIMEOUT, default=_get_default(CONF_TIMEOUT, DEFAULT_TIMEOUT)): int,
         }
     )
 
 
-async def _get_team_list(self):
+def _get_team_list() -> list:
     """Return list of team acronyms"""
 
     team_list = [
@@ -112,7 +117,7 @@ class NFLScoresFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input={}):
         """Handle a flow initialized by the user."""
         self._errors = {}
-        self._team_list = await _get_team_list(self)
+        self._team_list = _get_team_list()
 
         if user_input is not None:
             self._data.update(user_input)
@@ -147,14 +152,12 @@ class NFLScoresOptionsFlow(config_entries.OptionsFlow):
     def __init__(self, config_entry):
         """Initialize."""
         self.config = config_entry
-        self._data = dict(config_entry.options)
         self._errors = {}
 
     async def async_step_init(self, user_input=None):
         """Manage options."""
         if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(title="", data=self._data)
+            return self.async_create_entry(title="", data=user_input)
         return await self._show_options_form(user_input)
 
     async def _show_options_form(self, user_input):
@@ -162,6 +165,6 @@ class NFLScoresOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=_get_schema(self.hass, user_input, self._data),
+            data_schema=_get_schema(self.hass, user_input, self.config.data),
             errors=self._errors,
         )
