@@ -164,7 +164,8 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["team_record"] = self.coordinator.data["team_record"]
         attrs["team_homeaway"] = self.coordinator.data["team_homeaway"]
         attrs["team_logo"] = self.coordinator.data["team_logo"]
-        attrs["team_colors"] = self.team_colors(self.coordinator.data["team_colors"])
+        attrs["team_colors"] = self.coordinator.data["team_colors"]
+        attrs["team_colors_rbg"] = self.team_colors(self.coordinator.data["team_colors"])
         attrs["team_score"] = self.coordinator.data["team_score"]
         attrs["team_win_probability"] = self.coordinator.data["team_win_probability"]
         attrs["team_timeouts"] = self.coordinator.data["team_timeouts"]
@@ -174,7 +175,8 @@ class NFLScoresSensor(CoordinatorEntity):
         attrs["opponent_record"] = self.coordinator.data["opponent_record"]
         attrs["opponent_homeaway"] = self.coordinator.data["opponent_homeaway"]
         attrs["opponent_logo"] = self.coordinator.data["opponent_logo"]
-        attrs["opponent_colors"] = self.team_colors(
+        attrs["opponent_colors"] = self.coordinator.data["opponent_colors"]
+        attrs["opponent_colors_rgb"] = self.team_colors(
             self.coordinator.data["opponent_colors"]
         )
         attrs["opponent_score"] = self.coordinator.data["opponent_score"]
