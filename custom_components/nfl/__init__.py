@@ -201,10 +201,14 @@ async def async_get_state(config) -> dict:
                 values["date"] = event["date"]
                 values["kickoff_in"] = arrow.get(event["date"]).humanize()
                 values["venue"] = event["competitions"][0]["venue"]["fullName"]
-                values["location"] = "%s, %s" % (
-                    event["competitions"][0]["venue"]["address"]["city"],
-                    event["competitions"][0]["venue"]["address"]["state"],
-                )
+                try:
+                    values["location"] = "%s, %s" % (
+                        event["competitions"][0]["venue"]["address"]["city"],
+                        event["competitions"][0]["venue"]["address"]["state"] if (
+                        "state" in event["competitions"][0]["venue"]["address"] ) else ""
+                    )
+                except:
+                    values["location"] = event["competitions"][0]["venue"]["address"]["city"]
                 try:
                     values["tv_network"] = event["competitions"][0]["broadcasts"][0][
                         "names"
