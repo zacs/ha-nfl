@@ -6,24 +6,31 @@ from homeassistant import config_entries, data_entry_flow, setup
 from homeassistant.const import CONF_NAME
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
+from custom_components.teamtracker.const import CONF_TEAM_ID, DOMAIN
 
 
 @pytest.mark.parametrize(
-    "input,step_id,title,data",
+    "input,step_id,title,description,data",
     [
         (
             {
-                "name": "Testing State",
+                "league_id": "NFL",
                 "team_id": "SEA",
+                "name": "team_tracker",
                 "timeout": 120,
+                "conference_id": "9999",
             },
             "user",
-            "Testing State",
+            "team_tracker",
+            "description",
             {
-                "name": "Testing State",
+                "league_id": "NFL",
                 "team_id": "SEA",
+                "name": "team_tracker",
                 "timeout": 120,
+                "conference_id": "9999",
+                "league_path": "nfl",
+                "sport_path": "football",
             },
         ),
     ],
@@ -32,6 +39,7 @@ async def test_form(
     input,
     step_id,
     title,
+    description,
     data,
     hass,
 ):
@@ -45,7 +53,7 @@ async def test_form(
     # assert result["title"] == title_1
 
     with patch(
-        "custom_components.nfl.async_setup_entry",
+        "custom_components.teamtracker.async_setup_entry",
         return_value=True,
     ) as mock_setup_entry:
 
@@ -77,7 +85,7 @@ async def test_form(
 #     await setup.async_setup_component(hass, "persistent_notification", {})
 
 #     with patch(
-#         "custom_components.nfl.async_setup_entry",
+#         "custom_components.teamtracker.async_setup_entry",
 #         return_value=True,
 #     ):
 #         result = await hass.config_entries.flow.async_init(
