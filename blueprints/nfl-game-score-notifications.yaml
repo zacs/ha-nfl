@@ -1,0 +1,97 @@
+blueprint:
+  domain: automation
+  name: NFL Game Score Notification
+  description: >
+    Designed for Home Assistant mobile app notifications.
+    Will send a notification with NFL game information, triggered by any score change(optionally ignoring opponent scores).
+    
+    
+    Requires the [ha-nfl integration by @zacs](https://github.com/zacs/ha-nfl).
+    
+    
+    The NFL notifications will be grouped together and tagged so that as new scores come in each game, 
+    individual game notifications are replaced with the updated scores.
+  input:
+    teams:
+      name: NFL Teams
+      description: NFL teams whose games you want to be notified of score changes
+      selector:
+        entity:
+          integration: nfl
+          multiple: true
+    notify_targets:
+      name: Mobile App devices to target
+      description: >-
+        Choose one or more Home Assistant mobile app devices to notify.
+      selector:
+        device:
+          integration: mobile_app
+          multiple: true
+    notify_on_opponent_score:
+      name: Notify on Opponent Scores
+      description: >-
+        Enable to notify on any score change, disable to only notify when your team's score changes.
+      selector:
+        select:
+          options:
+            - "Yes"
+            - "No"
+          mode: list
+      default: "Yes"
+variables:
+  notify_on_opponent_score: !input notify_on_opponent_score
+  notify_targets: !input notify_targets
+trigger:
+  - platform: state
+    entity_id: !input teams
+    attribute: team_score
+    id: team_score
+  - platform: state
+    entity_id: !input teams
+    attribute: opponent_score
+    id: oppo_score
+  - platform: state
+    entity_id: !input teams
+    to: POST
+    id: POST
+condition:
+  - condition: template
+    value_template: '{{ (states(trigger.entity_id) in [ "IN" ]) or (trigger.to_state.state == "POST") }}'
+  - condition: template
+    value_template: '{{ (trigger.id != "oppo_score") or (notify_on_opponent_score=="Yes") }}'
+action:
+  - repeat:
+      for_each: "{{ notify_targets }}"
+      sequence:
+        - service: 'notify.mobile_app_{{ device_attr(repeat.item, "name") | slugify }}'
+          data:
+            title: >-
+              {{ state_attr(trigger.entity_id, "team_name") }} / {{
+              state_attr(trigger.entity_id, "opponent_name") }}
+            message: >-
+              {{ state_attr(trigger.entity_id,"team_abbr") }} {{
+              state_attr(trigger.entity_id,"team_score") }} {{ ("•••" if
+              state_attr(trigger.entity_id,"team_timeouts")|int(0) == 3 else "••" if
+              state_attr(trigger.entity_id,"team_timeouts")|int(0) == 2 else "•" if
+              state_attr(trigger.entity_id,"team_timeouts")|int(0) == 1 else "" ) if 
+              state_attr(trigger.entity_id,"team_timeouts") else ""}}
+  
+              {{ state_attr(trigger.entity_id,"opponent_abbr") }} {{
+              state_attr(trigger.entity_id,"opponent_score") }} {{ ("•••" if
+              state_attr(trigger.entity_id,"opponent_timeouts")|int(0) == 3 else "••" if
+              state_attr(trigger.entity_id,"opponent_timeouts")|int(0) == 2 else "•" if
+              state_attr(trigger.entity_id,"opponent_timeouts")|int(0) == 1 else "" ) if
+              state_attr(trigger.entity_id,"opponent_timeouts") else ""}}
+  
+              {{ "Q" ~ state_attr(trigger.entity_id, "quarter") if
+              state_attr(trigger.entity_id, "quarter") else "" }} {{ " - " ~ 
+              state_attr(trigger.entity_id, "clock") if state_attr(trigger.entity_id,
+              "clock") else "" }}
+  
+              {{ "Final" if states(trigger.entity_id) == "POST" else
+              ((state_attr(trigger.entity_id, "team_win_probability") * 100) | string
+              | truncate(5,true,"") ) ~ "% chance of winning" if
+              state_attr(trigger.entity_id, "team_win_probability") else ""}}
+            data:
+              tag: '{{ state_attr(trigger.entity_id,"team_abbr")|lower }}-score'
+              group: football
