@@ -1,11 +1,11 @@
 blueprint:
   domain: automation
-  name: NFL Game Score Notification
-  description: >
+  name: NFL Game Score
+  description: >-
     Designed for Home Assistant mobile app notifications.
     Will send a notification with NFL game information, triggered by any score change(optionally ignoring opponent scores).
     
-    
+     
     Requires the [ha-nfl integration by @zacs](https://github.com/zacs/ha-nfl).
     
     
@@ -38,6 +38,13 @@ blueprint:
             - "No"
           mode: list
       default: "Yes"
+    notification_link:
+      name: Notification Link
+      description: >
+        Optional. Enter a web address(e.g. https://www.espn.com/) or a home assistant dashboard relative url(e.g. /lovelace/football) to go to when clicking on a game's notification.
+      selector:
+        text:
+          type: url
 variables:
   notify_on_opponent_score: !input notify_on_opponent_score
   notify_targets: !input notify_targets
@@ -56,9 +63,9 @@ trigger:
     id: POST
 condition:
   - condition: template
-    value_template: '{{ (states(trigger.entity_id) in [ "IN" ]) or (trigger.to_state.state == "POST") }}'
+    value_template: '{{ (states(trigger.entity_id) in [ "IN" ] or trigger.to_state.state == "POST" ) }}'
   - condition: template
-    value_template: '{{ (trigger.id != "oppo_score") or (notify_on_opponent_score=="Yes") }}'
+    value_template: '{{ ( trigger.id != "oppo_score") or (notify_on_opponent_score=="Yes" ) }}'
 action:
   - repeat:
       for_each: "{{ notify_targets }}"
@@ -95,3 +102,5 @@ action:
             data:
               tag: '{{ state_attr(trigger.entity_id,"team_abbr")|lower }}-score'
               group: football
+              url: !input notification_link
+              clickAction: !input notification_link
