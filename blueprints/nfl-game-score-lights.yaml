@@ -1,0 +1,92 @@
+blueprint:
+  domain: automation
+  name: Light Up In NFL Team Colors on Score Changes
+  description: >
+    This blueprint will flash one or more lights using the team colors provided by the api, triggered by any score change (optionally ignoring opponent scores).
+    
+    
+    Requires the [ha-nfl integration by @zacs](https://github.com/zacs/ha-nfl).
+  input:
+    teams:
+      name: NFL Teams
+      description: NFL teams whose games you want to watch for score changes.
+      selector:
+        entity:
+          integration: nfl
+          multiple: true
+    light_targets:
+      name: Lights to flash
+      description: >-
+        Choose one or more lights.
+      selector:
+        entity:
+          domain: light
+          multiple: true
+    activate_on_opponent_score:
+      name: Activate on opponent score
+      description: >-
+        Enable to flash lights on any score change, disable to only activate when your team's score changes.  Colors will be those of whichever team has scored.
+      selector:
+        select:
+          options:
+            - "Yes"
+            - "No"
+          mode: list
+      default: "Yes"
+    repeat_count:
+      name: Repeat count
+      description: >-
+        How many times should the color cycle run?
+      selector:
+        number:
+          min: 1
+          max: 15
+          mode: slider
+      default: 3
+variables:
+  activate_on_opponent_score: !input activate_on_opponent_score
+trigger:
+  - platform: state
+    entity_id: !input teams
+    attribute: team_score
+    id: team_score
+  - platform: state
+    entity_id: !input teams
+    attribute: opponent_score
+    id: oppo_score
+condition:
+  - condition: template
+    value_template: '{{ (states(trigger.entity_id) in [ "IN" ]) }}'
+  - condition: template
+    value_template: '{{ (trigger.id != "oppo_score") or (activate_on_opponent_score == "Yes") }}'
+action:
+  - service: scene.create
+    data:
+      snapshot_entities:  !input light_targets
+      scene_id: nfl_game_score_lights_capture
+  - repeat:
+      count: !input repeat_count
+      sequence:
+        - service: light.turn_on
+          data:
+            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rbg')[0] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[0] }}"
+          target:
+            entity_id: !input light_targets
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 1.5
+            milliseconds: 0
+        - service: light.turn_on
+          data:
+            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rbg')[1] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[1] }}"
+          target:
+            entity_id: !input light_targets
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 1.5
+            milliseconds: 0
+  - service: scene.turn_on
+    target:
+      entity_id: scene.nfl_game_score_lights_capture
