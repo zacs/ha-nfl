@@ -133,41 +133,52 @@ By default, NCAA football and basketball will only find a game if at least one o
 The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
 
 ## Conference ID Numbers
-| Conference | Conference ID |
-| --- | --- |
-| ACC | 1 |
-| American | 151 |
-| Big 12 | 4 |
-| Big Ten | 5 |
-| C-USA | 12 |
-| FBS Independent | 18 |
-| MAC | 15 |
-| Mountain West | 17 |
-| PAC-12 | 9 |
-| SEC | 8 |
-| Sun Belt | 37 |
-| ASUN | 176 |
-| Big Sky | 20 |
-| Big South | 40 |
-| CAA | 18 |
-| Ivy | 22 |
-| MEAC | 24 |
+| Conference | Football Conference ID | Basketball Conference ID |
+| --- | --- | --- |
+| ACC | 1 | 2 |
+| American | 151 | 62 |
+| Big 12 | 4 | 8 |
+| Big Ten | 5 | 7 |
+| C-USA | 12 | 11 |
+| FBS Independent | 18 |  |
+| Independent |  | 43 |
+| MAC | 15 | 14 |
+| Mountain West | 17 | 44 |
+| MVC |  | 18 |
+| PAC-12 | 9 | 21 | 
+| SEC | 8 | 23 |
+| Sun Belt | 37 | 27 |
+| America East |  | 1 |
+| ASUN | 176 | 46 |
+| Atlantic 10 |  | 3 |
+| Big East |  | 4 |
+| Big Sky | 20 | 5 |
+| Big South | 40 | 6 |
+| Big West |  | 9 |
+| CAA | 18 | 10 |
+| Horizon |  | 45 |
+| Ivy | 22 | 12 |
+| MAAC |  | 13 |
+| MEAC | 24 | 16 |
 | MVFC | 21 |
-| NEC | 25 |
-| OVC | 26 |
-| Patriot | 27 |
+| NEC | 25 | 19 |
+| OVC | 26 | 20 |
+| Patriot | 27 | 22 |
 | Pioneer | 28 |
-| SWAC | 31 |
-| Southern | 29 |
-| Southland | 30 |
-| WAC | 16 |
+| SWAC | 31 | 26 |
+| Southern | 29 | 24 |
+| Southland | 30 | 25 |
+| Summit |  | 49 |
+| WAC | 16 | 30 |
+| WCC |  | 29 |
 
 The following identifiers are also valid:
-| Additional Groupings | Conference ID | Description |
-| --- | --- | --- |
-| FBS (1-A) | 80 | Subset of unranked FBS games |
-| FCS (1-AA) | 81 | Subset of FCS games |
-| DIVII/III | 35 | Subset of D2/D3 games |
+| Additional Groupings | Football Conference ID | Basketball Conference ID | Description |
+| --- | --- | --- | --- |
+| FBS (1-A) | 80 |  | Subset of unranked FBS games |
+| FCS (1-AA) | 81 |  | Subset of FCS games |
+| DIVII/III | 35 |  | Subset of D2/D3 games |
+| D1 |  | 50 | Subset of unranked D1 games |
 
 ### Via the "Configuration->Integrations" section of the Home Assistant UI
 
