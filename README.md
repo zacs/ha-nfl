@@ -129,15 +129,19 @@ Clone or download this repository and copy the "teamtracker" directory to your "
   
 ### HACS
 
-Use this button:
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=vasqued2&repository=ha-teamtracker&category=integration)
-
-_OR_ Manually
-
 1. Open the HACS section of Home Assistant.
-2. Click the "..." button in the top right corner and select "Custom Repositories."
-3. In the window that opens paste this Github URL.
-4. In the window that opens when you select it click om "Install This Repository in HACS"
+2. In Integrations, click the "+ EXPLORE & DOWNLOAD REPOSITORIES" button in the bottom right corner.
+3. In the window that opens search for "Team Tracker Card".
+4. Select "Team Tracker Card" from the list
+5. Select the "Download" button in the buttom right corner.
+6. Select "Download" from the window to download the button.
+7. When given the Option, Reload.
+
+ - HACS should automatically add the following to your resources:
+```
+url: /hacsfiles/ha-teamtracker-card/ha-teamtracker-card.js
+type: Javascript Module
+```
   
 ## Configuration
 
