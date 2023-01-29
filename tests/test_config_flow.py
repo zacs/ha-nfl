@@ -1,12 +1,10 @@
 """Test for config flow"""
-from tests.const import CONFIG_DATA
 from unittest.mock import patch
-import pytest
-from homeassistant import config_entries, data_entry_flow, setup
-from homeassistant.const import CONF_NAME
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.teamtracker.const import CONF_TEAM_ID, DOMAIN
+import pytest
+
+from custom_components.teamtracker.const import DOMAIN
+from homeassistant import config_entries, setup
 
 
 @pytest.mark.parametrize(
@@ -36,7 +34,7 @@ from custom_components.teamtracker.const import CONF_TEAM_ID, DOMAIN
     ],
 )
 async def test_form(
-    input,
+    input,  # pylint: disable=redefined-builtin
     step_id,
     title,
     description,

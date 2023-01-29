@@ -5,27 +5,26 @@ import aiofiles
 
 from custom_components.teamtracker.clear_values import async_clear_values
 from custom_components.teamtracker.const import (
-    DEFAULT_KICKOFF_IN,
     DEFAULT_LAST_UPDATE,
     DEFAULT_LOGO,
 )
 from custom_components.teamtracker.event import async_process_event
-from tests.const import TEST_DATA
+from tests.const import MULTIGAME_DATA
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def test_event(hass):
+async def test_multigame(hass):
     """ Use file w/ test json and loop through test cases and compare to expected results """
 
-    async with aiofiles.open("tests/tt/all.json", mode="r") as f:
+    async with aiofiles.open("tests/tt/multigame.json", mode="r") as f:
         contents = await f.read()
     data = json.loads(contents)
     if data is None:
-        _LOGGER.warning("test_event(): Error with test file '%s'", "tests/tt/all.json")
+        _LOGGER.warning("test_event(): Error with test file '%s'", "tests/tt/multigame.json")
         assert False
 
-    for t in TEST_DATA:
+    for t in MULTIGAME_DATA:
         values = await async_clear_values()
         values["sport"] = t["sport"]
         values["league"] = t["league"]
@@ -54,11 +53,4 @@ async def test_event(hass):
         )
 
         assert values
-
-        file = "tests/tt/results/" + sensor_name + ".json"
-        async with aiofiles.open(file, mode="r") as f:
-            contents = await f.read()
-        expected_results = json.loads(contents)
-
-        values["kickoff_in"] = DEFAULT_KICKOFF_IN  # set to default value for compare
-        assert values == expected_results
+        assert values["event_name"] == t["expected_event_name"]
