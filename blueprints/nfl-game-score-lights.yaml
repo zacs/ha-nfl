@@ -69,7 +69,7 @@ action:
       sequence:
         - service: light.turn_on
           data:
-            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rbg')[0] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[0] }}"
+            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rgb')[0] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[0] }}"
           target:
             entity_id: !input light_targets
         - delay:
@@ -79,7 +79,7 @@ action:
             milliseconds: 0
         - service: light.turn_on
           data:
-            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rbg')[1] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[1] }}"
+            rgb_color: "{{ state_attr(trigger.entity_id, 'team_colors_rgb')[1] if (trigger.id != 'oppo_score') else  state_attr(trigger.entity_id, 'opponent_colors_rgb')[1] }}"
           target:
             entity_id: !input light_targets
         - delay:
