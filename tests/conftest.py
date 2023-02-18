@@ -1,7 +1,7 @@
 """Fixtures for tests"""
 import pytest
 
-pytest_plugins = "pytest_homeassistant_custom_component"
+pytest_plugins = ("pytest_homeassistant_custom_component", "pytest_asyncio")
 
 
 @pytest.fixture(autouse=True)
