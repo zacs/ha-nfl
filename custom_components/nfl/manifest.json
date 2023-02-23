@@ -8,5 +8,5 @@
     "iot_class": "cloud_polling",
     "issue_tracker": "https://github.com/zacs/ha_nfl/issues",
     "requirements": ["arrow"],
-    "version": "0.1"
+    "version": "0.1.1"
   }
