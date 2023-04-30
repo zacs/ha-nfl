@@ -8,6 +8,14 @@ CONFIG_DATA = {
     "conference_id": "9999",
 }
 
+CONFIG_DATA2 = {
+    "league_id": "NCAAF",
+    "team_id": "OSU",
+    "name": "test_tt_all_test02",
+    "timeout": 120,
+    "conference_id": "5",
+}
+
 TEST_DATA = [
     {
         "sensor_name": "test_tt_all_test01",
@@ -176,6 +184,24 @@ TEST_DATA = [
         "sport": "cricket",
         "league": "XXX",
         "team_abbr": "IND",
+    },
+    {
+        "sensor_name": "test_tt_all_test29",
+        "sport": "racing",
+        "league": "F1",
+        "team_abbr": "SAINTZ",
+    },
+    {
+        "sensor_name": "test_tt_all_test30",
+        "sport": "racing",
+        "league": "F1",
+        "team_abbr": "VERSTAPPEN",
+    },
+    {
+        "sensor_name": "test_tt_all_test31",
+        "sport": "racing",
+        "league": "F1",
+        "team_abbr": "STROLLZ",
     },
 ]
 
