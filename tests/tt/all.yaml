@@ -1,0 +1,189 @@
+#
+# Test Scenarios
+#  Use conference_id: 9999 to override API call and use /share/test.json file instead
+# 
+
+# Baseball
+# PRE - MLB, MIA
+  - platform: teamtracker
+    league_id: MLB
+    team_id: MIA
+    conference_id: 9999
+    name: test_tt_all_test01
+# IN - MLB, MIL
+  - platform: teamtracker
+    league_id: MLB
+    team_id: MIL
+    conference_id: 9999
+    name: test_tt_all_test02
+# POST - MLB, CIN
+  - platform: teamtracker
+    league_id: MLB
+    team_id: CIN
+    conference_id: 9999
+    name: test_tt_all_test03
+
+# Football
+# PRE - NCAAF, BGSU
+  - platform: teamtracker
+    league_id: NCAAF
+    team_id: BGSU
+    conference_id: 9999
+    name: test_tt_all_test04
+# IN - NCAAF, ALA
+  - platform: teamtracker
+    league_id: NCAAF
+    team_id: ALA
+    conference_id: 9999
+    name: test_tt_all_test05
+# POST - NFL, BUF
+  - platform: teamtracker
+    league_id: NFL
+    team_id: BUF
+    conference_id: 9999
+    name: test_tt_all_test06
+
+# Soccer
+# PRE - NWSL, ORL
+  - platform: teamtracker
+    league_id: NWSL
+    team_id: ORL
+    conference_id: 9999
+    name: test_tt_all_test07
+# IN - MLS, CLB
+  - platform: teamtracker
+    league_id: MLS
+    team_id: CLB
+    conference_id: 9999
+    name: test_tt_all_test08
+# POST - BUND, FCA
+  - platform: teamtracker
+    league_id: WC
+    team_id: ARG
+    conference_id: 9999
+    name: test_tt_all_test09
+
+# Basketball
+# PRE - NBA, GS
+  - platform: teamtracker
+    league_id: NBA
+    team_id: DET
+    conference_id: 9999
+    name: test_tt_all_test10
+# IN - NBA, BOS
+  - platform: teamtracker
+    league_id: NBA
+    team_id: UTAH
+    conference_id: 9999
+    name: test_tt_all_test11
+# POST - NBA,CHA
+  - platform: teamtracker
+    league_id: NBA
+    team_id: CHA
+    conference_id: 9999
+    name: test_tt_all_test12
+
+# Hockey
+# PRE - 
+  - platform: teamtracker
+    league_id: NHL
+    team_id: WPG
+    conference_id: 9999
+    name: test_tt_all_test13
+# IN - 
+  - platform: teamtracker
+    league_id: NHL
+    team_id: NYI
+    conference_id: 9999
+    name: test_tt_all_test14
+# POST - 
+  - platform: teamtracker
+    league_id: NHL
+    team_id: CBJ
+    conference_id: 9999
+    name: test_tt_all_test15
+
+# 
+# Volleyball
+# PRE - NCAAVBW, PEPP
+  - platform: teamtracker
+    league_id: NCAAVBW
+    team_id: PEPP
+    conference_id: 9999
+    name: test_tt_all_test16
+# IN - NCAAVBW, MSST
+  - platform: teamtracker
+    league_id: NCAAVBW
+    team_id: MSST
+    conference_id: 9999
+    name: test_tt_all_test17
+# POST - NCAAVBW, ARMY
+  - platform: teamtracker
+    league_id: NCAAVBW
+    team_id: ARMY
+    conference_id: 9999
+    name: test_tt_all_test18
+
+# 
+# Tennis
+# PRE - 
+  - platform: teamtracker
+    league_id: WTA
+    team_id: Kalinina
+    conference_id: 9999
+    name: test_tt_all_test19
+# IN - 
+  - platform: teamtracker
+    league_id: WTA
+    team_id: Bogdan
+    conference_id: 9999
+    name: test_tt_all_test20
+# POST - 
+  - platform: teamtracker
+    league_id: WTA
+    team_id: Partaud
+    conference_id: 9999
+    name: test_tt_all_test21
+
+# 
+# MMA
+# PRE - 
+  - platform: teamtracker
+    league_id: UFC
+    team_id: Strickland
+    conference_id: 9999
+    name: test_tt_all_test22
+# IN - 
+  - platform: teamtracker
+    league_id: UFC
+    team_id: Caceres
+    conference_id: 9999
+    name: test_tt_all_test23
+
+# POST - 
+  - platform: teamtracker
+    league_id: UFC
+    team_id: Fakhretdinov
+    conference_id: 9999
+    name: test_tt_all_test24
+
+# 
+# Golf
+# IN - 
+  - platform: teamtracker
+    league_id: PGA
+    team_id: Conners
+    conference_id: 9999
+    name: test_tt_all_test25
+
+# Error Conditions
+# Invalid League - 
+  - platform: teamtracker
+    league_id: BADLEAGUE
+    team_id: BADTEAM
+    name: test_tt_all_teste01
+# Invalid Team - 
+  - platform: teamtracker
+    league_id: NFL
+    team_id: BADTEAM
+    name: test_tt_all_teste02

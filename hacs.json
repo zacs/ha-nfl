@@ -1,5 +1,5 @@
 {
-    "name": "NFL",
+    "name": "Team Tracker",
     "homeassistant": "0.95.4",
     "render_readme": true
 }
