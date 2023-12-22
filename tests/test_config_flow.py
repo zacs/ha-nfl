@@ -1,10 +1,13 @@
 """Test for config flow"""
 from unittest.mock import patch
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 import pytest
 
-from custom_components.teamtracker.const import DOMAIN
+from custom_components.teamtracker.const import DOMAIN, CONF_API_LANGUAGE
 from homeassistant import setup
+from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
+from tests.const import CONFIG_DATA
 
 
 @pytest.mark.parametrize(
@@ -15,7 +18,6 @@ from homeassistant import setup
                 "league_id": "NFL",
                 "team_id": "SEA",
                 "name": "team_tracker",
-                "timeout": 120,
                 "conference_id": "9999",
             },
             "user",
@@ -25,7 +27,6 @@ from homeassistant import setup
                 "league_id": "NFL",
                 "team_id": "SEA",
                 "name": "team_tracker",
-                "timeout": 120,
                 "conference_id": "9999",
                 "league_path": "nfl",
                 "sport_path": "football",
@@ -76,3 +77,48 @@ async def test_path_form(
     )
     assert result["type"] == "form"
     assert result["errors"] == {}
+
+#@patch("custom_components.teamtracker.sensor.async_add_entities")
+async def test_options_flow_init(
+    hass,
+):
+    """ Test config flow options """
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="team_tracker",
+        data=CONFIG_DATA,
+    )
+
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 1
+    entries = hass.config_entries.async_entries(DOMAIN)
+    assert len(entries) == 1
+
+    # Show Options Flow Form
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert "form" == result["type"]
+    assert "init" == result["step_id"]
+    assert {} == result["errors"]
+
+    # Submit Form with Options
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input={"api_language": "en"}
+    )
+
+    assert "create_entry" == result["type"]
+    assert "" == result["title"]
+    assert result["result"] is True
+    assert {CONF_API_LANGUAGE: "en"} == result["data"]
+
+    # Unload
+    assert await entry.async_unload(hass)
+    await hass.async_block_till_done()
+
+
+
+
