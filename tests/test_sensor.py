@@ -2,9 +2,10 @@
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from typing import Any
 from custom_components.teamtracker.const import DOMAIN
-#from custom_components.teamtracker.sensor import TeamTrackerScoresSensor
-from tests.const import CONFIG_DATA
+from custom_components.teamtracker.sensor import async_setup_platform
+from tests.const import CONFIG_DATA, PLATFORM_TEST_DATA
 
 
 @pytest.fixture(autouse=False)
@@ -38,3 +39,24 @@ async def test_sensor(hass, mocker):
     assert await entry.async_unload(hass)
     await hass.async_block_till_done()
 
+
+async def test_setup_platform(hass):
+    """test platform setup"""
+
+# Mock implementation of async_add_entities callback
+    entity_list = []
+    async def mock_async_add_entities_callback(entities: list[Any], update_before_add: bool = False) -> None:
+        """Mock implementation of the async_add_entities callback."""
+        # Simulate async_add_entities callback behavior
+        entity_list.extend(entities)
+        print(f"Adding entities: {entity_list}")
+
+    for test in PLATFORM_TEST_DATA:
+        await async_setup_platform(
+            hass,
+            test[0],
+            mock_async_add_entities_callback,
+            discovery_info=None,
+        )
+
+        assert (DOMAIN in hass.data) == test[1]
