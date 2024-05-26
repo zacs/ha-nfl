@@ -259,6 +259,8 @@ NOTE:  In rare instances, the team ID will vary based on your local language.  W
 
 For individual sports, you should specify the althlete's name in `team_id` field.  This will cause the sensor to track the competitions matching the name of the specified athlete.  You should use as much of the name (i.e. last name, full name) as needed to uniquely identify the athlete.
 
+See [https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#use-of-a-wild-card-in-place-of-athletes-name](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#use-of-a-wild-card-in-place-of-athletes-name) for the use of a wild card in the Team ID field.
+
 ### Conference ID Numbers
 
 By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.  Conferences ID's are not consistent across football and basketball.
