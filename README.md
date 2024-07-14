@@ -75,6 +75,7 @@ Some attributes are only available for certain sports.
 | `quarter` | The current quarter of gameplay | `IN` |
 | `clock` | The clock value within the quarter (should never be higher than 15:00).  Inning (MLB only). | `IN` |
 | `event_name` | The name of the event being played (eg. "The Masters") | `PRE` `IN` `POST` |
+| `event_url` | An ESPN URL for the event | `PRE` `IN` `POST` |
 | `venue` | The name of the stadium where the game is being played (eg. "Arrowhead Stadium") | `PRE` `IN` `POST` |
 | `location` | The city and state where the game is being played (eg. "Pittsburgh, PA") | `PRE` `IN` `POST` |
 | `tv_network` | The TV network where you can watch the game (eg. "NBC" or "NFL"). Note that if there is a national feed, it will be listed here, otherwise the local affiliate will be listed. | `PRE` `IN` `POST` |
@@ -100,6 +101,7 @@ Some attributes are only available for certain sports.
 | `team_rank` | Your team's current rank (null if unranked or does not apply). | `PRE` `IN` `POST` |
 | `team_homeaway` | Your team's home/away status. Either `home` or `away`. | `PRE` `IN` `POST` |
 | `team_logo` | A URL for a 500px wide PNG logo for the team. | `PRE` `IN` `POST` `BYE` |
+| `team_url` | An ESPN URL for the team. | `PRE` `IN` `POST` `BYE` |
 | `team_colors` | An array with two hex colors. The first is your team's primary color, and the second is their secondary color. Unless you're the Browns, in which case they are the same. | `PRE` `IN` `POST` |
 | `team_score` | Your team's score. An integer. | `IN` `POST` |
 | `team_win_probability` | The real-time chance your team has to win, according to ESPN. A percentage, but presented as a float. Note that this value can become null in between posession changes. | `IN` |
@@ -112,6 +114,7 @@ Some attributes are only available for certain sports.
 | `opponent_rank` | Your opponent's current rank (null if unranked or does not apply). | `PRE` `IN` `POST` |
 | `opponent_homeaway` | Your opponent's home/away status. Either `home` or `away`. | `PRE` `IN` `POST` |
 | `opponent_logo` | A URL for a 500px wide PNG logo for the opponent. | `PRE` `IN` `POST` `BYE` |
+| `opponent_url` | An ESPN URL for the opponent. | `PRE` `IN` `POST` `BYE` |
 | `opponent_colors` | An array with two hex colors. The first is your opponent's primary color, and the second is their secondary color. | `PRE` `IN` `POST` |
 | `opponent_score` | Your opponent's score. An integer. | `IN` `POST` |
 | `opponent_win_probability` | The real-time chance your opponent has to win, according to ESPN. A percentage, but presented as a float. Note that this value can become null in between posession changes. | `IN` |
