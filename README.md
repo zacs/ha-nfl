@@ -335,3 +335,13 @@ Example
   name: "Saints"
   api_language: en
 ```
+
+## Services
+
+TeamTracker supports the following services.
+
+| Service | Input Parameters | Description |
+| --- | --- | --- |
+| call_api | sport_path, league_path, team_id, conference_id (optional) | Sets the teamtracker sensor based on the input parameters, calls the ESPN API, and populates the sensor attributes. |
+
+Details can be viewed in the Service tab in Developer Tools.
