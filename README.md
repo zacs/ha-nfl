@@ -118,11 +118,11 @@ The `league_id` configuration key is used the specify the league for the sensor.
 - WTA (Women's Tennis Assc.)
 - XXX (Custom: Specify Sport and League Path)
 
-Using `XXX` or selecting "Custom: Specify Sport and League Path" from the UI enables the creation of a Custom API Configuration and requires the `sport_path` and `league_path` configuration keys to be defined.
+Using `XXX` or selecting "Custom: Specify Sport and League Path" from the UI enables the creation of a Custom API and requires the `sport_path` and `league_path` configuration keys to be defined.
 
 #### Specify the Team (team_id)
 
-The `team_id` key is used the specifiy the team for the sensor.  It can take the form of a Team Abbreviation, Team ID, Athlete Name, Regular Expression, or a Wildcard (`*`).
+The `team_id` configuration key is used the specifiy the competitor to track for the sensor.  It can take the form of a Team Abbreviation, Team ID, Athlete Name, Regular Expression, or the Wildcard character (`*`).
 
 | Form | Description |
 | --- | --- |
@@ -132,9 +132,11 @@ The `team_id` key is used the specifiy the team for the sensor.  It can take the
 | RegEx | Regular expressions can be used to match team names, athlete names, and rosters in competitions like Doubles Tennis.  See below for an example. |
 | Wildcard | You can use the single `*` character as a Wildcard.  This will cause the sensor to match a team or athlete using sport-specific logic outlined below. |
 
+*RegEx*
 For doubles in tennis, rosters are used instead of team names and are in the format of `{Player 1} / {Player 2}`.  You can use a regular expression to match the roster.  As an example, if you do not know the order in which the players are listed on the roster, the regular expression `.*(?:NADAL|ALCARAZ).*/.*(?:NADAL|ALCARAZ).*` will match a doubles match with Nadal and Alcaraz regardless of which player is listed first.  The names are not case sensitive.
 
-The Wildcard acts in the following manner
+*Wildcard*
+The Wildcard behavior varies based on the sport.
 | Sport | Behavior |
 | --- | --- |
 | Golf | Displays the current leader and competitor in second place |
@@ -143,21 +145,21 @@ The Wildcard acts in the following manner
 | Tennis | Results will be unpredictable due to multiple tournaments and matches in progress at once |
 | Team Sports | Most useful for playoffs.  Will continually reset to display whatever team competition is in progress in the league.  Results will be unpredictable if multiple competitions are in progress at once |
 
-#### Override the API Language (api_lang)
+#### Override the API Language (api_language)
 
 NOTE:  Team Abbreviations and Names may vary based on your local language.  While rare, changing the language after a sensor is set up can cause it to stop working.
 
 TeamTracker will use your local language settings when calling the ESPN APIs.  Some languages are supported more robustly than others.  For example, one language may provide play-by-play updates while another will not.  For this reason, you can override your local language.  English appears to be the most robustly supported language.
 
-If you set up the sensor using the Home Assistant UI.  You can add the override language code via the sensor's Configure button after it has been created.
+If you set up the sensor using the Home Assistant UI, you can add the override language code via the sensor's Configure button after it has been created.
 
-If you are setting up the sensor using YAML.  You can add it to your YAML configuration.
+If you are setting up the sensor using YAML.  You can add the `api_language` configuration key to your YAML configuration.
 
 You should use a [standard ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) when specifying an override.
 
 #### Specify the Conference - for NCAA Sports only (conference_id)
 
-The `conference_id` key is used the specifiy the Conference for the sensor.  It should only be used for NCAA football and basketball.  Using it for other leagues or sports will cause a `NOT_FOUND` state.
+The `conference_id` configuration key is used the specifiy the Conference for the sensor.  It should only be used for NCAA football and basketball.  Using it for other leagues or sports will cause a `NOT_FOUND` state.
 
 By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.  Conferences ID's are not consistent across football and basketball.
 
