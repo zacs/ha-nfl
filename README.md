@@ -133,9 +133,11 @@ The `team_id` configuration key is used the specifiy the competitor to track for
 | Wildcard | You can use the single `*` character as a Wildcard.  This will cause the sensor to match a team or athlete using sport-specific logic outlined below. |
 
 *RegEx*
+
 For doubles in tennis, rosters are used instead of team names and are in the format of `{Player 1} / {Player 2}`.  You can use a regular expression to match the roster.  As an example, if you do not know the order in which the players are listed on the roster, the regular expression `.*(?:NADAL|ALCARAZ).*/.*(?:NADAL|ALCARAZ).*` will match a doubles match with Nadal and Alcaraz regardless of which player is listed first.  The names are not case sensitive.
 
 *Wildcard*
+
 The Wildcard behavior varies based on the sport.
 | Sport | Behavior |
 | --- | --- |
