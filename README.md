@@ -43,7 +43,7 @@ It is possible to configure Team Tracker to use any existing ESPN Scoreboard API
 
 Sensors with Custom APIs require more steps to set up, however once set up, they behave the same as a natively supported sensor.  There is no difference between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
 
-The [Custom APIs](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-api-configurations--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) section below provides more details for setting up Custom API Configurations.
+The [Custom APIs](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) section below provides more details for setting up Custom API Configurations.
 
 ## Installation
 
