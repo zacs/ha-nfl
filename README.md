@@ -19,7 +19,7 @@ TeamTracker will work for any of the hundreds of teams/leagues for which an ESPN
 
 A small subset of the most popular teams/leagues have been pre-configured to simplify their setup.  This is referred to as native support.  Unfortunately, given the large number of teams/leagues for which APIs exist, it is impossible to provide native support for all of them.  
 
-The remaining teams/leagues are still supported, however they require a couple extra steps to set up.  This is referred to as setting up a Custom API Configuration.  
+The remaining teams/leagues are still supported, however they require a couple extra steps to set up.  This is referred to as configuring a Custom API.
 
 ### Natively Supported (Pre-Configured) Sports / Leagues
 
@@ -37,14 +37,13 @@ The following leagues are supported natively:
 - Tennis - ATP, WTA
 - Volleyball - NCAAVB, NCAAVBW
 
-### Sports / Leagues Supported via Custom API Configurations
+### Sports / Leagues Supported by Configuring a Custom API
 
-It is possible to configure Team Tracker to use any existing ESPN Scoreboard API, not just the pre-configured leagues.  This is done by using a Custom API Configuration. 
+It is possible to configure Team Tracker to use any existing ESPN Scoreboard API, not just the pre-configured leagues.  This is done by configuring a Custom API. 
 
-Custom API Configurations require more steps to set up, however once set up, they behave the same way a natively supported sensor does.  There is no difference, for example, between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
+Sensors with Custom APIs require more steps to set up, however once set up, they behave the same as a natively supported sensor.  There is no difference between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
 
-The [Custom API Configurations](https://github.com/vasqued2/ha-teamtracker/blob/Tennis-Doubles/README.md#custom-api-configurations--how-to-determine-the-sport-path-and-league-path) Section below provides more details for setting up Custom API Configurations.
-
+The [Custom APIs](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-api-configurations--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) section below provides more details for setting up Custom API Configurations.
 
 ## Installation
 
@@ -75,17 +74,17 @@ OR manually perform the followng steps:
 
 ### Configuration Keys
 
-The following configuration keys are available when setting up a Team Tracker sensor.
+The following configuration keys can be used when setting up a Team Tracker sensor.
 
 | YAML Name | UI Label | Required | Description | Valid Values |
 | --- | --- | --- | --- | --- |
 | name | Friendly Name| No | Friendly name for the sensor | Any valid friendly name |
-| league_id | League | Yes | League ID | See below |
-| team_id | Team / Athlete | Yes | Team Team ID, Athlete Name, Regular Expression | See below |
-| api_lang | None | No | Overrides default API language | [ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) |
-| conference_id | Conference Number | Only if `league_id` is a NCAA sport | Conference ID  | See below |
-| sport_path | Sport Path | If `league_id` is XXX | Sport path | See below |
-| league_path | League Path | No | If `league_id` is XXX | See below |
+| league_id | League | Yes | League ID | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-league-league_id)|
+| team_id | Team / Athlete | Yes | Team Team ID, Athlete Name, Regular Expression, or Wildcard | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-team-team_id) |
+| api_language | None | No | Overrides default API language | [ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) |
+| conference_id | Conference Number | Only if `league_id` is an NCAA football or basketball | Conference ID  | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-conference---for-ncaa-sports-only-conference_id) |
+| sport_path | Sport Path | If `league_id` is `XXX` | Sport Path for Custom API | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) |
+| league_path | League Path | If `league_id` is `XXX` | League Path for Custom | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) |
 
 
 #### Specify the League (league_id)
@@ -211,7 +210,7 @@ The following identifiers are also valid:
 | DIVII/III | 35 |  | Subset of D2/D3 games |
 | D1 |  | 50 | Subset of unranked D1 games |
 
-#### Custom API Configurations:  How to Determine the Sport Path and League Path (sport_path, league_path)
+#### Custom APIs:  How to Determine the Sport Path and League Path (sport_path, league_path)
 
 Setting the `league_id` configuration key to `XXX` or selecting "Custom: Specify Sport and League Path" from the UI, invokes the Custom API Configuration mode. 
  This requires you to set the `sport_path` and `league_path` configuration keys.  This section explains how to determine the correct values for these keys.
@@ -233,16 +232,15 @@ Once you have used the resources referenced above to determine the correct value
 
 1. On the Integrations page, select the "+ Add Integration" button.
 2. Search for the integration labeled "Team Tracker" and select it.  
-3. Select the desired League from the League List.  Select "Custom:  Specific sport and league path" to create a Custom API Configuration.
-4. Enter a value for team's ID in the UI prompt. This can be a the team abbreviation, team ID, athlete name, wildcard, or a regex as explained in the Team ID section.
-5. If NCAA football or basketball, enter the Conference ID from Conference ID Numbers below if desired.  
+3. Select the desired League from the League List.  Select "Custom:  Specific sport and league path" to create a Custom API.
+4. Enter a value for team's ID in the UI prompt. This can be a the team abbreviation, team ID, athlete name, wildcard, or a regex as explained in the [Team ID](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-team-team_id) section.
+5. If NCAA football or basketball, enter the Conference ID from [Conference ID](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-conference---for-ncaa-sports-only-conference_id) section if desired.  
 6. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_entered`.
-7. If you are setting up a Custom API Configuration, a second window will be displayed.
+7. If you are setting up a Custom API, a second window will be displayed.
 8. Enter the value for the Sport Path for the Custom API.
 9. Enter the value for the League Path for the Custom API.
 
 Once the sensor is set up with the UI, you can use the Options Menu to override the API language if desired.
-
 
 ### Manual Configuration in your `configuration.yaml` file
 
@@ -373,6 +371,8 @@ TeamTracker supports the following services.
 
 | Service | Input Parameters | Description |
 | --- | --- | --- |
-| call_api | sport_path, league_path, team_id, conference_id (optional) | Sets the teamtracker sensor based on the input parameters, calls the ESPN API, and populates the sensor attributes. |
+| call_api | sport_path, league_path, team_id, conference_id (optional) | Dynamically changes the teamtracker sensor based on the input parameters, calls the ESPN API, and refreshes the sensor attributes. Sensor will revert to original configuration on reboot. |
 
-Details can be viewed in the Service tab in Developer Tools.
+NOTE: The functionality and input parameters of the `call_api` service are subject to change as new uses emerge. If you have ideas or suggestions for specific use cases, open an Issue so they can be tracked.
+
+Additional details available on the Services tab in Developer Tools.
