@@ -1,6 +1,6 @@
 # Real-time Sports Scores in Home Assistant
 
-This integration provides real-time scores for teams and athletes (beta) in multiple professional (NBA, NFL, NHL, MLB, MLS, and more), college (NCAA), and international (soccer, golf, tennis, racing, cricket) sports using the ESPN Scoreboard APIs, and creates a sensor with attributes for the details of the game. 
+This integration provides real-time scores for teams and athletes in multiple professional (NBA, NFL, NHL, MLB, MLS, and more), college (NCAA), and international (soccer, golf, tennis, racing, cricket) sports using the ESPN Scoreboard APIs, and creates a sensor with detailed data for the competition. Services exist to change and interact with the sensor.
 
 This integration can be used with the [ha-teamtracker-card](https://github.com/vasqued2/ha-teamtracker-card) to display the game information in the Home Assistant dashboard.
 
@@ -19,12 +19,12 @@ TeamTracker will work for any of the hundreds of teams/leagues for which an ESPN
 
 A small subset of the most popular teams/leagues have been pre-configured to simplify their setup.  This is referred to as native support.  Unfortunately, given the large number of teams/leagues for which APIs exist, it is impossible to provide native support for all of them.  
 
-The remaining teams/leagues are still supported, however they require a couple extra steps to set up.  This is referred to as setting up a Custom API Configuration.  Custom API Configurations require more steps to set up, however once set up, they behave the same way that a natively supported sensor does.  There is no difference, for example, between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
+The remaining teams/leagues are still supported, however they require a couple extra steps to set up.  This is referred to as setting up a Custom API Configuration.  
 
 ### Natively Supported (Pre-Configured) Sports / Leagues
 
 The following leagues are supported natively:
-- Australian Football - AFL (beta)
+- Australian Football - AFL
 - Baseball - MLB
 - Basketball - NBA, WNBA, NCAAM, NCAAW, WNBA
 - Football - NFL, NCAAF, XFL
@@ -39,7 +39,182 @@ The following leagues are supported natively:
 
 ### Sports / Leagues Supported via Custom API Configurations
 
-It is possible to configure Team Tracker to use a custom API beyond those for the pre-configured leagues.  
+It is possible to configure Team Tracker to use any existing ESPN Scoreboard API, not just the pre-configured leagues.  This is done by using a Custom API Configuration. 
+
+Custom API Configurations require more steps to set up, however once set up, they behave the same way a natively supported sensor does.  There is no difference, for example, between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
+
+The [Custom API Configurations](https://github.com/vasqued2/ha-teamtracker/blob/Tennis-Doubles/README.md#custom-api-configurations--how-to-determine-the-sport-path-and-league-path) Section below provides more details for setting up Custom API Configurations.
+
+
+## Installation
+
+### Manual Installation
+
+Clone or download this repository and copy the "teamtracker" directory to your "custom_components" directory in your config directory
+
+```<config directory>/custom_components/teamtracker/...```
+  
+### Installation via HACS
+
+Use this button:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=vasqued2&repository=ha-teamtracker&category=integration)
+
+OR manually perform the followng steps:
+
+1. Open the HACS section of Home Assistant.
+2. In Integrations, click the "+ EXPLORE & DOWNLOAD REPOSITORIES" button in the bottom right corner.
+3. In the window that opens search for "Team Tracker Card".
+4. Select "Team Tracker Card" from the list
+5. Select the "Download" button in the buttom right corner.
+6. Select "Download" from the window to download the button.
+7. When given the Option, Reload.
+
+
+## Configuration
+
+### Configuration Keys
+
+The following configuration keys are available when setting up a Team Tracker sensor.
+
+| YAML Name | UI Label | Required | Description | Valid Values |
+| --- | --- | --- | --- | --- |
+| name | Friendly Name| No | Friendly name for the sensor | Any valid friendly name |
+| league_id | League | Yes | League ID | See below |
+| team_id | Team / Athlete | Yes | Team Team ID, Athlete Name, Regular Expression | See below |
+| api_lang | None | No | Overrides default API language | [ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) |
+| conference_id | Conference Number | Only if `league_id` is a NCAA sport | Conference ID  | See below |
+| sport_path | Sport Path | If `league_id` is XXX | Sport path | See below |
+| league_path | League Path | No | If `league_id` is XXX | See below |
+
+
+#### Specify the League (league_id)
+
+The `league_id` configuration key is used the specify the league for the sensor.  The following values are valid:
+- ATP (Assc. of Tennis Professionals)
+- BUND (German Bundesliga)
+- CL (Champions League)
+- CLA (Conmebol Libertadores)
+- EPL (English Premiere League)
+- F1 (Formula 1 Racing)
+- IRL (Indy Racing League)
+- LIGA (Spanish LaLiga)
+- LIG1 (French Ligue 1)
+- MLB (Major League Baseball)
+- MLS (Major League Soccer)
+- NBA (National Basketball Assc.)
+- NCAAF (NCAA Football)
+- NCAAM (NCAA Men's Basketball)
+- NCAAW (NCAA Women's Basketball)
+- NCAAVB (NCAA Men's Volleyball)
+- NCAAVBW (NCAA Women's Volleyball)
+- NFL (National Football League)
+- NWSL (National Women's Soccer League)
+- PGA (Professional Golfers' Assc.)
+- SERA (Italian Serie A)
+- UFC (Ultimate Fighting Championship)
+- XFL (XFL)
+- WC (World Cup)
+- WNBA (Women's NBA)
+- WTA (Women's Tennis Assc.)
+- XXX (Custom: Specify Sport and League Path)
+
+Using `XXX` or selecting "Custom: Specify Sport and League Path" from the UI enables the creation of a Custom API Configuration and requires the `sport_path` and `league_path` configuration keys to be defined.
+
+#### Specify the Team (team_id)
+
+The `team_id` key is used the specifiy the team for the sensor.  It can take the form of a Team Abbreviation, Team ID, Athlete Name, Regular Expression, or a Wildcard (`*`).
+
+| Form | Description |
+| --- | --- |
+| Team Abbreviation | This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well. |
+| Team ID | ESPN assigns a unique number to identify a team.  This unique number shows up in URLs and other locations. |
+| Athlete Name | For sports involving individual athletes, you should use the athlete's name as the search string.  You should use as much as is needed to uniquely identify the desired athlete. |
+| RegEx | Regular expressions can be used to match team names, athlete names, and rosters in competitions like Doubles Tennis.  See below for an example. |
+| Wildcard | You can use the single `*` character as a Wildcard.  This will cause the sensor to match a team or athlete using sport-specific logic outlined below. |
+
+For doubles in tennis, rosters are used instead of team names and are in the format of `{Player 1} / {Player 2}`.  You can use a regular expression to match the roster.  As an example, if you do not know the order in which the players are listed on the roster, the regular expression `.*(?:NADAL|ALCARAZ).*/.*(?:NADAL|ALCARAZ).*` will match a doubles match with Nadal and Alcaraz regardless of which player is listed first.  The names are not case sensitive.
+
+The Wildcard acts in the following manner
+| Sport | Behavior |
+| --- | --- |
+| Golf | Displays the current leader and competitor in second place |
+| MMA | Displays the current active fight or the next upcoming fight if none are active |
+| Racing | Displays the current leader and competitor in second place |
+| Tennis | Results will be unpredictable due to multiple tournaments and matches in progress at once |
+| Team Sports | Most useful for playoffs.  Will continually reset to display whatever team competition is in progress in the league.  Results will be unpredictable if multiple competitions are in progress at once |
+
+#### Override the API Language (api_lang)
+
+NOTE:  Team Abbreviations and Names may vary based on your local language.  While rare, changing the language after a sensor is set up can cause it to stop working.
+
+TeamTracker will use your local language settings when calling the ESPN APIs.  Some languages are supported more robustly than others.  For example, one language may provide play-by-play updates while another will not.  For this reason, you can override your local language.  English appears to be the most robustly supported language.
+
+If you set up the sensor using the Home Assistant UI.  You can add the override language code via the sensor's Configure button after it has been created.
+
+If you are setting up the sensor using YAML.  You can add it to your YAML configuration.
+
+You should use a [standard ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) when specifying an override.
+
+#### Specify the Conference - for NCAA Sports only (conference_id)
+
+The `conference_id` key is used the specifiy the Conference for the sensor.  It should only be used for NCAA football and basketball.  Using it for other leagues or sports will cause a `NOT_FOUND` state.
+
+By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.  Conferences ID's are not consistent across football and basketball.
+
+The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
+
+| Conference | Football Conference ID | Basketball Conference ID |
+| --- | --- | --- |
+| ACC | 1 | 2 |
+| American | 151 | 62 |
+| Big 12 | 4 | 8 |
+| Big Ten | 5 | 7 |
+| C-USA | 12 | 11 |
+| FBS Independent | 18 |  |
+| Independent |  | 43 |
+| MAC | 15 | 14 |
+| Mountain West | 17 | 44 |
+| MVC |  | 18 |
+| PAC-12 | 9 | 21 | 
+| SEC | 8 | 23 |
+| Sun Belt | 37 | 27 |
+| America East |  | 1 |
+| ASUN | 176 | 46 |
+| Atlantic 10 |  | 3 |
+| Big East |  | 4 |
+| Big Sky | 20 | 5 |
+| Big South | 40 | 6 |
+| Big West |  | 9 |
+| CAA | 18 | 10 |
+| Horizon |  | 45 |
+| Ivy | 22 | 12 |
+| MAAC |  | 13 |
+| MEAC | 24 | 16 |
+| MVFC | 21 |
+| NEC | 25 | 19 |
+| OVC | 26 | 20 |
+| Patriot | 27 | 22 |
+| Pioneer | 28 |
+| SWAC | 31 | 26 |
+| Southern | 29 | 24 |
+| Southland | 30 | 25 |
+| Summit |  | 49 |
+| WAC | 16 | 30 |
+| WCC |  | 29 |
+
+The following identifiers are also valid:
+| Additional Groupings | Football Conference ID | Basketball Conference ID | Description |
+| --- | --- | --- | --- |
+| FBS (1-A) | 80 |  | Subset of unranked FBS games |
+| FCS (1-AA) | 81 |  | Subset of FCS games |
+| DIVII/III | 35 |  | Subset of D2/D3 games |
+| D1 |  | 50 | Subset of unranked D1 games |
+
+#### Custom API Configurations:  How to Determine the Sport Path and League Path (sport_path, league_path)
+
+Setting the `league_id` configuration key to `XXX` or selecting "Custom: Specify Sport and League Path" from the UI, invokes the Custom API Configuration mode. 
+ This requires you to set the `sport_path` and `league_path` configuration keys.  This section explains how to determine the correct values for these keys.
 
 All ESPN APIs use a URL in the following format:
 https://site.api.espn.com/apis/site/v2/sports/{SPORT_PATH}/{LEAGUE_PATH}/scoreboard
@@ -47,11 +222,79 @@ where {SPORT_PATH} is the sport and {LEAGUE_PATH} is the league that the team pl
 
 For example, for the NFL, the URL is https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
 
-Once you know the URL with the scoreboard of your team, it is possible to configure Team Tracker to use it.  the [Custom API Configuration section of the Wiki](https://github.com/vasqued2/ha-teamtracker/wiki/Custom-API-Configurations) contains more details on how to determine the {SPORT_PATH} and {LEAGUE_PATH} as well as some that have been verified to work and some that are known to not be compatible.  Please update the Wiki if you try others.
+The [Custom API Configuration section of the Wiki](https://github.com/vasqued2/ha-teamtracker/wiki/Custom-API-Configurations) contains more details on how to determine the {SPORT_PATH} and {LEAGUE_PATH} as well as some that have been verified to work and some that are known to not be compatible.  Please update the Wiki if you try others.
 
 The [FAQ in the Wiki](https://github.com/vasqued2/ha-teamtracker/wiki/Frequently-Asked-Questions) also contains an explanation of the types of sports that work with the teamtracker integration and those that currently do not.
 
-The Configuration section below provides more details for configuring both types of sensors.
+Once you have used the resources referenced above to determine the correct values to use for `sport_path` and `league_path`, you should use those values in the YAML or UI configuration.
+
+
+### Configuration via the "Configuration->Integrations" section of the Home Assistant UI
+
+1. On the Integrations page, select the "+ Add Integration" button.
+2. Search for the integration labeled "Team Tracker" and select it.  
+3. Select the desired League from the League List.  Select "Custom:  Specific sport and league path" to create a Custom API Configuration.
+4. Enter a value for team's ID in the UI prompt. This can be a the team abbreviation, team ID, athlete name, wildcard, or a regex as explained in the Team ID section.
+5. If NCAA football or basketball, enter the Conference ID from Conference ID Numbers below if desired.  
+6. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_entered`.
+7. If you are setting up a Custom API Configuration, a second window will be displayed.
+8. Enter the value for the Sport Path for the Custom API.
+9. Enter the value for the League Path for the Custom API.
+
+Once the sensor is set up with the UI, you can use the Options Menu to override the API language if desired.
+
+
+### Manual Configuration in your `configuration.yaml` file
+
+To create a sensor via YAML, add the following configuration to your sensor definitions.  Enclose the values in quotes to avoid unrealized conflicts w/ predefined terms in YAML (i.e. NO being interpreted as No):
+
+```
+- platform: teamtracker
+  league_id: "NFL"
+  team_id: "NO"
+```
+
+After you restart Home Assistant then you should have a new sensor called `sensor.team_tracker` in your system.
+
+You can overide the sensor default name (`sensor.team_tracker`) to one of your choosing by setting the `name` option:
+
+```
+- platform: teamtracker
+  league_id: "NFL"
+  team_id: "NO"
+  name: "Saints"
+```
+
+Using the configuration example above the sensor will then be called "sensor.saints".
+
+To set a Conference ID for an NCAA football or basketball team, use the following:
+
+```
+  - platform: teamtracker
+    league_id: "NCAAF"
+    team_id: "BGSU"
+    conference_id: 15
+    name: "Falcons"
+```
+
+To set up a Custom API Configuration, set the league_id to 'XXX' and enter the desired values for sport_path and league_path.
+```
+- platform: teamtracker
+  league_id: "XXX"
+  team_id: "OSU"
+  sport_path: "volleyball"
+  league_path: "womens-college-volleyball"
+  name: "Buckeyes_VB"
+```
+
+To override the API language to Spanish, set the api_lang to 'esp'.
+```
+- platform: teamtracker
+  league_id: "NFL"
+  team_id: "NO"
+  name: "Saints"
+  api_language: esp
+```
 
 ## Sensor Data
 
@@ -123,218 +366,6 @@ Some attributes are only available for certain sports.
 | `last_update` | A timestamp for the last time data was fetched for the game. If you watch this in real-time, you should notice it updating every 10 minutes, except for during the game (and for the ~20 minutes pre-game) when it updates every 5 seconds. | `PRE` `IN` `POST` `BYE` |
 | `api_message` | A message giving information to help troubleshoot when the sensor is state `NOT_FOUND` | `NOT_FOUND` |
 
-
-## Installation
-
-### Manually
-
-Clone or download this repository and copy the "teamtracker" directory to your "custom_components" directory in your config directory
-
-```<config directory>/custom_components/teamtracker/...```
-  
-### HACS
-
-1. Open the HACS section of Home Assistant.
-2. In Integrations, click the "+ EXPLORE & DOWNLOAD REPOSITORIES" button in the bottom right corner.
-3. In the window that opens search for "Team Tracker Card".
-4. Select "Team Tracker Card" from the list
-5. Select the "Download" button in the buttom right corner.
-6. Select "Download" from the window to download the button.
-7. When given the Option, Reload.
-
- - HACS should automatically add the following to your resources:
-```
-url: /hacsfiles/ha-teamtracker-card/ha-teamtracker-card.js
-type: Javascript Module
-```
-  
-## Configuration
-
-### Configuration via the "Configuration->Integrations" section of the Home Assistant UI
-
-1. Search for the integration labeled "Team Tracker" and select it.  
-2. Enter the desired League from the League List.
-3. Enter the team's ID in the UI prompt. 
-4. If NCAA football or basketball, enter the Conference ID from Conference ID Numbers below if desired.  
-5. You can also enter a friendly name. If you keep the default, your sensor will be `sensor.team_tracker`, otherwise it will be `sensor.friendly_name_you_picked`. 
-
-When using the Home Assistant UI to set up a Custom API Configuration, simply enter 'XXX' in the League field.  This will trigger a second dialogue box which will allow you to enter the values for the {SPORT_PATH} and {LEAGUE_PATH}.
-
-#### Determining the Team ID
-For the Team ID, you'll need to know the team abbreviation ESPN uses for your team.  This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well.
-
-Alternate Method:  ESPN assigns a unique number to identify a team.  This unique number shows up in URLs and other locations.  This value can also be used to specify the team ID.  If used, TeamTracker will also search for this number to uniquely identify a team.
-
-For sports involving individual athletes, you should use the athlete's name as the search string.  You should use as much as is needed to uniquely identify the desired athlete.
-
-#### Use of a Wild Card In Place of Athlete's Name
-
-You can use the single `*` character as a Wild Card in place of the team or athlete's name.  This will cause the sensor to match a team or athlete using sport-specific logic.
-
-The Wild Card acts in the following manner
-| Sport | Behavior |
-| --- | --- |
-| Golf | Displays the current leader and competitor in second place |
-| MMA | Displays the current active fight or the next upcoming fight if none are active |
-| Racing | Displays the current leader and competitor in second place |
-| Tennis | Results will be unpredictable due to multiple tournaments and matches in progress at once |
-| Team Sports | Most useful for playoffs.  Will continually reset to display whatever team competition is in progress in the league.  Results will be unpredictable if multiple competitions are in progress at once |
-
-### Manual Configuration in your `configuration.yaml` file
-
-To create a sensor instance add the following configuration to your sensor definitions using the team_id found above.  Enclose the values in quotes to avoid unrealized conflicts w/ predefined terms in YAML (i.e. NO being interpreted as No):
-
-```
-- platform: teamtracker
-  league_id: "NFL"
-  team_id: "NO"
-```
-
-After you restart Home Assistant then you should have a new sensor called `sensor.team_tracker` in your system.
-
-You can overide the sensor default name (`sensor.team_tracker`) to one of your choosing by setting the `name` option:
-
-```
-- platform: teamtracker
-  league_id: "NFL"
-  team_id: "NO"
-  name: "Saints"
-```
-
-Using the configuration example above the sensor will then be called "sensor.saints".
-
-To set a Conference ID for an NCAA football or basketball team, use the following:
-
-```
-  - platform: teamtracker
-    league_id: "NCAAF"
-    team_id: "BGSU"
-    conference_id: 15
-    name: "Falcons"
-```
-
-To set up a Custom API Configuration, set the league_id to 'XXX' and enter the desired values for sport_path and league_path.
-```
-- platform: teamtracker
-  league_id: "XXX"
-  team_id: "OSU"
-  sport_path: "volleyball"
-  league_path: "womens-college-volleyball"
-  name: "Buckeyes_VB"
-```
-
-### League List ###
-
-For the League, the following values are valid:
-- ATP (Assc. of Tennis Professionals)
-- BUND (German Bundesliga)
-- CL (Champions League)
-- CLA (Conmebol Libertadores)
-- EPL (English Premiere League)
-- F1 (Formula 1 Racing)
-- IRL (Indy Racing League)
-- LIGA (Spanish LaLiga)
-- LIG1 (French Ligue 1)
-- MLB (Major League Baseball)
-- MLS (Major League Soccer)
-- NBA (National Basketball Assc.)
-- NCAAF (NCAA Football)
-- NCAAM (NCAA Men's Basketball)
-- NCAAW (NCAA Women's Basketball)
-- NCAAVB (NCAA Men's Volleyball)
-- NCAAVBW (NCAA Women's Volleyball)
-- NFL (National Football League)
-- NWSL (National Women's Soccer League)
-- PGA (Professional Golfers' Assc.)
-- SERA (Italian Serie A)
-- UFC (Ultimate Fighting Championship)
-- XFL (XFL)
-- WC (World Cup)
-- WNBA (Women's NBA)
-- WTA (Women's Tennis Assc.)
-- XXX (Custom API Configuration)
-    
-### Team ID
-
-For the Team, you'll need to know the team ID ESPN uses for your team.  This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well.  
-
-NOTE:  In rare instances, the team ID will vary based on your local language.  While rare, changing the language after a sensor is set up can cause it to stop working.
-
-For individual sports, you should specify the althlete's name in `team_id` field.  This will cause the sensor to track the competitions matching the name of the specified athlete.  You should use as much of the name (i.e. last name, full name) as needed to uniquely identify the athlete.
-
-See [https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#use-of-a-wild-card-in-place-of-athletes-name](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#use-of-a-wild-card-in-place-of-athletes-name) for the use of a wild card in the Team ID field.
-
-### Conference ID Numbers
-
-By default, NCAA football and basketball will only find a game if at least one of the teams playing is ranked.  In order to find games in which both teams are unranked, you must specify a Conference ID, which is a number used by ESPN to identify college conferences and other groups of teams.  Conferences ID's are not consistent across football and basketball.
-
-The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
-
-| Conference | Football Conference ID | Basketball Conference ID |
-| --- | --- | --- |
-| ACC | 1 | 2 |
-| American | 151 | 62 |
-| Big 12 | 4 | 8 |
-| Big Ten | 5 | 7 |
-| C-USA | 12 | 11 |
-| FBS Independent | 18 |  |
-| Independent |  | 43 |
-| MAC | 15 | 14 |
-| Mountain West | 17 | 44 |
-| MVC |  | 18 |
-| PAC-12 | 9 | 21 | 
-| SEC | 8 | 23 |
-| Sun Belt | 37 | 27 |
-| America East |  | 1 |
-| ASUN | 176 | 46 |
-| Atlantic 10 |  | 3 |
-| Big East |  | 4 |
-| Big Sky | 20 | 5 |
-| Big South | 40 | 6 |
-| Big West |  | 9 |
-| CAA | 18 | 10 |
-| Horizon |  | 45 |
-| Ivy | 22 | 12 |
-| MAAC |  | 13 |
-| MEAC | 24 | 16 |
-| MVFC | 21 |
-| NEC | 25 | 19 |
-| OVC | 26 | 20 |
-| Patriot | 27 | 22 |
-| Pioneer | 28 |
-| SWAC | 31 | 26 |
-| Southern | 29 | 24 |
-| Southland | 30 | 25 |
-| Summit |  | 49 |
-| WAC | 16 | 30 |
-| WCC |  | 29 |
-
-The following identifiers are also valid:
-| Additional Groupings | Football Conference ID | Basketball Conference ID | Description |
-| --- | --- | --- | --- |
-| FBS (1-A) | 80 |  | Subset of unranked FBS games |
-| FCS (1-AA) | 81 |  | Subset of FCS games |
-| DIVII/III | 35 |  | Subset of D2/D3 games |
-| D1 |  | 50 | Subset of unranked D1 games |
-
-### Override the API Language
-
-TeamTracker will use your local language settings when calling the ESPN APIs.  Some languages are supported more robustly than others.  For example, one language may provide play-by-play updates while another will not.  For this reason, you can override your local language.  English appears to be the most robustly supported language.
-
-If you set up the sensor using the Home Assistant UI.  You can add the override language code via the sensor's Configure button after it has been created.
-
-If you are setting up the sensor using YAML.  You can add it to your YAML configuration.
-
-You should use a [standard ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) when specifying an override.
-
-Example
-```
-- platform: teamtracker
-  league_id: "NFL"
-  team_id: "NO"
-  name: "Saints"
-  api_language: en
-```
 
 ## Services
 
