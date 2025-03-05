@@ -167,44 +167,44 @@ By default, NCAA football and basketball will only find a game if at least one o
 
 The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
 
-| Conference | Football Conference ID | Basketball Conference ID |
-| --- | --- | --- |
-| ACC | 1 | 2 |
-| American | 151 | 62 |
-| Big 12 | 4 | 8 |
-| Big Ten | 5 | 7 |
-| C-USA | 12 | 11 |
-| FBS Independent | 18 |  |
-| Independent |  | 43 |
-| MAC | 15 | 14 |
-| Mountain West | 17 | 44 |
-| MVC |  | 18 |
-| PAC-12 | 9 | 21 | 
-| SEC | 8 | 23 |
-| Sun Belt | 37 | 27 |
-| America East |  | 1 |
-| ASUN | 176 | 46 |
-| Atlantic 10 |  | 3 |
-| Big East |  | 4 |
-| Big Sky | 20 | 5 |
-| Big South | 40 | 6 |
-| Big West |  | 9 |
-| CAA | 18 | 10 |
-| Horizon |  | 45 |
-| Ivy | 22 | 12 |
-| MAAC |  | 13 |
-| MEAC | 24 | 16 |
-| MVFC | 21 |
-| NEC | 25 | 19 |
-| OVC | 26 | 20 |
-| Patriot | 27 | 22 |
-| Pioneer | 28 |
-| SWAC | 31 | 26 |
-| Southern | 29 | 24 |
-| Southland | 30 | 25 |
-| Summit |  | 49 |
-| WAC | 16 | 30 |
-| WCC |  | 29 |
+| Conference | Football Conf. ID | Basketball Conf. ID | Baseball Conf. ID | Softball Conf. ID
+| --- | --- | --- | --- | --- |
+| ACC | 1 | 2 | 37 | 40 |
+| American | 151 | 62 |  |  |
+| Big 12 | 4 | 8 | 44 | 45 |
+| Big Ten | 5 | 7 | 48 | 49 |
+| C-USA | 12 | 11 | 50 |  |
+| FBS Independent | 18 |  |  |  |
+| Independent |  | 43 | 53 |  |
+| MAC | 15 | 14 |  |  |
+| Mountain West | 17 | 44 |  |  |
+| MVC |  | 18 |  |  |
+| PAC-12 | 9 | 21 | 46 | 47 |
+| SEC | 8 | 23 | 27 | 32 |
+| Sun Belt | 37 | 27 |  |  |
+| America East |  | 1 |  |  |
+| ASUN | 176 | 46 | 56 |  |
+| Atlantic 10 |  | 3 |  |  |
+| Big East |  | 4 |  |  |
+| Big Sky | 20 | 5 |  |  |
+| Big South | 40 | 6 |  |  |
+| Big West |  | 9 |  |  |
+| CAA | 18 | 10 |  |  |
+| Horizon |  | 45 |  |  |
+| Ivy | 22 | 12 |  |  |
+| MAAC |  | 13 | 52 |  |
+| MEAC | 24 | 16 |  |  |
+| MVFC | 21 |  |  |  |
+| NEC | 25 | 19 | 51 |  |
+| OVC | 26 | 20 |  |  |
+| Patriot | 27 | 22 |  |  |
+| Pioneer | 28 |  |  |  |
+| SWAC | 31 | 26 |  |  |
+| Southern | 29 | 24 |  |  |
+| Southland | 30 | 25 | 54 |  |
+| Summit |  | 49 |  |  |
+| WAC | 16 | 30 |  |  |
+| WCC |  | 29 | 55 |  |
 
 The following identifiers are also valid:
 | Additional Groupings | Football Conference ID | Basketball Conference ID | Description |
