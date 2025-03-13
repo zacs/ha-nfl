@@ -213,6 +213,7 @@ The following identifiers are also valid:
 | FCS (1-AA) | 81 |  | Subset of FCS games |
 | DIVII/III | 35 |  | Subset of D2/D3 games |
 | D1 |  | 50 | Subset of unranked D1 games |
+| D1 |  | 100 | NCAA Tournament |
 
 #### Custom APIs:  How to Determine the Sport Path and League Path (sport_path, league_path)
 
