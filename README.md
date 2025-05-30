@@ -14,6 +14,8 @@ This integration is a fork of the excellent [ha-nfl](https://github.com/zacs/ha-
  - For example, any teamtracker v0.2.x will be compatible with any teamtracker-card v0.2.y.
  - Compatibility is not guaranteed across different MAJOR or MINOR version numbers.
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/vasqued2)
+
 ## Supported Teams and Leagues
 TeamTracker will work for any of the hundreds of teams/leagues for which an ESPN scoreboard API exists.  
 
