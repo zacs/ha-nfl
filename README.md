@@ -45,6 +45,8 @@ It is possible to configure Team Tracker to use any existing ESPN Scoreboard API
 
 Sensors with Custom APIs require more steps to set up, however once set up, they behave the same as a natively supported sensor.  There is no difference between a team playing in a natively supported soccer league or a non-natively supported soccer league other than the extra steps needed to initially set up the non-natively supported one.
 
+Additionally, a Custom API can be configured using the `league_path` value of `all` to pull in soccer matches across multiple leagues and tournaments for the same team.
+
 The [Custom APIs](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) section below provides more details for setting up Custom API Configurations.
 
 ## Installation
@@ -86,7 +88,7 @@ The following configuration keys can be used when setting up a Team Tracker sens
 | api_language | None | No | Overrides default API language | [ISO language code](https://www.andiamo.co.uk/resources/iso-language-codes/) |
 | conference_id | Conference Number | Only if `league_id` is an NCAA football or basketball | Conference ID  | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#specify-the-conference---for-ncaa-sports-only-conference_id) |
 | sport_path | Sport Path | If `league_id` is `XXX` | Sport Path for Custom API | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) |
-| league_path | League Path | If `league_id` is `XXX` | League Path for Custom | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) |
+| league_path | League Path | If `league_id` is `XXX` | League Path for Custom API. The value `all` can be used for soccer teams to pull in all matches across all leagues and tournaments. The unique ESPN Team ID should be used for `team_id` when `all` is used. | [See below](https://github.com/vasqued2/ha-teamtracker?tab=readme-ov-file#custom-apis--how-to-determine-the-sport-path-and-league-path-sport_path-league_path) |
 
 
 #### Specify the League (league_id)
@@ -129,7 +131,7 @@ The `team_id` configuration key is used the specifiy the competitor to track for
 | Form | Description |
 | --- | --- |
 | Team Abbreviation | This is the 2-, 3- or 4-letter abbreviation (eg. "SEA" for Seattle or "NE" for New England) ESPN uses when space is limited.  You can generally find them at https://espn.com/ in the top scores UI, but they can also be found in other pages with team stats as well. |
-| Team ID | ESPN assigns a unique number to identify a team.  This unique number shows up in URLs and other locations. |
+| Team ID | ESPN assigns a unique number to identify a team.  This unique number shows up in URLs and other locations. The Team ID should be used when using the `league_path` of `all` for soccer teams. |
 | Athlete Name | For sports involving individual athletes, you should use the athlete's name as the search string.  You should use as much as is needed to uniquely identify the desired athlete. |
 | RegEx | Regular expressions can be used to match team names, athlete names, and rosters in competitions like Doubles Tennis.  See below for an example. |
 | Wildcard | You can use the single `*` character as a Wildcard.  This will cause the sensor to match a team or athlete using sport-specific logic outlined below. |
