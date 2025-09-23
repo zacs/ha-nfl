@@ -201,6 +201,7 @@ The following is a list of the college conferences and the corresponding number 
 | MVFC | 21 |  |  |  |
 | NEC | 25 | 19 | 51 |  |
 | OVC | 26 | 20 |  |  |
+| OVC-Big South | 179 |  |  |  |
 | Patriot | 27 | 22 |  |  |
 | Pioneer | 28 |  |  |  |
 | SWAC | 31 | 26 |  |  |
