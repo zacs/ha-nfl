@@ -207,7 +207,7 @@ The following is a list of the college conferences and the corresponding number 
 | SWAC | 31 | 26 |  |  | 74 |
 | Southern | 29 | 24 |  |  | 72 |
 | Southland | 30 | 25 | 54 |  |
-| Summit |  | 49 |  |  |
+| Summit |  | 49 |  |  | 73, 77 (legacy) |
 | WAC | 16 | 30 |  |  |
 | WCC |  | 29 | 55 |  |
 
