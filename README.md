@@ -171,45 +171,45 @@ By default, NCAA football and basketball will only find a game if at least one o
 
 The following is a list of the college conferences and the corresponding number ESPN uses for their Conference ID.  For games involving at least one ranked team, no Conference ID is needed.
 
-| Conference | Football Conf. ID | Basketball Conf. ID | Baseball Conf. ID | Softball Conf. ID | W. VB Conf. ID |
-| --- | --- | --- | --- | --- | --- |
-| ACC | 1 | 2 | 37 | 40 | 49 |
-| Big 12 | 4 | 8 | 44 | 45 | 51 |
-| Big Ten | 5 | 7 | 48 | 49 | 54 |
-| C-USA | 12 | 11 | 50 |  | 79 |
+| Conference | Football | Basketball | Baseball | Softball | W. Volleyball | W. Basketball |
+| --- | --- | --- | --- | --- | --- | --- |
+| ACC | 1 | 2 | 37 | 40 | 49 | 2 |
+| Big 12 | 4 | 8 | 44 | 45 | 51 | 8 |
+| Big Ten | 5 | 7 | 48 | 49 | 54 | 7 |
+| C-USA | 12 | 11 | 50 |  | 79 | 11 |
 | FBS Independent | 18 |  |  |  |
 | Independent |  | 43 | 53 |  |
-| MAC | 15 | 14 |  |  | 62 |
-| Mountain West | 17 | 44 |  |  |
-| MVC |  | 18 |  |  | 64 |
+| MAC | 15 | 14 |  |  | 62 | 14 |
+| Mountain West | 17 | 44 |  |  |  | 44 |
+| MVC |  | 18 |  |  | 64 | 18 |
 | PAC-12 | 9 | 21 | 46 | 47 | 69 |
-| SEC | 8 | 23 | 27 | 32 | 71 |
-| Sun Belt | 37 | 27 |  |  | 75 |
-| America East |  | 1 |  |  | 46 |
-| American | 151 | 62 |  |  57 |
-| ASUN | 176 | 46 | 56 |  | 50 |
-| Atlantic 10 |  | 3 |  |  | 48 |
-| Big East |  | 4 |  |  | 52 |
-| Big Sky | 20 | 5 |  |  |
-| Big South | 40 | 6 |  |  | 13 |
-| Big West |  | 9 |  |  | 55 |
-| CAA | 18 | 10 |  |  | 56 |
-| Horizon |  | 45 |  |  | 59 |
-| Ivy | 22 | 12 |  |  | 76 |
-| MAAC |  | 13 | 52 |  | 61 |
-| MEAC | 24 | 16 |  |  | 63 |
+| SEC | 8 | 23 | 27 | 32 | 71 | 23 |
+| Sun Belt | 37 | 27 |  |  | 75 | 27 |
+| America East |  | 1 |  |  | 46 | 1|
+| American | 151 | 62 |  |  | 57 | 62 |
+| ASUN | 176 | 46 | 56 |  | 50 | 46 |
+| Atlantic 10 |  | 3 |  |  | 48 | 3 |
+| Big East |  | 4 |  |  | 52 | 4 |
+| Big Sky | 20 | 5 |  |  |  | 5 |
+| Big South | 40 | 6 |  |  | 13 | 6 |
+| Big West |  | 9 |  |  | 55 | 9 |
+| CAA | 18 | 10 |  |  | 56 | 10 |
+| Horizon |  | 45 |  |  | 59 | 45 |
+| Ivy | 22 | 12 |  |  | 76 | 12 |
+| MAAC |  | 13 | 52 |  | 61 | 13 |
+| MEAC | 24 | 16 |  |  | 63 | 16 |
 | MVFC | 21 |  |  |  |
-| NEC | 25 | 19 | 51 |  | 66 |
-| OVC | 26 | 20 |  |  | 26 |
+| NEC | 25 | 19 | 51 |  | 66 | 19 |
+| OVC | 26 | 20 |  |  | 26 | 20 |
 | OVC-Big South | 179 |  |  |  |
-| Patriot | 27 | 22 |  |  | 70 |
+| Patriot | 27 | 22 |  |  | 70 | 22 |
 | Pioneer | 28 |  |  |  |
-| SWAC | 31 | 26 |  |  | 74 |
-| Southern | 29 | 24 |  |  | 72 |
-| Southland | 30 | 25 | 54 |  |
-| Summit |  | 49 |  |  | 73, 77 (legacy) |
-| WAC | 16 | 30 |  |  |
-| WCC |  | 29 | 55 |  |
+| SWAC | 31 | 26 |  |  | 74 | 26 |
+| Southern | 29 | 24 |  |  | 72 | 24 |
+| Southland | 30 | 25 | 54 |  |  | 25 |
+| Summit |  | 49 |  |  | 73, 77 (legacy) | 47 |
+| WAC | 16 | 30 |  |  |  | 30 |
+| WCC |  | 29 | 55 |  |  | 29 |
 
 The following identifiers are also valid:
 | Additional Groupings | Football Conference ID | Basketball Conference ID | Description |
