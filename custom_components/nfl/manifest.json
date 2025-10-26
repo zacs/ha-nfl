@@ -1,12 +1,16 @@
 {
-    "domain": "nfl",
-    "name": "NFL",
-    "codeowners": ["@zacs"],
-    "config_flow": true,
-    "dependencies": [],
-    "documentation": "https://github.com/zacs/ha_nfl",
-    "iot_class": "cloud_polling",
-    "issue_tracker": "https://github.com/zacs/ha_nfl/issues",
-    "requirements": ["arrow"],
-    "version": "0.1.1"
-  }
+  "domain": "nfl",
+  "name": "NFL",
+  "codeowners": [
+    "@zacs"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/zacs/ha-nfl",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/zacs/ha-nfl/issues",
+  "requirements": [
+    "arrow"
+  ],
+  "version": "0.1.1"
+}

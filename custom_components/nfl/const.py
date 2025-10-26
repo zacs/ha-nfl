@@ -14,7 +14,7 @@ DEFAULT_TIMEOUT = 120
 # Misc
 TEAM_ID = ""
 VERSION = "0.1"
-ISSUE_URL = "https://github.com/zacs/ha_nfl"
+ISSUE_URL = "https://github.com/zacs/ha-nfl/issues"
 DOMAIN = "nfl"
 PLATFORM = "sensor"
 ATTRIBUTION = "Data provided by ESPN"
