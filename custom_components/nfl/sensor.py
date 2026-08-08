@@ -1,5 +1,6 @@
 import logging
 import uuid
+from types import SimpleNamespace
 
 import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -35,28 +36,31 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Configuration from yaml"""
-    if DOMAIN not in hass.data.keys():
-        hass.data.setdefault(DOMAIN, {})
-        config.entry_id = slugify(f"{config.get(CONF_TEAM_ID)}")
-        config.data = config
-    else:
-        config.entry_id = slugify(f"{config.get(CONF_TEAM_ID)}")
-        config.data = config
+    hass.data.setdefault(DOMAIN, {})
+
+    # In HA 2024.05+ the YAML `config` is an immutable NodeDictClass, so we can
+    # no longer attach `entry_id`/`data` attributes to it directly. Wrap it in a
+    # lightweight object that mimics the ConfigEntry interface (entry_id + data)
+    # the rest of the platform expects.
+    entry = SimpleNamespace(
+        entry_id=slugify(f"{config.get(CONF_TEAM_ID)}"),
+        data=dict(config),
+    )
 
     # Setup the data coordinator
     coordinator = NFLDataUpdateCoordinator(
         hass,
-        config,
-        config[CONF_TIMEOUT],
+        entry.data,
+        entry.data.get(CONF_TIMEOUT),
     )
 
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_refresh()
 
-    hass.data[DOMAIN][config.entry_id] = {
+    hass.data[DOMAIN][entry.entry_id] = {
         COORDINATOR: coordinator,
     }
-    async_add_entities([NFLScoresSensor(hass, config)], True)
+    async_add_entities([NFLScoresSensor(hass, entry)], True)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
