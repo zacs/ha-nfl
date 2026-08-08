@@ -1,13 +1,16 @@
 """Tests for init."""
-import pytest
-from unittest.mock import patch
 
-from homeassistant.const import CONF_NAME
+from datetime import timedelta
+from unittest.mock import AsyncMock, patch
+
+import pytest
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
+from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity_registry import async_get
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.nfl import _LOGGER, NFLDataUpdateCoordinator
 from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
 from tests.const import CONFIG_DATA
 
@@ -23,7 +26,11 @@ async def test_setup_entry(
     )
 
     entry.add_to_hass(hass)
-    assert await hass.config_entries.async_setup(entry.entry_id)
+    with patch(
+        "custom_components.nfl.NFLDataUpdateCoordinator.async_refresh",
+        new=AsyncMock(return_value=None),
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
     assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 1
@@ -40,7 +47,11 @@ async def test_unload_entry(hass):
     )
 
     entry.add_to_hass(hass)
-    assert await hass.config_entries.async_setup(entry.entry_id)
+    with patch(
+        "custom_components.nfl.NFLDataUpdateCoordinator.async_refresh",
+        new=AsyncMock(return_value=None),
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
     assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 1
@@ -55,6 +66,33 @@ async def test_unload_entry(hass):
     assert await hass.config_entries.async_remove(entries[0].entry_id)
     await hass.async_block_till_done()
     assert len(hass.states.async_entity_ids(SENSOR_DOMAIN)) == 0
+
+
+def test_coordinator_passes_config_entry(hass):
+    """Test the coordinator passes the config entry to Home Assistant."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="NFL",
+        data=CONFIG_DATA,
+    )
+
+    with patch(
+        "custom_components.nfl.DataUpdateCoordinator.__init__",
+        autospec=True,
+        return_value=None,
+    ) as mock_init:
+        coordinator = NFLDataUpdateCoordinator(
+            hass, entry.data, entry.data.get("timeout"), config_entry=entry
+        )
+
+    mock_init.assert_called_once_with(
+        coordinator,
+        hass,
+        _LOGGER,
+        config_entry=entry,
+        name=CONFIG_DATA[CONF_NAME],
+        update_interval=timedelta(minutes=10),
+    )
 
 
 # async def test_import(hass):

@@ -1,14 +1,15 @@
-""" NFL Team Status """
+"""NFL Team Status"""
+
 import asyncio
 import logging
 from datetime import timedelta
-import arrow
 
 import aiohttp
+import arrow
 from async_timeout import timeout
 from homeassistant import config_entries
-from homeassistant.const import CONF_NAME
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_registry import (
     async_entries_for_config_entry,
@@ -18,8 +19,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import (
     API_ENDPOINT,
-    CONF_TIMEOUT,
     CONF_TEAM_ID,
+    CONF_TIMEOUT,
     COORDINATOR,
     DEFAULT_TIMEOUT,
     DOMAIN,
@@ -53,7 +54,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Setup the data coordinator
     coordinator = NFLDataUpdateCoordinator(
-        hass, entry.data, entry.data.get(CONF_TIMEOUT)
+        hass, entry.data, entry.data.get(CONF_TIMEOUT), config_entry=entry
     )
 
     # Fetch initial data so we have data when entities subscribe
@@ -119,10 +120,11 @@ async def async_migrate_entry(hass, config_entry):
         if CONF_TIMEOUT not in updated_config.keys():
             updated_config[CONF_TIMEOUT] = DEFAULT_TIMEOUT
 
-        if updated_config != config_entry.data:
-            hass.config_entries.async_update_entry(config_entry, data=updated_config)
-
-        config_entry.version = 2
+        hass.config_entries.async_update_entry(
+            config_entry,
+            data=updated_config,
+            version=2,
+        )
         _LOGGER.debug("Migration to version %s complete", config_entry.version)
 
     return True
@@ -131,7 +133,13 @@ async def async_migrate_entry(hass, config_entry):
 class NFLDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching NFL data."""
 
-    def __init__(self, hass, config, the_timeout: int):
+    def __init__(
+        self,
+        hass,
+        config,
+        the_timeout: int,
+        config_entry: ConfigEntry | None = None,
+    ):
         """Initialize."""
         self.interval = timedelta(minutes=10)
         self.name = config[CONF_NAME]
@@ -141,7 +149,13 @@ class NFLDataUpdateCoordinator(DataUpdateCoordinator):
 
         _LOGGER.debug("Data will be updated every %s", self.interval)
 
-        super().__init__(hass, _LOGGER, name=self.name, update_interval=self.interval)
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=config_entry,
+            name=self.name,
+            update_interval=self.interval,
+        )
 
     async def _async_update_data(self):
         """Fetch data"""
@@ -204,11 +218,16 @@ async def async_get_state(config) -> dict:
                 try:
                     values["location"] = "%s, %s" % (
                         event["competitions"][0]["venue"]["address"]["city"],
-                        event["competitions"][0]["venue"]["address"]["state"] if (
-                        "state" in event["competitions"][0]["venue"]["address"] ) else ""
+                        (
+                            event["competitions"][0]["venue"]["address"]["state"]
+                            if ("state" in event["competitions"][0]["venue"]["address"])
+                            else ""
+                        ),
                     )
                 except:
-                    values["location"] = event["competitions"][0]["venue"]["address"]["city"]
+                    values["location"] = event["competitions"][0]["venue"]["address"][
+                        "city"
+                    ]
                 try:
                     values["tv_network"] = event["competitions"][0]["broadcasts"][0][
                         "names"
