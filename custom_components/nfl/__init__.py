@@ -32,6 +32,48 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+# Polling cadence bounds.
+DEFAULT_SCAN_INTERVAL = timedelta(minutes=10)
+LIVE_SCAN_INTERVAL = timedelta(seconds=5)
+MIN_PREGAME_SCAN_INTERVAL = timedelta(seconds=5)
+# When kickoff is this close (or already elapsed while still reported as PRE),
+# poll at the fast pre-game cadence so we catch the PRE -> IN transition.
+IMMINENT_KICKOFF_WINDOW = timedelta(seconds=60)
+
+
+def _compute_update_interval(state, seconds_to_kickoff):
+    """Return how long to wait before the next data refresh.
+
+    Instead of a single fixed pre-game window that flips polling to a fast
+    cadence, the pre-game interval scales with the time remaining until
+    kickoff: the closer kickoff gets, the shorter the interval. This lets the
+    final pre-game poll land within seconds of kickoff without polling
+    aggressively for the entire pre-game period.
+    """
+    state = (state or "").upper()
+
+    if state == "IN":
+        # Game is live; poll frequently to track scores and plays.
+        return LIVE_SCAN_INTERVAL
+
+    if state == "PRE":
+        # ESPN can still report PRE slightly past the scheduled kickoff, so
+        # treat an unknown or already-elapsed kickoff as imminent.
+        if (
+            seconds_to_kickoff is None
+            or seconds_to_kickoff <= IMMINENT_KICKOFF_WINDOW.total_seconds()
+        ):
+            return MIN_PREGAME_SCAN_INTERVAL
+        # Halve the remaining time so the cadence converges on kickoff,
+        # clamped between the fast pre-game cadence and the default cadence.
+        seconds = seconds_to_kickoff / 2
+        seconds = max(MIN_PREGAME_SCAN_INTERVAL.total_seconds(), seconds)
+        seconds = min(DEFAULT_SCAN_INTERVAL.total_seconds(), seconds)
+        return timedelta(seconds=seconds)
+
+    # POST, BYE, NOT_FOUND, or anything unexpected: use the default cadence.
+    return DEFAULT_SCAN_INTERVAL
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load the saved entities."""
@@ -141,7 +183,7 @@ class NFLDataUpdateCoordinator(DataUpdateCoordinator):
         config_entry: ConfigEntry | None = None,
     ):
         """Initialize."""
-        self.interval = timedelta(minutes=10)
+        self.interval = DEFAULT_SCAN_INTERVAL
         self.name = config[CONF_NAME]
         self.timeout = the_timeout
         self.config = config
@@ -162,13 +204,28 @@ class NFLDataUpdateCoordinator(DataUpdateCoordinator):
         async with timeout(self.timeout):
             try:
                 data = await update_game(self.config)
-                # update the interval based on flag
-                if data["private_fast_refresh"] == True:
-                    self.update_interval = timedelta(seconds=5)
-                else:
-                    self.update_interval = timedelta(minutes=10)
             except Exception as error:
                 raise UpdateFailed(error) from error
+
+            # Scale the next poll to the game state and time until kickoff.
+            seconds_to_kickoff = None
+            game_date = data.get("date")
+            if game_date is not None:
+                try:
+                    seconds_to_kickoff = (
+                        arrow.get(game_date) - arrow.now()
+                    ).total_seconds()
+                except (TypeError, ValueError):
+                    seconds_to_kickoff = None
+
+            self.update_interval = _compute_update_interval(
+                data.get("state"), seconds_to_kickoff
+            )
+            _LOGGER.debug(
+                "State is %s; next update in %s",
+                data.get("state"),
+                self.update_interval,
+            )
             return data
 
 
@@ -413,7 +470,6 @@ async def async_get_state(config) -> dict:
                     oppo_index
                 ]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-                values["private_fast_refresh"] = False
 
         # Never found the team. Either a bye or a post-season condition
         if not found_team:
@@ -450,20 +506,6 @@ async def async_get_state(config) -> dict:
                 values["team_logo"] = None
                 values["state"] = "NOT_FOUND"
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-
-        if values["state"] == "PRE" and (
-            (arrow.get(values["date"]) - arrow.now()).total_seconds() < 1200
-        ):
-            _LOGGER.debug(
-                "Event is within 20 minutes, setting refresh rate to 5 seconds."
-            )
-            values["private_fast_refresh"] = True
-        elif values["state"] == "IN":
-            _LOGGER.debug("Event in progress, setting refresh rate to 5 seconds.")
-            values["private_fast_refresh"] = True
-        elif values["state"] in ["POST", "BYE"]:
-            _LOGGER.debug("Event is over, setting refresh back to 10 minutes.")
-            values["private_fast_refresh"] = False
 
     return values
 
@@ -504,7 +546,6 @@ async def async_clear_states(config) -> dict:
         "opponent_win_probability": None,
         "opponent_timeouts": None,
         "last_update": None,
-        "private_fast_refresh": False,
     }
 
     return values
