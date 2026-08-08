@@ -10,7 +10,14 @@ from homeassistant.helpers.entity_registry import async_get
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.nfl import _LOGGER, NFLDataUpdateCoordinator
+from custom_components.nfl import (
+    DEFAULT_SCAN_INTERVAL,
+    LIVE_SCAN_INTERVAL,
+    MIN_PREGAME_SCAN_INTERVAL,
+    _LOGGER,
+    _compute_update_interval,
+    NFLDataUpdateCoordinator,
+)
 from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
 from tests.const import CONFIG_DATA
 
@@ -93,6 +100,47 @@ def test_coordinator_passes_config_entry(hass):
         name=CONFIG_DATA[CONF_NAME],
         update_interval=timedelta(minutes=10),
     )
+
+
+def test_update_interval_live_is_fast():
+    """A live game polls at the fast live cadence."""
+    assert _compute_update_interval("IN", 0) == LIVE_SCAN_INTERVAL
+    # Case-insensitive and independent of any kickoff value.
+    assert _compute_update_interval("in", None) == LIVE_SCAN_INTERVAL
+
+
+def test_update_interval_finished_or_idle_is_default():
+    """Finished/idle states fall back to the default cadence."""
+    for state in ("POST", "BYE", "NOT_FOUND", "", None):
+        assert _compute_update_interval(state, None) == DEFAULT_SCAN_INTERVAL
+
+
+def test_update_interval_imminent_kickoff_is_fast():
+    """PRE within the imminent window (or past kickoff) polls fast."""
+    # Already elapsed but still reported as PRE (ESPN lag).
+    assert _compute_update_interval("PRE", -30) == MIN_PREGAME_SCAN_INTERVAL
+    # Exactly at / just inside the 60s window.
+    assert _compute_update_interval("PRE", 60) == MIN_PREGAME_SCAN_INTERVAL
+    assert _compute_update_interval("PRE", 30) == MIN_PREGAME_SCAN_INTERVAL
+    # Unknown kickoff time is treated as imminent.
+    assert _compute_update_interval("PRE", None) == MIN_PREGAME_SCAN_INTERVAL
+
+
+def test_update_interval_pregame_scales_and_converges():
+    """Pre-game cadence halves the remaining time, clamped to sane bounds."""
+    # Far out: capped at the default cadence, never longer.
+    assert _compute_update_interval("PRE", 24 * 3600) == DEFAULT_SCAN_INTERVAL
+    # Mid-range: half of the remaining time.
+    assert _compute_update_interval("PRE", 600) == timedelta(seconds=300)
+    assert _compute_update_interval("PRE", 200) == timedelta(seconds=100)
+    # As kickoff approaches the interval keeps shrinking (monotonic), so the
+    # final pre-game poll lands within seconds of kickoff.
+    prev = DEFAULT_SCAN_INTERVAL
+    for secs in (3600, 1800, 900, 300, 120, 61):
+        current = _compute_update_interval("PRE", secs)
+        assert current <= prev
+        assert current >= MIN_PREGAME_SCAN_INTERVAL
+        prev = current
 
 
 # async def test_import(hass):
