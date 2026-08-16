@@ -471,33 +471,24 @@ async def async_get_state(config) -> dict:
                 ]["score"]
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
 
-        # Never found the team. Either a bye or a post-season condition
-        if not found_team:
-            _LOGGER.debug(
-                "Did not find a game with for the configured team. Checking if it's a bye week."
-            )
-            found_bye = False
-            values = await async_clear_states(config)
-            try:  # look for byes in regular season
-                for bye_team in data["week"]["teamsOnBye"]:
-                    if team_id.lower() == bye_team["abbreviation"].lower():
-                        _LOGGER.debug("Bye week confirmed.")
-                        found_bye = True
-                        values["team_abbr"] = bye_team["abbreviation"]
-                        values["team_name"] = bye_team["shortDisplayName"]
-                        values["team_logo"] = bye_team["logo"]
-                        values["state"] = "BYE"
-                        values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-                if found_bye == False:
-                    _LOGGER.debug(
-                        "Team not found in active games or bye week list. Have you missed the playoffs?"
-                    )
-                    values["team_abbr"] = None
-                    values["team_name"] = None
-                    values["team_logo"] = None
-                    values["state"] = "NOT_FOUND"
+    # Never found the team. Either a bye or a post-season condition
+    if not found_team:
+        _LOGGER.debug(
+            "Did not find a game with for the configured team. Checking if it's a bye week."
+        )
+        found_bye = False
+        values = await async_clear_states(config)
+        try:  # look for byes in regular season
+            for bye_team in data["week"]["teamsOnBye"]:
+                if team_id.lower() == bye_team["abbreviation"].lower():
+                    _LOGGER.debug("Bye week confirmed.")
+                    found_bye = True
+                    values["team_abbr"] = bye_team["abbreviation"]
+                    values["team_name"] = bye_team["shortDisplayName"]
+                    values["team_logo"] = bye_team["logo"]
+                    values["state"] = "BYE"
                     values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-            except:
+            if found_bye == False:
                 _LOGGER.debug(
                     "Team not found in active games or bye week list. Have you missed the playoffs?"
                 )
@@ -506,6 +497,15 @@ async def async_get_state(config) -> dict:
                 values["team_logo"] = None
                 values["state"] = "NOT_FOUND"
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+        except:
+            _LOGGER.debug(
+                "Team not found in active games or bye week list. Have you missed the playoffs?"
+            )
+            values["team_abbr"] = None
+            values["team_name"] = None
+            values["team_logo"] = None
+            values["state"] = "NOT_FOUND"
+            values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
 
     return values
 
