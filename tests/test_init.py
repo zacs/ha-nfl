@@ -17,6 +17,7 @@ from custom_components.nfl import (
     _LOGGER,
     _compute_update_interval,
     NFLDataUpdateCoordinator,
+    async_get_state,
 )
 from custom_components.nfl.const import CONF_TEAM_ID, DOMAIN
 from tests.const import CONFIG_DATA
@@ -141,6 +142,39 @@ def test_update_interval_pregame_scales_and_converges():
         assert current <= prev
         assert current >= MIN_PREGAME_SCAN_INTERVAL
         prev = current
+
+
+async def test_async_get_state_handles_api_failure(hass):
+    """A non-200 response must not raise KeyError and should mark NOT_FOUND (#59)."""
+
+    class FakeResponse:
+        status = 503
+
+        async def json(self):
+            return None
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+    class FakeSession:
+        def get(self, url, headers=None):
+            return FakeResponse()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+    with patch("custom_components.nfl.aiohttp.ClientSession", return_value=FakeSession()):
+        values = await async_get_state(CONFIG_DATA)
+
+    assert values["state"] == "NOT_FOUND"
+    assert values["date"] is None
+    assert values["last_update"] is not None
 
 
 # async def test_import(hass):
