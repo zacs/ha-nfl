@@ -7,6 +7,7 @@ import pytest
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity_registry import async_get
+from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -144,8 +145,8 @@ def test_update_interval_pregame_scales_and_converges():
         prev = current
 
 
-async def test_async_get_state_handles_api_failure(hass):
-    """A non-200 response must not raise KeyError and should mark NOT_FOUND (#59)."""
+async def test_async_get_state_raises_on_api_failure(hass):
+    """A non-200 response must surface as UpdateFailed, not look like a bye (#61)."""
 
     class FakeResponse:
         status = 503
@@ -170,11 +171,43 @@ async def test_async_get_state_handles_api_failure(hass):
             return None
 
     with patch("custom_components.nfl.aiohttp.ClientSession", return_value=FakeSession()):
+        with pytest.raises(UpdateFailed, match="503"):
+            await async_get_state(CONFIG_DATA)
+
+
+async def test_async_get_state_sends_no_user_agent(hass):
+    """ESPN 403s browser user agents, so we must not send one (#61)."""
+
+    sent_headers = {}
+
+    class FakeResponse:
+        status = 200
+
+        async def json(self):
+            return {"events": [], "week": {}}
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+    class FakeSession:
+        def get(self, url, headers=None):
+            sent_headers.update(headers or {})
+            return FakeResponse()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+    with patch("custom_components.nfl.aiohttp.ClientSession", return_value=FakeSession()):
         values = await async_get_state(CONFIG_DATA)
 
+    assert "User-Agent" not in sent_headers
     assert values["state"] == "NOT_FOUND"
-    assert values["date"] is None
-    assert values["last_update"] is not None
 
 
 # async def test_import(hass):

@@ -18,7 +18,6 @@ from .const import (
     DEFAULT_NAME,
     DEFAULT_TIMEOUT,
     DOMAIN,
-    USER_AGENT,
 )
 
 JSON_FEATURES = "features"
