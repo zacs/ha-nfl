@@ -26,7 +26,6 @@ from .const import (
     DOMAIN,
     ISSUE_URL,
     PLATFORMS,
-    USER_AGENT,
     VERSION,
 )
 
@@ -242,234 +241,239 @@ async def async_get_state(config) -> dict:
     """Query API for status."""
 
     values = {}
-    headers = {"User-Agent": USER_AGENT, "Accept": "application/ld+json"}
-    data = None
+    # No User-Agent header on purpose: ESPN 403s browser-impersonating agents
+    # (#61). aiohttp fills in its own "Python/x.y aiohttp/z", which is accepted.
+    # Don't skip_auto_headers it either -- a request with no UA at all also 403s.
+    headers = {"Accept": "application/ld+json"}
     url = API_ENDPOINT
     team_id = config[CONF_TEAM_ID]
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as r:
             _LOGGER.debug("Getting state for %s from %s" % (team_id, url))
-            if r.status == 200:
-                data = await r.json()
+            if r.status != 200:
+                # Surface the failure instead of letting it look like a bye week.
+                raise UpdateFailed(
+                    "ESPN API returned HTTP %s for %s" % (r.status, url)
+                )
+            data = await r.json()
 
     found_team = False
-    if data is not None:
-        for event in data["events"]:
-            # _LOGGER.debug("Looking at this event: %s" % event)
-            if team_id in event["shortName"]:
-                _LOGGER.debug("Found event; parsing data.")
-                found_team = True
-                team_index = (
-                    0
-                    if event["competitions"][0]["competitors"][0]["team"][
-                        "abbreviation"
-                    ]
-                    == team_id
-                    else 1
+    for event in data["events"]:
+        # _LOGGER.debug("Looking at this event: %s" % event)
+        if team_id in event["shortName"]:
+            _LOGGER.debug("Found event; parsing data.")
+            found_team = True
+            team_index = (
+                0
+                if event["competitions"][0]["competitors"][0]["team"][
+                    "abbreviation"
+                ]
+                == team_id
+                else 1
+            )
+            oppo_index = abs((team_index - 1))
+            values["state"] = event["status"]["type"]["state"].upper()
+            values["date"] = event["date"]
+            values["kickoff_in"] = arrow.get(event["date"]).humanize()
+            values["venue"] = event["competitions"][0]["venue"]["fullName"]
+            try:
+                values["location"] = "%s, %s" % (
+                    event["competitions"][0]["venue"]["address"]["city"],
+                    (
+                        event["competitions"][0]["venue"]["address"]["state"]
+                        if ("state" in event["competitions"][0]["venue"]["address"])
+                        else ""
+                    ),
                 )
-                oppo_index = abs((team_index - 1))
-                values["state"] = event["status"]["type"]["state"].upper()
-                values["date"] = event["date"]
-                values["kickoff_in"] = arrow.get(event["date"]).humanize()
-                values["venue"] = event["competitions"][0]["venue"]["fullName"]
+            except:
+                values["location"] = event["competitions"][0]["venue"]["address"][
+                    "city"
+                ]
+            try:
+                values["tv_network"] = event["competitions"][0]["broadcasts"][0][
+                    "names"
+                ][0]
+            except:
+                values["tv_network"] = None
+            if event["status"]["type"]["state"].lower() in [
+                "pre"
+            ]:  # odds only exist pre-game
+                values["odds"] = event["competitions"][0]["odds"][0]["details"]
+                values["overunder"] = event["competitions"][0]["odds"][0][
+                    "overUnder"
+                ]
+            else:
+                values["odds"] = None
+                values["overunder"] = None
+            if event["status"]["type"]["state"].lower() in [
+                "pre",
+                "post",
+            ]:  # could use status.completed == true as well
+                values["possession"] = None
+                values["last_play"] = None
+                values["down_distance_text"] = None
+                values["team_timeouts"] = 3
+                values["opponent_timeouts"] = 3
+                values["quarter"] = None
+                values["clock"] = None
+                values["team_win_probability"] = None
+                values["opponent_win_probability"] = None
+            else:
+                values["quarter"] = event["status"]["period"]
+                values["clock"] = event["status"]["displayClock"]
+                values["last_play"] = event["competitions"][0]["situation"][
+                    "lastPlay"
+                ]["text"]
                 try:
-                    values["location"] = "%s, %s" % (
-                        event["competitions"][0]["venue"]["address"]["city"],
-                        (
-                            event["competitions"][0]["venue"]["address"]["state"]
-                            if ("state" in event["competitions"][0]["venue"]["address"])
-                            else ""
-                        ),
-                    )
+                    values["down_distance_text"] = event["competitions"][0][
+                        "situation"
+                    ]["downDistanceText"]
                 except:
-                    values["location"] = event["competitions"][0]["venue"]["address"][
-                        "city"
-                    ]
-                try:
-                    values["tv_network"] = event["competitions"][0]["broadcasts"][0][
-                        "names"
-                    ][0]
-                except:
-                    values["tv_network"] = None
-                if event["status"]["type"]["state"].lower() in [
-                    "pre"
-                ]:  # odds only exist pre-game
-                    values["odds"] = event["competitions"][0]["odds"][0]["details"]
-                    values["overunder"] = event["competitions"][0]["odds"][0][
-                        "overUnder"
-                    ]
-                else:
-                    values["odds"] = None
-                    values["overunder"] = None
-                if event["status"]["type"]["state"].lower() in [
-                    "pre",
-                    "post",
-                ]:  # could use status.completed == true as well
-                    values["possession"] = None
-                    values["last_play"] = None
                     values["down_distance_text"] = None
-                    values["team_timeouts"] = 3
-                    values["opponent_timeouts"] = 3
-                    values["quarter"] = None
-                    values["clock"] = None
-                    values["team_win_probability"] = None
-                    values["opponent_win_probability"] = None
+                try:
+                    values["possession"] = event["competitions"][0]["situation"][
+                        "possession"
+                    ]
+                except:
+                    values["possession"] = None
+                if (
+                    event["competitions"][0]["competitors"][team_index]["homeAway"]
+                    == "home"
+                ):
+                    values["team_timeouts"] = event["competitions"][0]["situation"][
+                        "homeTimeouts"
+                    ]
+                    values["opponent_timeouts"] = event["competitions"][0][
+                        "situation"
+                    ]["awayTimeouts"]
+                    try:
+                        values["team_win_probability"] = event["competitions"][0][
+                            "situation"
+                        ]["lastPlay"]["probability"]["homeWinPercentage"]
+                        values["opponent_win_probability"] = event["competitions"][
+                            0
+                        ]["situation"]["lastPlay"]["probability"][
+                            "awayWinPercentage"
+                        ]
+                    except:
+                        values["team_win_probability"] = None
+                        values["opponent_win_probability"] = None
                 else:
-                    values["quarter"] = event["status"]["period"]
-                    values["clock"] = event["status"]["displayClock"]
-                    values["last_play"] = event["competitions"][0]["situation"][
-                        "lastPlay"
-                    ]["text"]
-                    try:
-                        values["down_distance_text"] = event["competitions"][0][
-                            "situation"
-                        ]["downDistanceText"]
-                    except:
-                        values["down_distance_text"] = None
-                    try:
-                        values["possession"] = event["competitions"][0]["situation"][
-                            "possession"
-                        ]
-                    except:
-                        values["possession"] = None
-                    if (
-                        event["competitions"][0]["competitors"][team_index]["homeAway"]
-                        == "home"
-                    ):
-                        values["team_timeouts"] = event["competitions"][0]["situation"][
-                            "homeTimeouts"
-                        ]
-                        values["opponent_timeouts"] = event["competitions"][0][
-                            "situation"
-                        ]["awayTimeouts"]
-                        try:
-                            values["team_win_probability"] = event["competitions"][0][
-                                "situation"
-                            ]["lastPlay"]["probability"]["homeWinPercentage"]
-                            values["opponent_win_probability"] = event["competitions"][
-                                0
-                            ]["situation"]["lastPlay"]["probability"][
-                                "awayWinPercentage"
-                            ]
-                        except:
-                            values["team_win_probability"] = None
-                            values["opponent_win_probability"] = None
-                    else:
-                        values["team_timeouts"] = event["competitions"][0]["situation"][
-                            "awayTimeouts"
-                        ]
-                        values["opponent_timeouts"] = event["competitions"][0][
-                            "situation"
-                        ]["homeTimeouts"]
-                        try:
-                            values["team_win_probability"] = event["competitions"][0][
-                                "situation"
-                            ]["lastPlay"]["probability"]["awayWinPercentage"]
-                            values["opponent_win_probability"] = event["competitions"][
-                                0
-                            ]["situation"]["lastPlay"]["probability"][
-                                "homeWinPercentage"
-                            ]
-                        except:
-                            values["team_win_probability"] = None
-                            values["opponent_win_probability"] = None
-                values["team_abbr"] = event["competitions"][0]["competitors"][
-                    team_index
-                ]["team"]["abbreviation"]
-                values["team_id"] = event["competitions"][0]["competitors"][team_index][
-                    "team"
-                ]["id"]
-                values["team_name"] = event["competitions"][0]["competitors"][
-                    team_index
-                ]["team"]["shortDisplayName"]
-                try:
-                    values["team_record"] = event["competitions"][0]["competitors"][
-                        team_index
-                    ]["records"][0]["summary"]
-                except:
-                    values["team_record"] = None
-                values["team_homeaway"] = event["competitions"][0]["competitors"][
-                    team_index
-                ]["homeAway"]
-                values["team_logo"] = event["competitions"][0]["competitors"][
-                    team_index
-                ]["team"]["logo"]
-                try:
-                    values["team_colors"] = [
-                        "".join(
-                            (
-                                "#",
-                                event["competitions"][0]["competitors"][team_index][
-                                    "team"
-                                ]["color"],
-                            )
-                        ),
-                        "".join(
-                            (
-                                "#",
-                                event["competitions"][0]["competitors"][team_index][
-                                    "team"
-                                ]["alternateColor"],
-                            )
-                        ),
+                    values["team_timeouts"] = event["competitions"][0]["situation"][
+                        "awayTimeouts"
                     ]
-                except:
-                    if team_id == "NFC":
-                        values["team_colors"] = ["#013369", "#013369"]
-                    if team_id == "AFC":
-                        values["team_colors"] = ["#D50A0A", "#D50A0A"]
-                values["team_score"] = event["competitions"][0]["competitors"][
+                    values["opponent_timeouts"] = event["competitions"][0][
+                        "situation"
+                    ]["homeTimeouts"]
+                    try:
+                        values["team_win_probability"] = event["competitions"][0][
+                            "situation"
+                        ]["lastPlay"]["probability"]["awayWinPercentage"]
+                        values["opponent_win_probability"] = event["competitions"][
+                            0
+                        ]["situation"]["lastPlay"]["probability"][
+                            "homeWinPercentage"
+                        ]
+                    except:
+                        values["team_win_probability"] = None
+                        values["opponent_win_probability"] = None
+            values["team_abbr"] = event["competitions"][0]["competitors"][
+                team_index
+            ]["team"]["abbreviation"]
+            values["team_id"] = event["competitions"][0]["competitors"][team_index][
+                "team"
+            ]["id"]
+            values["team_name"] = event["competitions"][0]["competitors"][
+                team_index
+            ]["team"]["shortDisplayName"]
+            try:
+                values["team_record"] = event["competitions"][0]["competitors"][
                     team_index
-                ]["score"]
-                values["opponent_abbr"] = event["competitions"][0]["competitors"][
+                ]["records"][0]["summary"]
+            except:
+                values["team_record"] = None
+            values["team_homeaway"] = event["competitions"][0]["competitors"][
+                team_index
+            ]["homeAway"]
+            values["team_logo"] = event["competitions"][0]["competitors"][
+                team_index
+            ]["team"]["logo"]
+            try:
+                values["team_colors"] = [
+                    "".join(
+                        (
+                            "#",
+                            event["competitions"][0]["competitors"][team_index][
+                                "team"
+                            ]["color"],
+                        )
+                    ),
+                    "".join(
+                        (
+                            "#",
+                            event["competitions"][0]["competitors"][team_index][
+                                "team"
+                            ]["alternateColor"],
+                        )
+                    ),
+                ]
+            except:
+                if team_id == "NFC":
+                    values["team_colors"] = ["#013369", "#013369"]
+                if team_id == "AFC":
+                    values["team_colors"] = ["#D50A0A", "#D50A0A"]
+            values["team_score"] = event["competitions"][0]["competitors"][
+                team_index
+            ]["score"]
+            values["opponent_abbr"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["team"]["abbreviation"]
+            values["opponent_id"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["team"]["id"]
+            values["opponent_name"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["team"]["shortDisplayName"]
+            try:
+                values["opponent_record"] = event["competitions"][0]["competitors"][
                     oppo_index
-                ]["team"]["abbreviation"]
-                values["opponent_id"] = event["competitions"][0]["competitors"][
-                    oppo_index
-                ]["team"]["id"]
-                values["opponent_name"] = event["competitions"][0]["competitors"][
-                    oppo_index
-                ]["team"]["shortDisplayName"]
-                try:
-                    values["opponent_record"] = event["competitions"][0]["competitors"][
-                        oppo_index
-                    ]["records"][0]["summary"]
-                except:
-                    values["opponent_record"] = None
-                values["opponent_homeaway"] = event["competitions"][0]["competitors"][
-                    oppo_index
-                ]["homeAway"]
-                values["opponent_logo"] = event["competitions"][0]["competitors"][
-                    oppo_index
-                ]["team"]["logo"]
-                try:
-                    values["opponent_colors"] = [
-                        "".join(
-                            (
-                                "#",
-                                event["competitions"][0]["competitors"][oppo_index][
-                                    "team"
-                                ]["color"],
-                            )
-                        ),
-                        "".join(
-                            (
-                                "#",
-                                event["competitions"][0]["competitors"][oppo_index][
-                                    "team"
-                                ]["alternateColor"],
-                            )
-                        ),
-                    ]
-                except:
-                    if team_id == "AFC":
-                        values["opponent_colors"] = ["#013369", "#013369"]
-                    if team_id == "NFC":
-                        values["opponent_colors"] = ["#D50A0A", "#D50A0A"]
-                values["opponent_score"] = event["competitions"][0]["competitors"][
-                    oppo_index
-                ]["score"]
-                values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
+                ]["records"][0]["summary"]
+            except:
+                values["opponent_record"] = None
+            values["opponent_homeaway"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["homeAway"]
+            values["opponent_logo"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["team"]["logo"]
+            try:
+                values["opponent_colors"] = [
+                    "".join(
+                        (
+                            "#",
+                            event["competitions"][0]["competitors"][oppo_index][
+                                "team"
+                            ]["color"],
+                        )
+                    ),
+                    "".join(
+                        (
+                            "#",
+                            event["competitions"][0]["competitors"][oppo_index][
+                                "team"
+                            ]["alternateColor"],
+                        )
+                    ),
+                ]
+            except:
+                if team_id == "AFC":
+                    values["opponent_colors"] = ["#013369", "#013369"]
+                if team_id == "NFC":
+                    values["opponent_colors"] = ["#D50A0A", "#D50A0A"]
+            values["opponent_score"] = event["competitions"][0]["competitors"][
+                oppo_index
+            ]["score"]
+            values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
 
     # Never found the team. Either a bye or a post-season condition
     if not found_team:
@@ -478,26 +482,17 @@ async def async_get_state(config) -> dict:
         )
         found_bye = False
         values = await async_clear_states(config)
-        try:  # look for byes in regular season
-            for bye_team in data["week"]["teamsOnBye"]:
-                if team_id.lower() == bye_team["abbreviation"].lower():
-                    _LOGGER.debug("Bye week confirmed.")
-                    found_bye = True
-                    values["team_abbr"] = bye_team["abbreviation"]
-                    values["team_name"] = bye_team["shortDisplayName"]
-                    values["team_logo"] = bye_team["logo"]
-                    values["state"] = "BYE"
-                    values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-            if found_bye == False:
-                _LOGGER.debug(
-                    "Team not found in active games or bye week list. Have you missed the playoffs?"
-                )
-                values["team_abbr"] = None
-                values["team_name"] = None
-                values["team_logo"] = None
-                values["state"] = "NOT_FOUND"
+        # look for byes in regular season
+        for bye_team in data.get("week", {}).get("teamsOnBye", []):
+            if team_id.lower() == bye_team["abbreviation"].lower():
+                _LOGGER.debug("Bye week confirmed.")
+                found_bye = True
+                values["team_abbr"] = bye_team["abbreviation"]
+                values["team_name"] = bye_team["shortDisplayName"]
+                values["team_logo"] = bye_team["logo"]
+                values["state"] = "BYE"
                 values["last_update"] = arrow.now().format(arrow.FORMAT_W3C)
-        except:
+        if not found_bye:
             _LOGGER.debug(
                 "Team not found in active games or bye week list. Have you missed the playoffs?"
             )
